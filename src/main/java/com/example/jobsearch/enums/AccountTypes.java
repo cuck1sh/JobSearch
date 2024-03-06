@@ -1,6 +1,6 @@
 package com.example.jobsearch.enums;
 
-public enum AccountType {
+public enum AccountTypes {
     RECRUITER,
     EMPLOYEE
 }
