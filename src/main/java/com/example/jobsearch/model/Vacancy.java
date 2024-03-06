@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vacancy {
-    private String id;
+    private Integer id;
     private String description;
     private Integer category_id;
     private Float salary;
