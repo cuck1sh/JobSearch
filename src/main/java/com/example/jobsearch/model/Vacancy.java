@@ -19,7 +19,7 @@ public class Vacancy {
     private Integer exp_form;
     private Integer exp_to;
     private Boolean is_active;
-    private Integer author_id;
+    private Integer user_id;
     private LocalDateTime created_date;
     private LocalDateTime update_time;
 }

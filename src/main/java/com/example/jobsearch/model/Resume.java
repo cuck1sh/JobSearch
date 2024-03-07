@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Resume {
     private Integer id;
-    private Integer applicant_id;
+    private Integer user_id;
     private String name;
     private Integer category_id;
     private Float salary;
