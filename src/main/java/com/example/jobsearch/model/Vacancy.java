@@ -22,4 +22,5 @@ public class Vacancy {
     private Integer user_id;
     private LocalDateTime created_date;
     private LocalDateTime update_time;
+
 }
