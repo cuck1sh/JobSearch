@@ -15,7 +15,7 @@ public class Vacancy {
     private Integer id;
     private String description;
     private Integer category_id;
-    private Float salary;
+    private Double salary;
     private Integer exp_form;
     private Integer exp_to;
     private Boolean is_active;

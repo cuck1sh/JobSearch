@@ -1,6 +1,5 @@
 package com.example.jobsearch.model;
 
-import com.example.jobsearch.enums.AccountTypes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +18,5 @@ public class User {
     private String password;
     private String phone_number;
     private String avatar;
-    private AccountTypes account_type;
+    private String account_type;
 }
