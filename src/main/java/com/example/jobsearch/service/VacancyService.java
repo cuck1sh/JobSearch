@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface VacancyService {
     List<VacancyDto> getVacancies();
+
+    List<VacancyDto> getVacanciesByCategory(String category);
 }

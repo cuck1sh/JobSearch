@@ -27,4 +27,17 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
                 .build()));
         return dtos;
     }
+
+    @Override
+    public List<RespondedApplicantsDto> getResponsesForVacancy(String name) {
+        List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForVacancy(name);
+        List<RespondedApplicantsDto> dtos = new ArrayList<>();
+        applicants.forEach(e -> dtos.add(RespondedApplicantsDto.builder()
+                .id(e.getId())
+                .resumeId(e.getResumeId())
+                .vacancyId(e.getVacancyId())
+                .confirmation(e.getConfirmation())
+                .build()));
+        return dtos;
+    }
 }

@@ -18,6 +18,16 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public List<VacancyDto> getVacancies() {
         List<Vacancy> vacancies = vacancyDao.getVacancies();
+        return getVacancyDtos(vacancies);
+    }
+
+    @Override
+    public List<VacancyDto> getVacanciesByCategory(String category) {
+        List<Vacancy> vacancies = vacancyDao.getVacanciesByCategory(category);
+        return getVacancyDtos(vacancies);
+    }
+
+    private List<VacancyDto> getVacancyDtos(List<Vacancy> vacancies) {
         List<VacancyDto> dtos = new ArrayList<>();
         vacancies.forEach(e -> dtos.add(VacancyDto.builder()
                 .id(e.getId())

@@ -20,4 +20,9 @@ public class RespondedApplicantsController {
         return ResponseEntity.ok(respondedApplicantsService.getUserResponses(email));
     }
 
+    @GetMapping("responces/vacancy")
+    public ResponseEntity<List<RespondedApplicantsDto>> getResponsesForVacancy(@RequestParam(name = "name") String name) {
+        return ResponseEntity.ok(respondedApplicantsService.getResponsesForVacancy(name));
+    }
+
 }
