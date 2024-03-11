@@ -18,6 +18,16 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public List<ResumeDto> getResumesByCategory(String category) {
         List<Resume> resumes = resumeDao.getResumesByCategory(category);
+        return getResumeDtos(resumes);
+    }
+
+    @Override
+    public List<ResumeDto> getResumesByUserEmail(String email) {
+        List<Resume> resumes = resumeDao.getResumesByUserEmail(email);
+        return getResumeDtos(resumes);
+    }
+
+    private List<ResumeDto> getResumeDtos(List<Resume> resumes) {
         List<ResumeDto> dtos = new ArrayList<>();
         resumes.forEach(e -> dtos.add(ResumeDto.builder()
                 .id(e.getId())

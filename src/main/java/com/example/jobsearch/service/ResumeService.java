@@ -6,4 +6,7 @@ import java.util.List;
 
 public interface ResumeService {
     List<ResumeDto> getResumesByCategory(String category);
+
+    List<ResumeDto> getResumesByUserEmail(String email);
+
 }

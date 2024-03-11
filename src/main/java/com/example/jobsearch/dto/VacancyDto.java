@@ -1,4 +1,4 @@
-package com.example.jobsearch.model;
+package com.example.jobsearch.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class Vacancy {
+@NoArgsConstructor
+public class VacancyDto {
     private Integer id;
     private String name;
     private String description;

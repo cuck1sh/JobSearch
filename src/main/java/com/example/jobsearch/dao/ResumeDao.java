@@ -25,4 +25,17 @@ public class ResumeDao {
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), category);
     }
+
+    public List<Resume> getResumesByUserEmail(String email) {
+        String sql = """
+                select * from PUBLIC.RESUMES
+                where USER_ID = (
+                    select
+                        u.id
+                    from USERS u
+                    where u.EMAIL = ?
+                    );
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), email);
+    }
 }

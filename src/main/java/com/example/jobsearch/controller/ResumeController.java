@@ -20,4 +20,10 @@ public class ResumeController {
         List<ResumeDto> rdtos = resumeService.getResumesByCategory(category);
         return ResponseEntity.ok(rdtos);
     }
+
+    @GetMapping("resumes/user")
+    public ResponseEntity<List<ResumeDto>> getResumesByUserEmail(@RequestParam(name = "email") String email) {
+        List<ResumeDto> rdtos = resumeService.getResumesByUserEmail(email);
+        return ResponseEntity.ok(rdtos);
+    }
 }
