@@ -10,5 +10,11 @@ public interface UserService {
 
     UserDto getUserById(int id) throws UserNotFoundException;
 
+    UserDto getUserByName(String name) throws UserNotFoundException;
+
+    UserDto getUserByPhone(String phone) throws UserNotFoundException;
+
+    UserDto getUserByEmail(String email) throws UserNotFoundException;
+
     void createUser(UserDto user);
 }

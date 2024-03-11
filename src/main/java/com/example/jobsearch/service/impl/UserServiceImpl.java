@@ -51,6 +51,54 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUserByName(String name) throws UserNotFoundException {
+        User user = userDao.getUserByName(name).orElseThrow(() -> new UserNotFoundException("Can not find user with name: " + name));
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .age(user.getAge())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .phoneNumber(user.getPhoneNumber())
+                .avatar(user.getAvatar())
+                .accountType(user.getAccountType())
+                .build();
+    }
+
+    @Override
+    public UserDto getUserByPhone(String phone) throws UserNotFoundException {
+        User user = userDao.getUserByPhone(phone).orElseThrow(() -> new UserNotFoundException("Can not find user with phone: " + phone));
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .age(user.getAge())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .phoneNumber(user.getPhoneNumber())
+                .avatar(user.getAvatar())
+                .accountType(user.getAccountType())
+                .build();
+    }
+
+    @Override
+    public UserDto getUserByEmail(String email) throws UserNotFoundException {
+        User user = userDao.getUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Can not find user with email: " + email));
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .age(user.getAge())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .phoneNumber(user.getPhoneNumber())
+                .avatar(user.getAvatar())
+                .accountType(user.getAccountType())
+                .build();
+    }
+
+    @Override
     public void createUser(UserDto user) {
         userDao.createUser(user);
     }

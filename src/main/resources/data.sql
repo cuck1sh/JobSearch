@@ -6,12 +6,12 @@ CREATE TABLE IF not EXISTS users
     age         integer,
     email       text unique not null,
     password    text        not null,
-    phoneNumber varchar(55) not null,
+    phone_number varchar(55) not null,
     avatar      text DEFAULT './images/default.png',
-    accountType VARCHAR(50) not null
+    account_type VARCHAR(50) not null
 );
 
-INSERT INTO users (name, surname, age, email, password, phoneNumber, avatar, accountType)
+INSERT INTO users (name, surname, age, email, password, phone_number, avatar, account_type)
 VALUES ('Егор', 'Кирин', 23, 'egor.kirin20@gmail.com', 'qwe', '996779088897', './data/images/default.png',
         'Соискатель'),
        ('Валерий', 'Жмышенко', 75, 'zhmych@gmail.com', 'qwert', '996779242526', './data/images/default.png',

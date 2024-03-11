@@ -38,10 +38,46 @@ public class UserDao {
         );
     }
 
+    public Optional<User> getUserByName(String name) {
+        String sql = """
+                select * from users
+                where LCASE(NAME) = ?;
+                """;
+        return Optional.ofNullable(
+                DataAccessUtils.singleResult(
+                        template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase())
+                )
+        );
+    }
+
+    public Optional<User> getUserByPhone(String phone) {
+        String sql = """
+                select * from users
+                where PHONE_NUMBER = ?;
+                """;
+        return Optional.ofNullable(
+                DataAccessUtils.singleResult(
+                        template.query(sql, new BeanPropertyRowMapper<>(User.class), phone)
+                )
+        );
+    }
+
+    public Optional<User> getUserByEmail(String email) {
+        String sql = """
+                select * from users
+                where EMAIL = ?;
+                """;
+        return Optional.ofNullable(
+                DataAccessUtils.singleResult(
+                        template.query(sql, new BeanPropertyRowMapper<>(User.class), email)
+                )
+        );
+    }
+
     public void createUser(UserDto user) {
         String sql = """
-                insert into users(name, surname, age, email, password, phoneNumber, avatar, accountType)
-                values (:name, :surname, :age, :email, :password, :phoneNumber, :avatar, :accountType);
+                insert into users(name, surname, age, email, password, phone_number, avatar, account_type)
+                values (:name, :surname, :age, :email, :password, :phone_number, :avatar, :account_type);
                 """;
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("name", user.getName())
