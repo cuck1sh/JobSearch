@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WorkExperienceInfo {
     private Integer id;
-    private Integer resume_id;
+    private Integer resumeId;
     private Integer years;
-    private String company_name;
+    private String companyName;
     private String position;
     private String responsibilities;
 }

@@ -13,10 +13,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class EducationInfo {
     private Integer id;
-    private Integer resume_id;
+    private Integer resumeId;
     private String institution;
     private String program;
-    private LocalDate start_date;
-    private LocalDate end_date;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String degree;
 }

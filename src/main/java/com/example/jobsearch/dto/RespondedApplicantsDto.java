@@ -1,4 +1,4 @@
-package com.example.jobsearch.model;
+package com.example.jobsearch.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ContactsInfo {
+@NoArgsConstructor
+public class RespondedApplicantsDto {
     private Integer id;
-    private Integer typeId;
     private Integer resumeId;
-    private String value;
+    private Integer vacancyId;
+    private Boolean confirmation;
 }

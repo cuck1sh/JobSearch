@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RespondedApplicants {
     private Integer id;
-    private Integer resume_id;
-    private Integer vacancy_id;
+    private Integer resumeId;
+    private Integer vacancyId;
     private Boolean confirmation;
 }
