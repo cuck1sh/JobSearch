@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Resume {
     private Integer id;
-    private Integer user_id;
+    private Integer userId;
     private String name;
-    private Integer category_id;
+    private Integer categoryId;
     private Double salary;
-    private Boolean is_active;
-    private LocalDateTime created_date;
-    private LocalDateTime update_time;
+    private Boolean isActive;
+    private LocalDateTime createdDate;
+    private LocalDateTime updateTime;
 }

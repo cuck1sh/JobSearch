@@ -27,9 +27,9 @@ public class UserServiceImpl implements UserService {
                 .age(e.getAge())
                 .email(e.getEmail())
                 .password(e.getPassword())
-                .phone_number(e.getPhone_number())
+                .phoneNumber(e.getPhoneNumber())
                 .avatar(e.getAvatar())
-                .account_type(e.getAccount_type())
+                .accountType(e.getAccountType())
                 .build()));
         return dtos;
     }
@@ -44,9 +44,9 @@ public class UserServiceImpl implements UserService {
                 .age(user.getAge())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .phone_number(user.getPhone_number())
+                .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
-                .account_type(user.getAccount_type())
+                .accountType(user.getAccountType())
                 .build();
     }
 

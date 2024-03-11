@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 public class Vacancy {
     private Integer id;
     private String description;
-    private Integer category_id;
+    private Integer categoryId;
     private Double salary;
-    private Integer exp_form;
-    private Integer exp_to;
-    private Boolean is_active;
-    private Integer user_id;
-    private LocalDateTime created_date;
-    private LocalDateTime update_time;
+    private Integer expFrom;
+    private Integer expTo;
+    private Boolean isActive;
+    private Integer userId;
+    private LocalDateTime createdDate;
+    private LocalDateTime updateTime;
 
 }

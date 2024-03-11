@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ContactsInfo {
     private Integer id;
-    private Integer type_id;
-    private Integer resume_id;
+    private Integer typeId;
+    private Integer resumeId;
     private String value;
 }

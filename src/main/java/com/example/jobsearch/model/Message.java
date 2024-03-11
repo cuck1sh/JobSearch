@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Message {
     private Integer id;
-    private Integer responded_applicants_id;
+    private Integer respondedApplicantsId;
     private String content;
     private LocalDateTime timestamp;
 }
