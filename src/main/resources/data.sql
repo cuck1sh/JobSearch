@@ -68,7 +68,8 @@ insert into contact_types (type)
 values ('Phone number'),
        ('Email'),
        ('Facebook'),
-       ('Instagram');
+       ('LinkedIn'),
+       ('Telegram');
 
 CREATE TABLE IF not EXISTS contact_info
 (

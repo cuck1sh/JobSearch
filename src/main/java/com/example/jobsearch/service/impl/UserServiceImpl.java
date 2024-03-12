@@ -99,6 +99,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Boolean isUserInSystem(String email) {
+        return userDao.isUserInSystem(email);
+    }
+
+    @Override
     public void createUser(UserDto user) {
         userDao.createUser(user);
     }
