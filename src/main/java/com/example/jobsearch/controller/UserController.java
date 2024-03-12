@@ -57,6 +57,13 @@ public class UserController {
         }
     }
 
+    @GetMapping("users/check/{email}")
+    public ResponseEntity<?> isUserInSystem(@PathVariable String email) {
+        Boolean check = userService.isUserInSystem(email);
+        return ResponseEntity.ok(check);
+    }
+
+
     @PostMapping("users")
     public HttpStatus createUser(UserDto user) {
         userService.createUser(user);
