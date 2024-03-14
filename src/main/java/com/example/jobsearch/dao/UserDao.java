@@ -3,7 +3,6 @@ package com.example.jobsearch.dao;
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -77,16 +76,16 @@ public class UserDao {
 
     public Boolean isUserInSystem(String email) {
         String sql = """
-                select * from users
-                where EMAIL = ?;
+                select case
+                when exists(select *
+                            from USERS
+                            where EMAIL = ?)
+                    then true
+                else false
+                end;
                 """;
 
-        try {
-            User user = template.queryForObject(sql, new BeanPropertyRowMapper<>(User.class), email);
-            return user != null;
-        } catch (EmptyResultDataAccessException e) {
-            return false;
-        }
+        return template.queryForObject(sql, new BeanPropertyRowMapper<>(Boolean.class), email);
     }
 
 

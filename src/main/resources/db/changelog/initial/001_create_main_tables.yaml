@@ -1,0 +1,355 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+              - column:
+                  name: surname
+                  type: text
+              - column:
+                  name: age
+                  type: int
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: varchar(55)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: avatar
+                  type: text
+                  defaultValue: './images/default.png'
+              - column:
+                  name: account_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-categories-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_categories_to_categories
+                    references: categories(id)
+  - changeSet:
+      id: create-resumes-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: resumes
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_users_to_resumes
+                    references: users(id)
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_categories_to_resumes
+                    references: categories(id)
+              - column:
+                  name: salary
+                  type: real
+              - column:
+                  name: is_active
+                  type: boolean
+              - column:
+                  name: created_date
+                  type: timestamp
+              - column:
+                  name: update_time
+                  type: timestamp
+  - changeSet:
+      id: create-contact_types-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: contact_types
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: text
+  - changeSet:
+      id: create-contact_info-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: contact_info
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_contact_types_to_contact_info
+                    references: contact_types(id)
+              - column:
+                  name: resume_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_resumes_to_contact_info
+                    references: resumes(id)
+              - column:
+                  name: value
+                  type: text
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-education_info-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: education_info
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: resume_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_resumes_to_education_info
+                    references: resumes(id)
+              - column:
+                  name: institution
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: program
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: degree
+                  type: text
+  - changeSet:
+      id: create-work_experience_info-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: work_experience_info
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: resume_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_resumes_to_work_experience_info
+                    references: resumes(id)
+              - column:
+                  name: years
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: company_name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: responsibilities
+                  type: text
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create-vacancies-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: vacancies
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: category_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_categories_to_vacancies
+                    references: categories(id)
+              - column:
+                  name: salary
+                  type: real
+              - column:
+                  name: exp_from
+                  type: int
+              - column:
+                  name: exp_to
+                  type: int
+              - column:
+                  name: is_active
+                  type: boolean
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_users_to_vacancies
+                    references: users(id)
+              - column:
+                  name: created_date
+                  type: timestamp
+              - column:
+                  name: update_date
+                  type: timestamp
+  - changeSet:
+      id: create-responded_applicants-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: responded_applicants
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: resume_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_resumes_to_responded_applicants
+                    references: resumes(id)
+              - column:
+                  name: vacancy_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_vacancies_to_responded_applicants
+                    references: vacancies(id)
+              - column:
+                  name: confirmation
+                  type: boolean
+  - changeSet:
+      id: create-messages-table
+      author: Egor Kirin
+      changes:
+        - createTable:
+            tableName: messages
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: responded_applicants_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_responded_applicants_to_messages
+                    references: responded_applicants(id)
+              - column:
+                  name: content
+                  type: text
+              - column:
+                  name: timestamp
+                  type: timestamp
