@@ -103,7 +103,7 @@ values ((select id
 
 
 insert into vacancies (name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date,
-                       update_date)
+                       update_time)
 values ('Мобильный разработчик',
         'middle на flutter',
         (select id from CATEGORIES where NAME = 'Программирование'),

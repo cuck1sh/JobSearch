@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,8 +72,8 @@ public class VacancyDao {
 
     public void createVacancy(VacancyDto vacancy) {
         String sql = """
-                insert into VACANCIES(name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date, update_date)
-                values (:name, :description, :category_id, :salary, :exp_from, :exp_to, :is_active, :user_id, :created_date, :update_date);
+                insert into VACANCIES(name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date, UPDATE_TIME)
+                values (:name, :description, :category_id, :salary, :exp_from, :exp_to, :is_active, :user_id, :created_date, :update_time);
                 """;
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("name", vacancy.getName())
@@ -84,7 +85,72 @@ public class VacancyDao {
                 .addValue("is_active", vacancy.getIsActive())
                 .addValue("user_id", vacancy.getUserId())
                 .addValue("created_date", vacancy.getCreatedDate())
-                .addValue("update_date", vacancy.getUpdateTime()));
+                .addValue("update_time", vacancy.getUpdateTime()));
     }
+
+    public void changeVacancyName(int id, String name) {
+        String sql = """
+                update vacancies
+                set name = ?, UPDATE_TIME = ?
+                where id = ?;
+                """;
+        template.update(sql, name, LocalDateTime.now(), id);
+    }
+
+    public void changeVacancyDescription(int id, String description) {
+        String sql = """
+                update vacancies
+                set description = ?, UPDATE_TIME = ?
+                where id = ?;
+                """;
+        template.update(sql, description, LocalDateTime.now(), id);
+    }
+
+    public void changeVacancyCategory(int id, String category) {
+        String sql = """
+                update vacancies
+                set category_id = (select id from CATEGORIES where name = ?),
+                    UPDATE_TIME = ?
+                where id = ?;
+                """;
+        template.update(sql, category, LocalDateTime.now(), id);
+    }
+
+    public void changeVacancySalary(int id, Double salary) {
+        String sql = """
+                update vacancies
+                set salary = ?, UPDATE_TIME = ?
+                where id = ?;
+                """;
+        template.update(sql, salary, LocalDateTime.now(), id);
+    }
+
+    public void changeVacancyExpFrom(int id, int expFrom) {
+        String sql = """
+                update vacancies
+                set EXP_FROM = ?, UPDATE_TIME = ?
+                where id = ?;
+                """;
+        template.update(sql, expFrom, LocalDateTime.now(), id);
+    }
+
+    public void changeVacancyExpTo(int id, int expTo) {
+        String sql = """
+                update vacancies
+                set EXP_TO = ?, UPDATE_TIME = ?
+                where id = ?;
+                """;
+        template.update(sql, expTo, LocalDateTime.now(), id);
+    }
+
+    public void changeVacancyActive(int id, Boolean isActive) {
+        String sql = """
+                update vacancies
+                set IS_ACTIVE = ?, UPDATE_TIME = ?
+                where id = ?;
+                """;
+        template.update(sql, isActive, LocalDateTime.now(), id);
+    }
+
 
 }

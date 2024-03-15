@@ -296,7 +296,7 @@ databaseChangeLog:
                   name: created_date
                   type: timestamp
               - column:
-                  name: update_date
+                  name: update_time
                   type: timestamp
   - changeSet:
       id: create-responded_applicants-table

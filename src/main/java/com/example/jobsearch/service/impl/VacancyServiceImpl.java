@@ -63,4 +63,56 @@ public class VacancyServiceImpl implements VacancyService {
                 .build()));
         return dtos;
     }
+
+    @Override
+    public List<Vacancy> getCompanyVacancies(int userId) {
+        // TODO реализовать выборку всех вакансий компании
+        return null;
+    }
+
+    @Override
+    public List<Vacancy> getActiveVacancies(int userId) {
+        // TODO реализовать выборку активный вакансий компании
+        return null;
+    }
+
+    @Override
+    public void createVacancy(VacancyDto vacancy) {
+        // TODO реализовать создание вокансии
+    }
+
+    @Override
+    public void changeVacancyName(int id, String name) {
+        // TODO реализовать смену имени вакансии
+    }
+
+    @Override
+    public void changeVacancyDescription(int id, String description) {
+        // TODO реализовать смену описания
+    }
+
+    @Override
+    public void changeVacancyCategory(int id, String category) {
+        // TODO реализовать смену категории
+    }
+
+    @Override
+    public void changeVacancySalary(int id, Double salary) {
+        // TODO реализовать смену зарплаты
+    }
+
+    @Override
+    public void changeVacancyExpFrom(int id, int expFrom) {
+        // TODO реализовать смену минимального опыта
+    }
+
+    @Override
+    public void changeVacancyExpTo(int id, int expTo) {
+        // TODO реализовать смену максимального опыта
+    }
+
+    @Override
+    public void changeVacancyActive(int id, Boolean isActive) {
+        // TODO реализовать смену статуса активности
+    }
 }
