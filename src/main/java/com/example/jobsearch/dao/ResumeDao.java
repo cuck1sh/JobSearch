@@ -58,6 +58,24 @@ public class ResumeDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), email);
     }
 
+    public List<Resume> getActiveResumes(int id) {
+        String sql = """
+                select * from PUBLIC.RESUMES
+                where IS_ACTIVE = true 
+                and id = ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), id);
+    }
+
+    public List<Resume> getNotActiveResumes(int id) {
+        String sql = """
+                select * from PUBLIC.RESUMES
+                where IS_ACTIVE = false
+                and id = ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), id);
+    }
+
     public void changeResumeName(int id, String name) {
         String sql = """
                 update resumes

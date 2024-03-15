@@ -8,8 +8,11 @@ import java.util.List;
 public interface ResumeService {
     ResumeDto getResumeById(int id) throws UserNotFoundException;
     List<ResumeDto> getResumesByCategory(String category);
-
     List<ResumeDto> getResumesByUserEmail(String email);
+
+    List<ResumeDto> getActiveResumes(int id);
+
+    List<ResumeDto> getNotActiveResumes(int id);
 
     void createResume(ResumeDto resume);
 

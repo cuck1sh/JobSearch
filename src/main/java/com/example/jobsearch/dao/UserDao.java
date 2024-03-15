@@ -104,5 +104,57 @@ public class UserDao {
                 .addValue("account_type", user.getAccountType()));
     }
 
+    public void changeUserName(int id, String name) {
+        String sql = """
+                update users
+                set name = ?
+                where id = ?;
+                """;
+        template.update(sql, name, id);
+    }
 
+    public void changeUserSurname(int id, String surname) {
+        String sql = """
+                update users
+                set surname = ?
+                where id = ?;
+                """;
+        template.update(sql, surname, id);
+    }
+
+    public void changeUserAge(int id, int age) {
+        String sql = """
+                update users
+                set age = ?
+                where id = ?;
+                """;
+        template.update(sql, age, id);
+    }
+
+    public void changeUserPassword(int id, String password) {
+        String sql = """
+                update users
+                set password = ?
+                where id = ?;
+                """;
+        template.update(sql, password, id);
+    }
+
+    public void changeUserPhoneNumber(int id, String PhoneNumber) {
+        String sql = """
+                update users
+                set PHONE_NUMBER = ?
+                where id = ?;
+                """;
+        template.update(sql, PhoneNumber, id);
+    }
+
+    public void changeUserAvatar(int id, String path) {
+        String sql = """
+                update users
+                set AVATAR = ?
+                where id = ?;
+                """;
+        template.update(sql, path, id);
+    }
 }
