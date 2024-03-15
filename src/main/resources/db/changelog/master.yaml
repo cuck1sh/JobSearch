@@ -1,3 +1,5 @@
 databaseChangeLog:
-  - includeAll:
-      path: /db/changelog/initial/
+  - include:
+      file: db/changelog/initial/001_create_main_tables.yaml
+  - include:
+      file: db/changelog/initial/002_insert_main_values.sql
