@@ -58,14 +58,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> getActiveResumes(int id) {
+    public List<ResumeDto> getActiveResumes(int userId) {
         // TODO реализовать выборку активных резюме
-        return null;
-    }
-
-    @Override
-    public List<ResumeDto> getNotActiveResumes(int id) {
-        // TODO реализовать выборку неактивных резюме
         return null;
     }
 
