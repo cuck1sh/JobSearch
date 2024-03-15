@@ -107,4 +107,34 @@ public class UserServiceImpl implements UserService {
     public void createUser(UserDto user) {
         userDao.createUser(user);
     }
+
+    @Override
+    public void changeUserName(int id, String name) {
+        // TODO Реализовать смену имени
+    }
+
+    @Override
+    public void changeUserSurname(int id, String surname) {
+        // TODO Реализовать смену фамилии
+    }
+
+    @Override
+    public void changeUserAge(int id, int age) {
+        // TODO Реализовать смену возраста
+    }
+
+    @Override
+    public void changeUserPassword(int id, String password) {
+        // TODO Реализовать смену пароля
+    }
+
+    @Override
+    public void changeUserPhoneNumber(int id, String PhoneNumber) {
+        // TODO Реализовать смену номера телефона
+    }
+
+    @Override
+    public void changeUserAvatar(int id, String path) {
+        // TODO Реализовать смену аватарки
+    }
 }

@@ -3,7 +3,6 @@ package com.example.jobsearch.dao;
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -77,19 +76,17 @@ public class UserDao {
 
     public Boolean isUserInSystem(String email) {
         String sql = """
-                select * from users
-                where EMAIL = ?;
+                select case
+                when exists(select *
+                            from USERS
+                            where EMAIL = ?)
+                    then true
+                else false
+                end;
                 """;
 
-        try {
-            User user = template.queryForObject(sql, new BeanPropertyRowMapper<>(User.class), email);
-            return user != null;
-        } catch (EmptyResultDataAccessException e) {
-            return false;
-        }
+        return template.queryForObject(sql, new BeanPropertyRowMapper<>(Boolean.class), email);
     }
-
-
 
     public void createUser(UserDto user) {
         String sql = """
@@ -105,5 +102,59 @@ public class UserDao {
                 .addValue("phone_number", user.getPhoneNumber())
                 .addValue("avatar", user.getAvatar())
                 .addValue("account_type", user.getAccountType()));
+    }
+
+    public void changeUserName(int id, String name) {
+        String sql = """
+                update users
+                set name = ?
+                where id = ?;
+                """;
+        template.update(sql, name, id);
+    }
+
+    public void changeUserSurname(int id, String surname) {
+        String sql = """
+                update users
+                set surname = ?
+                where id = ?;
+                """;
+        template.update(sql, surname, id);
+    }
+
+    public void changeUserAge(int id, int age) {
+        String sql = """
+                update users
+                set age = ?
+                where id = ?;
+                """;
+        template.update(sql, age, id);
+    }
+
+    public void changeUserPassword(int id, String password) {
+        String sql = """
+                update users
+                set password = ?
+                where id = ?;
+                """;
+        template.update(sql, password, id);
+    }
+
+    public void changeUserPhoneNumber(int id, String PhoneNumber) {
+        String sql = """
+                update users
+                set PHONE_NUMBER = ?
+                where id = ?;
+                """;
+        template.update(sql, PhoneNumber, id);
+    }
+
+    public void changeUserAvatar(int id, String path) {
+        String sql = """
+                update users
+                set AVATAR = ?
+                where id = ?;
+                """;
+        template.update(sql, path, id);
     }
 }

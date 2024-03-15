@@ -7,6 +7,15 @@ spring:
     username: root
     password: qwerty
     driver-class-name: org.h2.Driver
-#  sql:
-#    init:
-#      mode: always
+  liquibase:
+    change-log: classpath:db/changelog/master.yaml
+  h2:
+    console:
+      enabled: false
+
+logging:
+  level:
+    root: info
+
+  file:
+    name: logs/spring.log
