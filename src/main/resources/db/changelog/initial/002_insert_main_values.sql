@@ -1,7 +1,7 @@
 INSERT INTO users (name, surname, age, email, password, phone_number, avatar, account_type)
 VALUES ('Егор', 'Кирин', 23, 'egor.kirin20@gmail.com', 'qwe', '996779088897', './data/images/default.png',
         'Соискатель'),
-       ('Валерий', 'Жмышенко', 75, 'zhmych@gmail.com', 'qwert', '996779242526', './data/images/default.png',
+       ('Жмых Airlines', null, 75, 'zhmych@gmail.com', 'qwert', '996779242526', './data/images/default.png',
         'Работодатель');
 
 insert into categories (name, parent_id)
@@ -104,8 +104,8 @@ values ((select id
 
 insert into vacancies (name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date,
                        update_date)
-values ('Жмых Airlines',
-        'Ищем в контору программиста',
+values ('Мобильный разработчик',
+        'middle на flutter',
         (select id from CATEGORIES where NAME = 'Программирование'),
         100000.00,
         2,
@@ -114,8 +114,8 @@ values ('Жмых Airlines',
         (select id from USERS where EMAIL = 'zhmych@gmail.com'),
         '2024-03-11 22:53:11',
         null),
-       ('Жмых Airlines',
-        'Ищем в контору Web-разработчика',
+       ('Web разработчик',
+        'middle на java',
         (select id from CATEGORIES where NAME = 'WEB программист'),
         150000.00,
         2,
@@ -130,7 +130,7 @@ values ((select id
          from RESUMES
          where NAME = 'Для WEB-a'
            and USER_ID = (select id from USERS where users.EMAIL = 'egor.kirin20@gmail.com')),
-        (select id from VACANCIES where NAME = 'Жмых Airlines' and description = 'Ищем в контору Web-разработчика'),
+        (select id from VACANCIES where NAME = 'Web разработчик' and description = 'middle на java'),
         true);
 
 insert into messages (responded_applicants_id, content, timestamp)
@@ -147,7 +147,7 @@ values ((select id
            and VACANCY_ID = (
              select id
              from VACANCIES
-             where NAME = 'Жмых Airlines'
-               and description = 'Ищем в контору Web-разработчика')),
+             where NAME = 'Web разработчик'
+               and description = 'middle на java')),
         'Рады сообщить о прохождении собеседования',
         '2024-03-11 23:06:13');
