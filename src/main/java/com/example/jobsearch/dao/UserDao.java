@@ -88,8 +88,6 @@ public class UserDao {
         return template.queryForObject(sql, new BeanPropertyRowMapper<>(Boolean.class), email);
     }
 
-
-
     public void createUser(UserDto user) {
         String sql = """
                 insert into users(name, surname, age, email, password, phone_number, avatar, account_type)
@@ -105,4 +103,6 @@ public class UserDao {
                 .addValue("avatar", user.getAvatar())
                 .addValue("account_type", user.getAccountType()));
     }
+
+
 }

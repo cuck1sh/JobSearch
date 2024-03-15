@@ -56,4 +56,35 @@ public class ResumeServiceImpl implements ResumeService {
                 .build()));
         return dtos;
     }
+
+    @Override
+    public void changeResumeName(int id, String name) {
+        // TODO реализовать смену имени
+    }
+
+    @Override
+    public void changeResumeCategory(int id, String category) {
+        // TODO реализовать смену категории
+    }
+
+    @Override
+    public void changeResumeSalary(int id, Double salary) {
+        // TODO реализовать смену зарплаты
+    }
+
+    @Override
+    public void changeResumeActive(int id, Boolean status) {
+        // TODO реализовать смену статуса активности
+    }
+
+    @Override
+    public void createResume(ResumeDto resume) {
+        resumeDao.createResume(resume);
+    }
+
+    @Override
+    public void deleteResumeById(int id) {
+        resumeDao.deleteResumeById(id);
+    }
+
 }

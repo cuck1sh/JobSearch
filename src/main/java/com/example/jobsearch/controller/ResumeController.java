@@ -37,4 +37,16 @@ public class ResumeController {
         List<ResumeDto> rdtos = resumeService.getResumesByUserEmail(email);
         return ResponseEntity.ok(rdtos);
     }
+
+    @PostMapping("add")
+    public HttpStatus addNewResume(ResumeDto resume) {
+        resumeService.createResume(resume);
+        return HttpStatus.OK;
+    }
+
+    @GetMapping("delete/{id}")
+    public HttpStatus deleteResumeById(@PathVariable int id) {
+        resumeService.deleteResumeById(id);
+        return HttpStatus.OK;
+    }
 }
