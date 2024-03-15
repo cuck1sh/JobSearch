@@ -11,16 +11,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("users")
+    @GetMapping
     public ResponseEntity<List<UserDto>> getUsers() {
         return ResponseEntity.ok(userService.getUsers());
     }
 
-    @GetMapping("users/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<?> getUserById(@PathVariable int id) {
         try {
             UserDto user = userService.getUserById(id);
@@ -30,7 +31,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("users/name")
+    @GetMapping("name")
     public ResponseEntity<?> getUserByName(@RequestParam(name = "name") String name) {
         try {
             return ResponseEntity.ok(userService.getUserByName(name));
@@ -39,7 +40,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("users/phone")
+    @GetMapping("phone")
     public ResponseEntity<?> getUserByPhone(@RequestParam(name = "phone") String phone) {
         try {
             return ResponseEntity.ok(userService.getUserByPhone(phone));
@@ -48,7 +49,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("users/email")
+    @GetMapping("email")
     public ResponseEntity<?> getUserByEmail(@RequestParam(name = "email") String email) {
         try {
             return ResponseEntity.ok(userService.getUserByEmail(email));
@@ -57,14 +58,14 @@ public class UserController {
         }
     }
 
-    @GetMapping("users/check/{email}")
+    @GetMapping("check/{email}")
     public ResponseEntity<?> isUserInSystem(@PathVariable String email) {
         Boolean check = userService.isUserInSystem(email);
         return ResponseEntity.ok(check);
     }
 
 
-    @PostMapping("users")
+    @PostMapping
     public HttpStatus createUser(UserDto user) {
         userService.createUser(user);
         return HttpStatus.OK;

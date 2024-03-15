@@ -2,6 +2,7 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.ResumeDao;
 import com.example.jobsearch.dto.ResumeDto;
+import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Resume;
 import com.example.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,20 @@ import java.util.List;
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeDao resumeDao;
 
+    @Override
+    public ResumeDto getResumeById(int id) throws UserNotFoundException {
+        Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new UserNotFoundException("Can not find resume with id: " + id));
+        return ResumeDto.builder()
+                .id(resume.getId())
+                .userId(resume.getUserId())
+                .name(resume.getName())
+                .categoryId(resume.getCategoryId())
+                .salary(resume.getSalary())
+                .isActive(resume.getIsActive())
+                .createdDate(resume.getCreatedDate())
+                .updateTime(resume.getUpdateTime())
+                .build();
+    }
     @Override
     public List<ResumeDto> getResumesByCategory(String category) {
         List<Resume> resumes = resumeDao.getResumesByCategory(category);
