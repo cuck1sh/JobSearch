@@ -1,10 +1,13 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.UserDao;
+import com.example.jobsearch.dto.UserAvatarDto;
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
+import com.example.jobsearch.model.UserAvatar;
 import com.example.jobsearch.service.UserService;
+import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +17,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
     private final UserDao userDao;
+    private final FileUtil fileUtil;
 
     @Override
     public List<UserDto> getUsers() {
@@ -136,5 +141,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeUserAvatar(int id, String path) {
         // TODO Реализовать смену аватарки
+    }
+
+    @Override
+    public void uploadUserAvatar(UserAvatarDto avatarDto) {
+        String filename = fileUtil.saveUploadedFile(avatarDto.getFile(), "images");
+        UserAvatar userAvatar = new UserAvatar();
+        userAvatar.setUserId(avatarDto.getUserId());
+        userAvatar.setFileName(filename);
+
+        userDao.saveAvatar(userAvatar);
     }
 }

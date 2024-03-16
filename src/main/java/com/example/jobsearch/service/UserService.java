@@ -1,5 +1,6 @@
 package com.example.jobsearch.service;
 
+import com.example.jobsearch.dto.UserAvatarDto;
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 
@@ -15,15 +16,11 @@ public interface UserService {
     void createUser(UserDto user);
 
     void changeUserName(int id, String name);
-
     void changeUserSurname(int id, String surname);
-
     void changeUserAge(int id, int age);
-
     void changeUserPassword(int id, String password);
-
     void changeUserPhoneNumber(int id, String PhoneNumber);
-
     void changeUserAvatar(int id, String path);
 
+    void uploadUserAvatar(UserAvatarDto avatarDto);
 }
