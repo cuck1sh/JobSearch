@@ -9,6 +9,9 @@ import com.example.jobsearch.model.UserAvatar;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -151,5 +154,14 @@ public class UserServiceImpl implements UserService {
         userAvatar.setFileName(filename);
 
         userDao.saveAvatar(userAvatar);
+    }
+
+    @SneakyThrows
+    @Override
+    public ResponseEntity<?> downloadAvatar(int userId) {
+        User user = userDao.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + userId));
+        String filename = user.getAvatar();
+        return fileUtil.getOutputFile(filename, "images", MediaType.IMAGE_PNG);
     }
 }

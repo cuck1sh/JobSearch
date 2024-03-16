@@ -167,4 +167,5 @@ public class UserDao {
                 """;
         template.update(sql, userAvatar.getFileName(), userAvatar.getUserId());
     }
+
 }

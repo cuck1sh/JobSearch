@@ -77,9 +77,14 @@ public class UserController {
         return HttpStatus.OK;
     }
 
-    @PostMapping("images")
+    @PostMapping("avatar")
     public ResponseEntity<Void> uploadAvatar(UserAvatarDto avatarDto) {
         userService.uploadUserAvatar(avatarDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("avatar/{userId}")
+    public ResponseEntity<?> downloadAvatar(@PathVariable("userId") int userId) {
+        return userService.downloadAvatar(userId);
     }
 }
