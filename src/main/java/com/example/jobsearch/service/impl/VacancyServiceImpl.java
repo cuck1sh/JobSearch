@@ -148,9 +148,9 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> getAllVacanciesByUser(int userId) {
+    public List<VacancyDto> getAllVacanciesByCompany(int userId) {
         if (userService.isUserInSystem(userId)) {
-            List<Vacancy> vacancies = vacancyDao.getAllVacancyByUser(userId);
+            List<Vacancy> vacancies = vacancyDao.getAllVacancyByCompany(userId);
             return getVacancyDtos(vacancies);
         }
         return null;
@@ -162,12 +162,6 @@ public class VacancyServiceImpl implements VacancyService {
             List<Vacancy> vacancies = vacancyDao.getVacanciesByCategoryAndUser(userId, category);
             return getVacancyDtos(vacancies);
         }
-        return null;
-    }
-
-    @Override
-    public List<Vacancy> getCompanyVacancies(int userId) {
-        // TODO реализовать выборку всех вакансий компании
         return null;
     }
 

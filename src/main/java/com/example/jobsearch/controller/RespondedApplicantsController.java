@@ -23,7 +23,12 @@ public class RespondedApplicantsController {
         return ResponseEntity.ok(respondedApplicantsService.getUserResponses(email));
     }
 
-    @GetMapping("vacancy/{vacancyId}")
+    @GetMapping("resumes/{resumeId}")
+    public ResponseEntity<List<RespondedApplicantsDto>> getResponsesForResume(@PathVariable int resumeId) {
+        return ResponseEntity.ok(respondedApplicantsService.getResponsesForResume(resumeId));
+    }
+
+    @GetMapping("vacancies/{vacancyId}")
     public ResponseEntity<List<RespondedApplicantsDto>> getResponsesForVacancy(@PathVariable int vacancyId) {
         return ResponseEntity.ok(respondedApplicantsService.getResponsesForVacancy(vacancyId));
     }

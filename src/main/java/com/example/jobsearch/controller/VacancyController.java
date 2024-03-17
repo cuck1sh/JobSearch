@@ -79,8 +79,8 @@ public class VacancyController {
     }
 
     @GetMapping("all/{userId}")
-    public ResponseEntity<?> getAllVacanciesByUser(@PathVariable int userId) {
-        List<VacancyDto> vacancies = vacancyService.getAllVacanciesByUser(userId);
+    public ResponseEntity<?> getAllVacanciesByCompany(@PathVariable int userId) {
+        List<VacancyDto> vacancies = vacancyService.getAllVacanciesByCompany(userId);
         if (vacancies != null) {
             return ResponseEntity.ok(vacancies);
         }

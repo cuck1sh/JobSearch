@@ -8,4 +8,6 @@ public interface RespondedApplicantsService {
     List<RespondedApplicantsDto> getUserResponses(String email);
 
     List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId);
+
+    List<RespondedApplicantsDto> getResponsesForResume(int resumeId);
 }

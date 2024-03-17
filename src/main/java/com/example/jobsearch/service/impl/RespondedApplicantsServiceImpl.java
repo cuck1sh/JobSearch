@@ -26,25 +26,23 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     @Override
     public List<RespondedApplicantsDto> getUserResponses(String email) {
         List<RespondedApplicants> applicants = respondedApplicantsDao.getUserResponses(email);
-        List<RespondedApplicantsDto> dtos = new ArrayList<>();
-        applicants.forEach(e -> {
-            try {
-                dtos.add(RespondedApplicantsDto.builder()
-                        .resume(resumeService.getResumeById(e.getResumeId()))
-                        .vacancy(vacancyService.getVacancyById(e.getVacancyId()))
-                        .confirmation(e.getConfirmation())
-                        .build());
-            } catch (UserNotFoundException ex) {
-                log.error(ex.getMessage());
-            }
-        });
-        return dtos;
+        return getRespondedApplicantsDtos(applicants);
     }
 
     @SneakyThrows
     @Override
     public List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId) {
         List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForVacancy(vacancyId);
+        return getRespondedApplicantsDtos(applicants);
+    }
+
+    @Override
+    public List<RespondedApplicantsDto> getResponsesForResume(int resumeId) {
+        List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForResume(resumeId);
+        return getRespondedApplicantsDtos(applicants);
+    }
+
+    private List<RespondedApplicantsDto> getRespondedApplicantsDtos(List<RespondedApplicants> applicants) {
         List<RespondedApplicantsDto> dtos = new ArrayList<>();
 
         applicants.forEach(e -> {

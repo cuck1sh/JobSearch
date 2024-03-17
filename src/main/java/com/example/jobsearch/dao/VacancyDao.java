@@ -147,14 +147,6 @@ public class VacancyDao {
         template.update(sql, id);
     }
 
-    public List<Vacancy> getCompanyVacancies(int userId) {
-        String sql = """
-                select * from VACANCIES
-                where USER_ID = ?;
-                """;
-        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
-    }
-
     public List<Vacancy> getActiveVacancies(int userId) {
         String sql = """
                 select * from VACANCIES
@@ -164,7 +156,7 @@ public class VacancyDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
     }
 
-    public List<Vacancy> getAllVacancyByUser(int userId) {
+    public List<Vacancy> getAllVacancyByCompany(int userId) {
         String sql = """
                 select * from vacancies
                 where user_id = ?;

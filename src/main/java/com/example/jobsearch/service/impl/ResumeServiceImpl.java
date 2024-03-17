@@ -22,6 +22,12 @@ public class ResumeServiceImpl implements ResumeService {
     private final CategoryService categoryService;
 
     @Override
+    public List<ResumeDto> getResumes() {
+        List<Resume> resumes = resumeDao.getResumes();
+        return getResumeDtos(resumes);
+    }
+
+    @Override
     public ResumeDto getResumeById(int id) throws UserNotFoundException {
         Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new UserNotFoundException("Can not find resume with id: " + id));
         return ResumeDto.builder()

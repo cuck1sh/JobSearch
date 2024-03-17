@@ -23,6 +23,11 @@ import java.util.List;
 public class ResumeController {
     private final ResumeService resumeService;
 
+    @GetMapping
+    public ResponseEntity<List<ResumeDto>> getResumes() {
+        return ResponseEntity.ok(resumeService.getResumes());
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<?> getResumeById(@PathVariable int id) {
         try {
@@ -34,8 +39,8 @@ public class ResumeController {
     }
 
     @GetMapping("category")
-    public ResponseEntity<List<ResumeDto>> getResumesByCategory(@RequestParam(name = "category") String category) {
-        List<ResumeDto> rdtos = resumeService.getResumesByCategory(category);
+    public ResponseEntity<List<ResumeDto>> getResumesByCategory(@RequestParam(name = "name") String name) {
+        List<ResumeDto> rdtos = resumeService.getResumesByCategory(name);
         return ResponseEntity.ok(rdtos);
     }
 
@@ -45,8 +50,9 @@ public class ResumeController {
         return ResponseEntity.ok(rdtos);
     }
 
+
     @PostMapping
-    public HttpStatus addNewResume(@RequestBody ResumeDto resume) {
+    public HttpStatus createResume(@RequestBody ResumeDto resume) {
         resumeService.createResume(resume);
         return HttpStatus.OK;
     }

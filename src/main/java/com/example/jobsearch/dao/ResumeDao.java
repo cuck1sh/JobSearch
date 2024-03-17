@@ -20,6 +20,14 @@ public class ResumeDao {
     private final JdbcTemplate template;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    public List<Resume> getResumes() {
+        String sql = """
+                select * from resumes;
+                """;
+
+        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class));
+    }
+
     public Optional<Resume> getResumeById(int id) {
         String sql = """
                 select * from RESUMES
@@ -140,4 +148,6 @@ public class ResumeDao {
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), userId);
     }
+
+
 }

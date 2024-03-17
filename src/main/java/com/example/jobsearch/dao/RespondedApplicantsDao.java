@@ -43,4 +43,17 @@ public class RespondedApplicantsDao {
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), vacancyId);
     }
+
+    public List<RespondedApplicants> getResponsesForResume(int resumeId) {
+        String sql = """
+                select * from PUBLIC.RESPONDED_APPLICANTS
+                where RESUME_ID in (
+                    select
+                        r.id
+                    from RESUMES r
+                    where r.ID = ?
+                    );
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), resumeId);
+    }
 }
