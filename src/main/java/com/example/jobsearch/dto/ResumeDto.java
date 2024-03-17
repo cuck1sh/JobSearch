@@ -1,5 +1,6 @@
 package com.example.jobsearch.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +14,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ResumeDto {
     private Integer id;
-    private Integer userId;
+    private UserDto user;
     private String name;
-    private Integer categoryId;
+    private CategoryDto category;
     private Double salary;
+
+    @JsonProperty("is_active")
     private Boolean isActive;
+
+    @JsonProperty("created_date")
     private LocalDateTime createdDate;
+
+    @JsonProperty("update_time")
     private LocalDateTime updateTime;
 }

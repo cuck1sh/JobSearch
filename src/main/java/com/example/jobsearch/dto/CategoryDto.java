@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RespondedApplicantsDto {
-    private ResumeDto resume;
-    private VacancyDto vacancy;
-    private Boolean confirmation;
+public class CategoryDto {
+    private Integer id;
+    private String parent;
+    private String name;
 }

@@ -31,16 +31,16 @@ public class RespondedApplicantsDao {
         return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), email);
     }
 
-    public List<RespondedApplicants> getResponsesForVacancy(String name) {
+    public List<RespondedApplicants> getResponsesForVacancy(int vacancyId) {
         String sql = """
                 select * from PUBLIC.RESPONDED_APPLICANTS
                 where VACANCY_ID in (
                     select
                         v.id
                     from VACANCIES v
-                    where v.NAME = ?
+                    where v.ID = ?
                     );
                 """;
-        return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), name);
+        return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), vacancyId);
     }
 }

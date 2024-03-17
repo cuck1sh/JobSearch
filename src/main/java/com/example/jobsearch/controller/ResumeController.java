@@ -6,7 +6,14 @@ import com.example.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -38,13 +45,13 @@ public class ResumeController {
         return ResponseEntity.ok(rdtos);
     }
 
-    @PostMapping("add")
-    public HttpStatus addNewResume(ResumeDto resume) {
+    @PostMapping
+    public HttpStatus addNewResume(@RequestBody ResumeDto resume) {
         resumeService.createResume(resume);
         return HttpStatus.OK;
     }
 
-    @GetMapping("delete/{id}")
+    @DeleteMapping("{id}")
     public HttpStatus deleteResumeById(@PathVariable int id) {
         resumeService.deleteResumeById(id);
         return HttpStatus.OK;

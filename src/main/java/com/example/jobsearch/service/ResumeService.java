@@ -9,14 +9,18 @@ public interface ResumeService {
     ResumeDto getResumeById(int id) throws UserNotFoundException;
     List<ResumeDto> getResumesByCategory(String category);
     List<ResumeDto> getResumesByUserEmail(String email);
+    void createResume(ResumeDto resume);
+    void deleteResumeById(int id);
+
 
     List<ResumeDto> getActiveResumes(int userId);
 
-    void createResume(ResumeDto resume);
-    void deleteResumeById(int id);
     void changeResumeName(int id, String name);
+
     void changeResumeCategory(int id, String category);
+
     void changeResumeSalary(int id, Double salary);
+
     void changeResumeActive(int id, Boolean status);
 
 }

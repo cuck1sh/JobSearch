@@ -29,12 +29,8 @@ public class UserController {
 
     @GetMapping("{id}")
     public ResponseEntity<?> getUserById(@PathVariable int id) {
-        try {
             UserDto user = userService.getUserById(id);
             return ResponseEntity.ok(user);
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
     }
 
     @GetMapping("name")

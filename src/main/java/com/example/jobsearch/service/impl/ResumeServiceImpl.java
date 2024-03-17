@@ -4,7 +4,9 @@ import com.example.jobsearch.dao.ResumeDao;
 import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Resume;
+import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ResumeService;
+import com.example.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +17,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeDao resumeDao;
+    private final UserService userService;
+    private final CategoryService categoryService;
 
     @Override
     public ResumeDto getResumeById(int id) throws UserNotFoundException {
         Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new UserNotFoundException("Can not find resume with id: " + id));
         return ResumeDto.builder()
                 .id(resume.getId())
-                .userId(resume.getUserId())
+                .user(userService.getUserById(resume.getUserId()))
                 .name(resume.getName())
-                .categoryId(resume.getCategoryId())
+                .category(categoryService.getCategoryById(resume.getCategoryId()))
                 .salary(resume.getSalary())
                 .isActive(resume.getIsActive())
                 .createdDate(resume.getCreatedDate())
@@ -42,19 +46,25 @@ public class ResumeServiceImpl implements ResumeService {
         return getResumeDtos(resumes);
     }
 
+
     private List<ResumeDto> getResumeDtos(List<Resume> resumes) {
         List<ResumeDto> dtos = new ArrayList<>();
         resumes.forEach(e -> dtos.add(ResumeDto.builder()
                 .id(e.getId())
-                .userId(e.getUserId())
+                .user(userService.getUserById(e.getUserId()))
                 .name(e.getName())
-                .categoryId(e.getCategoryId())
+                .category(categoryService.getCategoryById(e.getCategoryId()))
                 .salary(e.getSalary())
                 .isActive(e.getIsActive())
                 .createdDate(e.getCreatedDate())
                 .updateTime(e.getUpdateTime())
                 .build()));
         return dtos;
+    }
+
+    @Override
+    public void createResume(ResumeDto resume) {
+        resumeDao.createResume(resume);
     }
 
     @Override
@@ -83,10 +93,6 @@ public class ResumeServiceImpl implements ResumeService {
         // TODO реализовать смену статуса активности
     }
 
-    @Override
-    public void createResume(ResumeDto resume) {
-        resumeDao.createResume(resume);
-    }
 
     @Override
     public void deleteResumeById(int id) {
