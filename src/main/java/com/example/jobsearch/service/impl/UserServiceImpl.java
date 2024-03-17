@@ -112,6 +112,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Boolean isUserInSystem(int id) {
+        return userDao.isUserInSystem(id);
+    }
+
+    @Override
     public void createUser(UserDto user) {
         userDao.createUser(user);
     }

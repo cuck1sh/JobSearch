@@ -86,7 +86,21 @@ public class UserDao {
                 end;
                 """;
 
-        return template.queryForObject(sql, new BeanPropertyRowMapper<>(Boolean.class), email);
+        return template.queryForObject(sql, Boolean.class, email);
+    }
+
+    public Boolean isUserInSystem(int id) {
+        String sql = """
+                select case
+                when exists(select *
+                            from USERS
+                            where id = ?)
+                    then true
+                else false
+                end;
+                """;
+
+        return template.queryForObject(sql, Boolean.class, id);
     }
 
     public void createUser(UserDto user) {

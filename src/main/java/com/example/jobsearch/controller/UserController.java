@@ -87,4 +87,6 @@ public class UserController {
     public ResponseEntity<?> downloadAvatar(@PathVariable("userId") int userId) {
         return userService.downloadAvatar(userId);
     }
+
+
 }

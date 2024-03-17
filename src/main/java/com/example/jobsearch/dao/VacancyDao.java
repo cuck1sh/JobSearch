@@ -52,24 +52,6 @@ public class VacancyDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), category);
     }
 
-    public List<Vacancy> getCompanyVacancies(int userId) {
-        String sql = """
-                select * from VACANCIES
-                where USER_ID = ?;
-                """;
-        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
-    }
-
-    public List<Vacancy> getActiveVacancies(int userId) {
-        String sql = """
-                select * from VACANCIES
-                where IS_ACTIVE = true
-                and USER_ID = ?;
-                """;
-        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
-    }
-
-
     public void createVacancy(VacancyDto vacancy) {
         String sql = """
                 insert into VACANCIES(name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date, UPDATE_TIME)
@@ -86,6 +68,20 @@ public class VacancyDao {
                 .addValue("user_id", vacancy.getUserId())
                 .addValue("created_date", vacancy.getCreatedDate())
                 .addValue("update_time", vacancy.getUpdateTime()));
+    }
+
+    public Boolean isVacancyInSystem(int id) {
+        String sql = """
+                select case
+                when exists(select *
+                            from VACANCIES
+                            where id = ?)
+                    then true
+                else false
+                end;
+                """;
+
+        return template.queryForObject(sql, Boolean.class, id);
     }
 
     public void changeVacancyName(int id, String name) {
@@ -125,22 +121,13 @@ public class VacancyDao {
         template.update(sql, salary, LocalDateTime.now(), id);
     }
 
-    public void changeVacancyExpFrom(int id, int expFrom) {
+    public void changeVacancyExp(int id, int expFrom, int expTo) {
         String sql = """
                 update vacancies
-                set EXP_FROM = ?, UPDATE_TIME = ?
+                set EXP_FROM = ?, EXP_TO = ?, UPDATE_TIME = ?
                 where id = ?;
                 """;
-        template.update(sql, expFrom, LocalDateTime.now(), id);
-    }
-
-    public void changeVacancyExpTo(int id, int expTo) {
-        String sql = """
-                update vacancies
-                set EXP_TO = ?, UPDATE_TIME = ?
-                where id = ?;
-                """;
-        template.update(sql, expTo, LocalDateTime.now(), id);
+        template.update(sql, expFrom, expTo, LocalDateTime.now(), id);
     }
 
     public void changeVacancyActive(int id, Boolean isActive) {
@@ -152,5 +139,45 @@ public class VacancyDao {
         template.update(sql, isActive, LocalDateTime.now(), id);
     }
 
+    public void delete(int id) {
+        String sql = """
+                delete from vacancies
+                where id =?;
+                """;
+        template.update(sql, id);
+    }
 
+    public List<Vacancy> getCompanyVacancies(int userId) {
+        String sql = """
+                select * from VACANCIES
+                where USER_ID = ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
+    }
+
+    public List<Vacancy> getActiveVacancies(int userId) {
+        String sql = """
+                select * from VACANCIES
+                where IS_ACTIVE = true
+                and USER_ID = ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
+    }
+
+    public List<Vacancy> getAllVacancyByUser(int userId) {
+        String sql = """
+                select * from vacancies
+                where user_id = ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
+    }
+
+    public List<Vacancy> getVacanciesByCategoryAndUser(int userId, String category) {
+        String sql = """
+                select * from vacancies
+                where user_id = ?
+                and category_id = (select id from categories where name = ?);
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId, category);
+    }
 }

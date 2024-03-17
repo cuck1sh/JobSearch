@@ -4,8 +4,11 @@ import com.example.jobsearch.dao.VacancyDao;
 import com.example.jobsearch.dto.VacancyDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Vacancy;
+import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
     private final VacancyDao vacancyDao;
+    private final UserService userService;
 
     @Override
     public VacancyDto getVacancyById(int id) throws UserNotFoundException {
@@ -64,6 +68,103 @@ public class VacancyServiceImpl implements VacancyService {
         return dtos;
     }
 
+    @SneakyThrows
+    @Override
+    public HttpStatus createVacancy(VacancyDto vacancy) {
+        String userAccountType = userService.getUserById(vacancy.getUserId()).getAccountType();
+        if ("Работодатель".equalsIgnoreCase(userAccountType)) {
+            vacancyDao.createVacancy(vacancy);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public Boolean isVacancyInSystem(int id) {
+        return vacancyDao.isVacancyInSystem(id);
+    }
+
+    @Override
+    public HttpStatus changeVacancyName(int id, String name) {
+        if (isVacancyInSystem(id)) {
+            vacancyDao.changeVacancyName(id, name);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus changeVacancyDescription(int id, String description) {
+        if (isVacancyInSystem(id)) {
+            vacancyDao.changeVacancyDescription(id, description);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus changeVacancyCategory(int id, String category) {
+        if (isVacancyInSystem(id)) {
+            vacancyDao.changeVacancyCategory(id, category);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus changeVacancySalary(int id, Double salary) {
+        if (isVacancyInSystem(id)) {
+            vacancyDao.changeVacancySalary(id, salary);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus changeVacancyExp(int id, int expFrom, int expTo) {
+        if (isVacancyInSystem(id)) {
+            vacancyDao.changeVacancyExp(id, expFrom, expTo);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus changeVacancyActive(int id, Boolean isActive) {
+        if (isVacancyInSystem(id)) {
+            vacancyDao.changeVacancyActive(id, isActive);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus delete(int id) {
+        if (isVacancyInSystem(id)) {
+            vacancyDao.delete(id);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public List<VacancyDto> getAllVacanciesByUser(int userId) {
+        if (userService.isUserInSystem(userId)) {
+            List<Vacancy> vacancies = vacancyDao.getAllVacancyByUser(userId);
+            return getVacancyDtos(vacancies);
+        }
+        return null;
+    }
+
+    @Override
+    public List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category) {
+        if (userService.isUserInSystem(userId)) {
+            List<Vacancy> vacancies = vacancyDao.getVacanciesByCategoryAndUser(userId, category);
+            return getVacancyDtos(vacancies);
+        }
+        return null;
+    }
+
     @Override
     public List<Vacancy> getCompanyVacancies(int userId) {
         // TODO реализовать выборку всех вакансий компании
@@ -74,45 +175,5 @@ public class VacancyServiceImpl implements VacancyService {
     public List<Vacancy> getActiveVacancies(int userId) {
         // TODO реализовать выборку активный вакансий компании
         return null;
-    }
-
-    @Override
-    public void createVacancy(VacancyDto vacancy) {
-        // TODO реализовать создание вокансии
-    }
-
-    @Override
-    public void changeVacancyName(int id, String name) {
-        // TODO реализовать смену имени вакансии
-    }
-
-    @Override
-    public void changeVacancyDescription(int id, String description) {
-        // TODO реализовать смену описания
-    }
-
-    @Override
-    public void changeVacancyCategory(int id, String category) {
-        // TODO реализовать смену категории
-    }
-
-    @Override
-    public void changeVacancySalary(int id, Double salary) {
-        // TODO реализовать смену зарплаты
-    }
-
-    @Override
-    public void changeVacancyExpFrom(int id, int expFrom) {
-        // TODO реализовать смену минимального опыта
-    }
-
-    @Override
-    public void changeVacancyExpTo(int id, int expTo) {
-        // TODO реализовать смену максимального опыта
-    }
-
-    @Override
-    public void changeVacancyActive(int id, Boolean isActive) {
-        // TODO реализовать смену статуса активности
     }
 }

@@ -14,6 +14,8 @@ public interface UserService {
     UserDto getUserByPhone(String phone) throws UserNotFoundException;
     UserDto getUserByEmail(String email) throws UserNotFoundException;
     Boolean isUserInSystem(String email);
+
+    Boolean isUserInSystem(int id);
     void createUser(UserDto user);
 
     void changeUserName(int id, String name);
