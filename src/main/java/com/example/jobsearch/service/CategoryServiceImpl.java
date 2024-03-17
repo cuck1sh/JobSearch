@@ -21,8 +21,17 @@ public class CategoryServiceImpl implements CategoryService {
 
         return CategoryDto.builder()
                 .id(category.getId())
-                .parent(categoryDao.getCategoryById(category.getParentId()).toString())
+                .parent(getParentCategory(category.getParentId()))
                 .name(category.getName())
                 .build();
+    }
+
+    @Override
+    public String getParentCategory(Object entry) {
+        if (entry != null) {
+            int id = (int) entry;
+            return categoryDao.getParentCategory(id);
+        }
+        return null;
     }
 }

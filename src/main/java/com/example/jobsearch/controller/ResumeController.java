@@ -51,9 +51,28 @@ public class ResumeController {
         return HttpStatus.OK;
     }
 
+    @PostMapping("{id}/name")
+    public HttpStatus changeName(@PathVariable int id, String name) {
+        return resumeService.changeResumeName(id, name);
+    }
+
+    @PostMapping("{id}/category")
+    public HttpStatus changeCategory(@PathVariable int id, String category) {
+        return resumeService.changeResumeCategory(id, category);
+    }
+
+    @PostMapping("{id}/salary")
+    public HttpStatus changeSalary(@PathVariable int id, Double salary) {
+        return resumeService.changeResumeSalary(id, salary);
+    }
+
+    @PostMapping("{id}/active")
+    public HttpStatus changeActive(@PathVariable int id, Boolean isActive) {
+        return resumeService.changeResumeActive(id, isActive);
+    }
+
     @DeleteMapping("{id}")
     public HttpStatus deleteResumeById(@PathVariable int id) {
-        resumeService.deleteResumeById(id);
-        return HttpStatus.OK;
+        return resumeService.deleteResumeById(id);
     }
 }

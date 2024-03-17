@@ -8,6 +8,7 @@ import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -68,35 +69,59 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public Boolean isResumeInSystem(int id) {
+        return resumeDao.isResumeInSystem(id);
+    }
+
+    @Override
+    public HttpStatus changeResumeName(int id, String name) {
+        if (isResumeInSystem(id)) {
+            resumeDao.changeResumeName(id, name);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus changeResumeCategory(int id, String category) {
+        if (isResumeInSystem(id)) {
+            resumeDao.changeResumeCategory(id, category);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus changeResumeSalary(int id, Double salary) {
+        if (isResumeInSystem(id)) {
+            resumeDao.changeResumeSalary(id, salary);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus changeResumeActive(int id, Boolean status) {
+        if (isResumeInSystem(id)) {
+            resumeDao.changeResumeActive(id, status);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
+    public HttpStatus deleteResumeById(int id) {
+        if (isResumeInSystem(id)) {
+            resumeDao.deleteResumeById(id);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
     public List<ResumeDto> getActiveResumes(int userId) {
         // TODO реализовать выборку активных резюме
         return null;
-    }
-
-    @Override
-    public void changeResumeName(int id, String name) {
-        // TODO реализовать смену имени
-    }
-
-    @Override
-    public void changeResumeCategory(int id, String category) {
-        // TODO реализовать смену категории
-    }
-
-    @Override
-    public void changeResumeSalary(int id, Double salary) {
-        // TODO реализовать смену зарплаты
-    }
-
-    @Override
-    public void changeResumeActive(int id, Boolean status) {
-        // TODO реализовать смену статуса активности
-    }
-
-
-    @Override
-    public void deleteResumeById(int id) {
-        resumeDao.deleteResumeById(id);
     }
 
 }

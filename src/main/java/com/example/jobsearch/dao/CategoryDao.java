@@ -27,4 +27,11 @@ public class CategoryDao {
         );
     }
 
+    public String getParentCategory(int id) {
+        String sql = """
+                select NAME from categories
+                where id = ?;
+                """;
+        return template.queryForObject(sql, String.class, id);
+    }
 }
