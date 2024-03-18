@@ -11,7 +11,8 @@ public interface UserService {
     List<UserDto> getUsers();
 
     UserDto getUserById(int id);
-    UserDto getUserByName(String name) throws UserNotFoundException;
+
+    List<UserDto> getUserByName(String name);
     UserDto getUserByPhone(String phone) throws UserNotFoundException;
     UserDto getUserByEmail(String email) throws UserNotFoundException;
     Boolean isUserInSystem(String email);
@@ -29,4 +30,6 @@ public interface UserService {
     void uploadUserAvatar(UserAvatarDto avatarDto);
 
     ResponseEntity<?> downloadAvatar(int userId);
+
+    List<UserDto> getUsersEmployee(String name, String surname);
 }

@@ -39,16 +39,20 @@ public class UserDao {
         );
     }
 
-    public Optional<User> getUserByName(String name) {
+    public List<User> getUsersByName(String name) {
         String sql = """
                 select * from users
                 where LCASE(NAME) = ?;
                 """;
-        return Optional.ofNullable(
-                DataAccessUtils.singleResult(
-                        template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase())
-                )
-        );
+        return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip());
+    }
+
+    public List<User> getEmployee(String name, String surname) {
+        String sql = """
+                select * from users
+                where LCASE(NAME) = ? and LCASE(SURNAME) = ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip(), surname.toLowerCase().strip());
     }
 
     public Optional<User> getUserByPhone(String phone) {
@@ -181,5 +185,6 @@ public class UserDao {
                 """;
         template.update(sql, userAvatar.getFileName(), userAvatar.getUserId());
     }
+
 
 }

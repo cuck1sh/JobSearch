@@ -29,17 +29,14 @@ public class UserController {
 
     @GetMapping("{id}")
     public ResponseEntity<?> getUserById(@PathVariable int id) {
-            UserDto user = userService.getUserById(id);
-            return ResponseEntity.ok(user);
+        UserDto user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("name")
     public ResponseEntity<?> getUserByName(@RequestParam(name = "name") String name) {
-        try {
-            return ResponseEntity.ok(userService.getUserByName(name));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return ResponseEntity.ok(userService.getUserByName(name));
+
     }
 
     @GetMapping("phone")

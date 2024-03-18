@@ -38,11 +38,6 @@ public class ResumeController {
         }
     }
 
-    @GetMapping("category")
-    public ResponseEntity<List<ResumeDto>> getResumesByCategory(@RequestParam(name = "name") String name) {
-        List<ResumeDto> rdtos = resumeService.getResumesByCategory(name);
-        return ResponseEntity.ok(rdtos);
-    }
 
     @GetMapping("user")
     public ResponseEntity<List<ResumeDto>> getResumesByUserEmail(@RequestParam(name = "email") String email) {

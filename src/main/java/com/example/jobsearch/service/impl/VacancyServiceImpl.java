@@ -69,14 +69,8 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @SneakyThrows
-    @Override
-    public HttpStatus createVacancy(VacancyDto vacancy) {
-        String userAccountType = userService.getUserById(vacancy.getUserId()).getAccountType();
-        if ("Работодатель".equalsIgnoreCase(userAccountType)) {
-            vacancyDao.createVacancy(vacancy);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
+    private boolean isEmployer(int userId) {
+        return "Работодатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
     }
 
     @Override
@@ -84,6 +78,16 @@ public class VacancyServiceImpl implements VacancyService {
         return vacancyDao.isVacancyInSystem(id);
     }
 
+    @Override
+    public HttpStatus createVacancy(VacancyDto vacancy) {
+        if (isEmployer(vacancy.getUserId())) {
+            vacancyDao.createVacancy(vacancy);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @SneakyThrows
     @Override
     public HttpStatus changeVacancyName(int id, String name) {
         if (isVacancyInSystem(id)) {

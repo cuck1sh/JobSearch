@@ -27,19 +27,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUsers() {
         List<User> users = userDao.getUsers();
-        List<UserDto> dtos = new ArrayList<>();
-        users.forEach(e -> dtos.add(UserDto.builder()
-                .id(e.getId())
-                .name(e.getName())
-                .surname(e.getSurname())
-                .age(e.getAge())
-                .email(e.getEmail())
-                .password(e.getPassword())
-                .phoneNumber(e.getPhoneNumber())
-                .avatar(e.getAvatar())
-                .accountType(e.getAccountType())
-                .build()));
-        return dtos;
+        return getUserDtos(users);
     }
 
     @SneakyThrows
@@ -60,19 +48,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByName(String name) throws UserNotFoundException {
-        User user = userDao.getUserByName(name).orElseThrow(() -> new UserNotFoundException("Can not find user with name: " + name));
-        return UserDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .surname(user.getSurname())
-                .age(user.getAge())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .phoneNumber(user.getPhoneNumber())
-                .avatar(user.getAvatar())
-                .accountType(user.getAccountType())
-                .build();
+    public List<UserDto> getUserByName(String name) {
+        List<User> users = userDao.getUsersByName(name);
+        return getUserDtos(users);
+    }
+
+    @Override
+    public List<UserDto> getUsersEmployee(String name, String surname) {
+        List<User> users = userDao.getEmployee(name, surname);
+        return getUserDtos(users);
+    }
+
+    private List<UserDto> getUserDtos(List<User> users) {
+        List<UserDto> dtos = new ArrayList<>();
+        users.forEach(e -> dtos.add(UserDto.builder()
+                .id(e.getId())
+                .name(e.getName())
+                .surname(e.getSurname())
+                .age(e.getAge())
+                .email(e.getEmail())
+                .password(e.getPassword())
+                .phoneNumber(e.getPhoneNumber())
+                .avatar(e.getAvatar())
+                .accountType(e.getAccountType())
+                .build()));
+        return dtos;
     }
 
     @Override
