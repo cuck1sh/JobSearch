@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class RespondedApplicantsDto {
-    private ResumeDto resume;
-    private VacancyDto vacancy;
-    private Boolean confirmation;
+@AllArgsConstructor
+public class UserAvatarDto {
+    private MultipartFile file;
+    private Integer userId;
 }

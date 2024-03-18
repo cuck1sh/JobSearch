@@ -31,16 +31,55 @@ public class RespondedApplicantsDao {
         return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), email);
     }
 
-    public List<RespondedApplicants> getResponsesForVacancy(String name) {
+    public List<RespondedApplicants> getResponsesForVacancy(int vacancyId) {
         String sql = """
                 select * from PUBLIC.RESPONDED_APPLICANTS
                 where VACANCY_ID in (
                     select
                         v.id
                     from VACANCIES v
-                    where v.NAME = ?
+                    where v.ID = ?
                     );
                 """;
-        return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), name);
+        return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), vacancyId);
+    }
+
+    public List<RespondedApplicants> getResponsesForResume(int resumeId) {
+        String sql = """
+                select * from PUBLIC.RESPONDED_APPLICANTS
+                where RESUME_ID in (
+                    select
+                        r.id
+                    from RESUMES r
+                    where r.ID = ?
+                    );
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), resumeId);
+    }
+
+    public List<RespondedApplicants> getResponsesForEmployee(int userId) {
+        String sql = """
+                select * from PUBLIC.RESPONDED_APPLICANTS
+                where RESUME_ID in (
+                    select
+                        r.USER_ID
+                    from RESUMES r
+                    where r.USER_ID = ?
+                    );
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), userId);
+    }
+
+    public List<RespondedApplicants> getResponsesForEmployer(int userId) {
+        String sql = """
+                select * from PUBLIC.RESPONDED_APPLICANTS
+                where VACANCY_ID in (
+                    select
+                        v.USER_ID
+                    from VACANCIES v
+                    where v.USER_ID = ?
+                    );
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), userId);
     }
 }

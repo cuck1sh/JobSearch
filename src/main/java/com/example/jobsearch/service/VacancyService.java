@@ -3,6 +3,7 @@ package com.example.jobsearch.service;
 import com.example.jobsearch.dto.VacancyDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Vacancy;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -10,25 +11,19 @@ public interface VacancyService {
 
     VacancyDto getVacancyById(int id) throws UserNotFoundException;
     List<VacancyDto> getVacancies();
-    List<VacancyDto> getVacanciesByCategory(String category);
+    HttpStatus createVacancy(VacancyDto vacancy);
+    Boolean isVacancyInSystem(int id);
+    HttpStatus changeVacancyName(int id, String name);
+    HttpStatus changeVacancyDescription(int id, String description);
+    HttpStatus changeVacancyCategory(int id, String category);
+    HttpStatus changeVacancySalary(int id, Double salary);
+    HttpStatus changeVacancyExp(int id, int expFrom, int expTo);
+    HttpStatus changeVacancyActive(int id, Boolean isActive);
+    HttpStatus delete(int id);
 
-    List<Vacancy> getCompanyVacancies(int userId);
+    List<VacancyDto> getAllVacanciesByCompany(int userId);
+    List<VacancyDto> getVacanciesByCategory(String category);
+    List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category);
 
     List<Vacancy> getActiveVacancies(int userId);
-
-    void createVacancy(VacancyDto vacancy);
-
-    void changeVacancyName(int id, String name);
-
-    void changeVacancyDescription(int id, String description);
-
-    void changeVacancyCategory(int id, String category);
-
-    void changeVacancySalary(int id, Double salary);
-
-    void changeVacancyExpFrom(int id, int expFrom);
-
-    void changeVacancyExpTo(int id, int expTo);
-
-    void changeVacancyActive(int id, Boolean isActive);
 }

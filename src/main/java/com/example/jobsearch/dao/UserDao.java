@@ -2,6 +2,7 @@ package com.example.jobsearch.dao;
 
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.model.User;
+import com.example.jobsearch.model.UserAvatar;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -38,16 +39,28 @@ public class UserDao {
         );
     }
 
-    public Optional<User> getUserByName(String name) {
+    public List<User> getUsersByName(String name) {
         String sql = """
                 select * from users
                 where LCASE(NAME) = ?;
                 """;
-        return Optional.ofNullable(
-                DataAccessUtils.singleResult(
-                        template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase())
-                )
-        );
+        return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip());
+    }
+
+    public List<User> getEmployee(String name, String surname) {
+        String sql = """
+                select * from users
+                where LCASE(NAME) = ? and LCASE(SURNAME) = ? and ACCOUNT_TYPE not like 'Работодатель';
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip(), surname.toLowerCase().strip());
+    }
+
+    public List<User> getEmployer(String name) {
+        String sql = """
+                select * from users
+                where LCASE(NAME) = ? and ACCOUNT_TYPE not like 'Соискатель';
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip());
     }
 
     public Optional<User> getUserByPhone(String phone) {
@@ -85,7 +98,21 @@ public class UserDao {
                 end;
                 """;
 
-        return template.queryForObject(sql, new BeanPropertyRowMapper<>(Boolean.class), email);
+        return template.queryForObject(sql, Boolean.class, email);
+    }
+
+    public Boolean isUserInSystem(int id) {
+        String sql = """
+                select case
+                when exists(select *
+                            from USERS
+                            where id = ?)
+                    then true
+                else false
+                end;
+                """;
+
+        return template.queryForObject(sql, Boolean.class, id);
     }
 
     public void createUser(UserDto user) {
@@ -157,4 +184,15 @@ public class UserDao {
                 """;
         template.update(sql, path, id);
     }
+
+    public void saveAvatar(UserAvatar userAvatar) {
+        String sql = """
+                update users
+                set avatar = ?
+                where id = ?;
+                """;
+        template.update(sql, userAvatar.getFileName(), userAvatar.getUserId());
+    }
+
+
 }

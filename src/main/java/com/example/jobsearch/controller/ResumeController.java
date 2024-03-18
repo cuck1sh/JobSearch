@@ -6,7 +6,11 @@ import com.example.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -15,6 +19,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
+
+    @GetMapping
+    public ResponseEntity<List<ResumeDto>> getResumes() {
+        return ResponseEntity.ok(resumeService.getResumes());
+    }
 
     @GetMapping("{id}")
     public ResponseEntity<?> getResumeById(@PathVariable int id) {
@@ -26,11 +35,6 @@ public class ResumeController {
         }
     }
 
-    @GetMapping("category")
-    public ResponseEntity<List<ResumeDto>> getResumesByCategory(@RequestParam(name = "category") String category) {
-        List<ResumeDto> rdtos = resumeService.getResumesByCategory(category);
-        return ResponseEntity.ok(rdtos);
-    }
 
     @GetMapping("user")
     public ResponseEntity<List<ResumeDto>> getResumesByUserEmail(@RequestParam(name = "email") String email) {
@@ -38,15 +42,5 @@ public class ResumeController {
         return ResponseEntity.ok(rdtos);
     }
 
-    @PostMapping("add")
-    public HttpStatus addNewResume(ResumeDto resume) {
-        resumeService.createResume(resume);
-        return HttpStatus.OK;
-    }
 
-    @GetMapping("delete/{id}")
-    public HttpStatus deleteResumeById(@PathVariable int id) {
-        resumeService.deleteResumeById(id);
-        return HttpStatus.OK;
-    }
 }

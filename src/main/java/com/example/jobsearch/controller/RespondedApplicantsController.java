@@ -5,6 +5,7 @@ import com.example.jobsearch.service.RespondedApplicantsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,9 +23,14 @@ public class RespondedApplicantsController {
         return ResponseEntity.ok(respondedApplicantsService.getUserResponses(email));
     }
 
-    @GetMapping("vacancy")
-    public ResponseEntity<List<RespondedApplicantsDto>> getResponsesForVacancy(@RequestParam(name = "name") String name) {
-        return ResponseEntity.ok(respondedApplicantsService.getResponsesForVacancy(name));
+    @GetMapping("resumes/{resumeId}")
+    public ResponseEntity<List<RespondedApplicantsDto>> getResponsesForResume(@PathVariable int resumeId) {
+        return ResponseEntity.ok(respondedApplicantsService.getResponsesForResume(resumeId));
+    }
+
+    @GetMapping("vacancies/{vacancyId}")
+    public ResponseEntity<List<RespondedApplicantsDto>> getResponsesForVacancy(@PathVariable int vacancyId) {
+        return ResponseEntity.ok(respondedApplicantsService.getResponsesForVacancy(vacancyId));
     }
 
 }
