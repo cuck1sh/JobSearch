@@ -114,6 +114,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void uploadUserAvatar(UserAvatarDto avatarDto) {
+        String filename = fileUtil.saveUploadedFile(avatarDto.getFile(), "images");
+        UserAvatar userAvatar = new UserAvatar();
+        userAvatar.setUserId(avatarDto.getUserId());
+        userAvatar.setFileName(filename);
+
+        userDao.saveAvatar(userAvatar);
+    }
+
+    @SneakyThrows
+    @Override
+    public ResponseEntity<?> downloadAvatar(int userId) {
+        User user = userDao.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + userId));
+        String filename = user.getAvatar();
+        return fileUtil.getOutputFile(filename, "images", MediaType.IMAGE_PNG);
+    }
+
+    @Override
     public Boolean isUserInSystem(String email) {
         return userDao.isUserInSystem(email);
     }
@@ -156,24 +175,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeUserAvatar(int id, String path) {
         // TODO Реализовать смену аватарки
-    }
-
-    @Override
-    public void uploadUserAvatar(UserAvatarDto avatarDto) {
-        String filename = fileUtil.saveUploadedFile(avatarDto.getFile(), "images");
-        UserAvatar userAvatar = new UserAvatar();
-        userAvatar.setUserId(avatarDto.getUserId());
-        userAvatar.setFileName(filename);
-
-        userDao.saveAvatar(userAvatar);
-    }
-
-    @SneakyThrows
-    @Override
-    public ResponseEntity<?> downloadAvatar(int userId) {
-        User user = userDao.getUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + userId));
-        String filename = user.getAvatar();
-        return fileUtil.getOutputFile(filename, "images", MediaType.IMAGE_PNG);
     }
 }
