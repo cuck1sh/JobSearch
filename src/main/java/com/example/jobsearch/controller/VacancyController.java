@@ -36,12 +36,6 @@ public class VacancyController {
         }
     }
 
-
-
-
-
-
-
     @GetMapping("all/{userId}")
     public ResponseEntity<?> getAllVacanciesByCompany(@PathVariable int userId) {
         List<VacancyDto> vacancies = vacancyService.getAllVacanciesByCompany(userId);
@@ -49,11 +43,6 @@ public class VacancyController {
             return ResponseEntity.ok(vacancies);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cannot find vacancies by user: " + userId);
-    }
-
-    @GetMapping("category")
-    public ResponseEntity<List<VacancyDto>> getVacanciesByCategory(String category) {
-        return ResponseEntity.ok(vacancyService.getVacanciesByCategory(category));
     }
 
     @GetMapping("{userId}/category")

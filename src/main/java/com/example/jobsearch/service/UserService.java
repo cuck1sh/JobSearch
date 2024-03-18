@@ -16,7 +16,6 @@ public interface UserService {
     UserDto getUserByPhone(String phone) throws UserNotFoundException;
     UserDto getUserByEmail(String email) throws UserNotFoundException;
     Boolean isUserInSystem(String email);
-
     Boolean isUserInSystem(int id);
     void createUser(UserDto user);
 
@@ -31,5 +30,7 @@ public interface UserService {
 
     ResponseEntity<?> downloadAvatar(int userId);
 
-    List<UserDto> getUsersEmployee(String name, String surname);
+    List<UserDto> getEmployee(String name, String surname);
+
+    List<UserDto> getEmployer(String name);
 }

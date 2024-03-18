@@ -37,37 +37,37 @@ public class EmployerController {
         return vacancyService.createVacancy(vacancy);
     }
 
-    @PostMapping("{id}/name")
+    @PostMapping("vacancies/{id}/name")
     public HttpStatus changeVacancyName(@PathVariable int id, String name) {
         return vacancyService.changeVacancyName(id, name);
     }
 
-    @PostMapping("{id}/description")
+    @PostMapping("vacancies/{id}/description")
     public HttpStatus changeVacancyDescription(@PathVariable int id, String description) {
         return vacancyService.changeVacancyDescription(id, description);
     }
 
-    @PostMapping("{id}/category")
+    @PostMapping("vacancies/{id}/category")
     public HttpStatus changeVacancyCategory(@PathVariable int id, String category) {
         return vacancyService.changeVacancyCategory(id, category);
     }
 
-    @PostMapping("{id}/salary")
+    @PostMapping("vacancies/{id}/salary")
     public HttpStatus changeVacancySalary(@PathVariable int id, Double salary) {
         return vacancyService.changeVacancySalary(id, salary);
     }
 
-    @PostMapping("{id}/exp")
+    @PostMapping("vacancies/{id}/exp")
     public HttpStatus changeVacancyExp(@PathVariable int id, int expFrom, int expTo) {
         return vacancyService.changeVacancyExp(id, expFrom, expTo);
     }
 
-    @PostMapping("{id}/active")
+    @PostMapping("vacancies/{id}/active")
     public HttpStatus changeVacancyActive(@PathVariable int id, boolean isActive) {
         return vacancyService.changeVacancyActive(id, isActive);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("vacancies/{id}")
     public HttpStatus delete(@PathVariable int id) {
         return vacancyService.delete(id);
     }
@@ -77,20 +77,25 @@ public class EmployerController {
         return ResponseEntity.ok(resumeService.getResumes());
     }
 
-    @GetMapping("category")
+    @GetMapping("resumes/category")
     public ResponseEntity<List<ResumeDto>> getResumesByCategory(@RequestParam(name = "name") String name) {
         List<ResumeDto> rdtos = resumeService.getResumesByCategory(name);
         return ResponseEntity.ok(rdtos);
     }
 
-    @GetMapping("vacancies/{vacancyId}")
+    @GetMapping("responses/users/{userId}")
+    public ResponseEntity<List<RespondedApplicantsDto>> getResponsesForEmployer(@PathVariable int userId) {
+        return ResponseEntity.ok(respondedApplicantsService.getResponsesForEmployer(userId));
+    }
+
+    @GetMapping("responses/vacancies/{vacancyId}")
     public ResponseEntity<List<RespondedApplicantsDto>> getResponsesForVacancy(@PathVariable int vacancyId) {
         return ResponseEntity.ok(respondedApplicantsService.getResponsesForVacancy(vacancyId));
     }
 
-    @PostMapping("users")
+    @PostMapping("employee")
     public ResponseEntity<List<UserDto>> getEmployee(String name, String surname) {
-        List<UserDto> users = userService.getUsersEmployee(name, surname);
+        List<UserDto> users = userService.getEmployee(name, surname);
         return ResponseEntity.ok(users);
     }
 

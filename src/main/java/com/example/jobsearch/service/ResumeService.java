@@ -12,7 +12,8 @@ public interface ResumeService {
     ResumeDto getResumeById(int id) throws UserNotFoundException;
     List<ResumeDto> getResumesByCategory(String category);
     List<ResumeDto> getResumesByUserEmail(String email);
-    void createResume(ResumeDto resume);
+
+    HttpStatus createResume(ResumeDto resume);
     Boolean isResumeInSystem(int id);
     HttpStatus changeResumeName(int id, String name);
     HttpStatus changeResumeCategory(int id, String category);

@@ -8,6 +8,7 @@ import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -69,9 +70,18 @@ public class ResumeServiceImpl implements ResumeService {
         return dtos;
     }
 
+    @SneakyThrows
+    private boolean isEmployee(int userId) {
+        return "Соискатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
+    }
+
     @Override
-    public void createResume(ResumeDto resume) {
-        resumeDao.createResume(resume);
+    public HttpStatus createResume(ResumeDto resume) {
+        if (isEmployee(resume.getUser().getId())) {
+            resumeDao.createResume(resume);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
     }
 
     @Override

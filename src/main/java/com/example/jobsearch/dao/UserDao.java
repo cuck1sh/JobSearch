@@ -50,9 +50,17 @@ public class UserDao {
     public List<User> getEmployee(String name, String surname) {
         String sql = """
                 select * from users
-                where LCASE(NAME) = ? and LCASE(SURNAME) = ?;
+                where LCASE(NAME) = ? and LCASE(SURNAME) = ? and ACCOUNT_TYPE not like 'Работодатель';
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip(), surname.toLowerCase().strip());
+    }
+
+    public List<User> getEmployer(String name) {
+        String sql = """
+                select * from users
+                where LCASE(NAME) = ? and ACCOUNT_TYPE not like 'Соискатель';
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip());
     }
 
     public Optional<User> getUserByPhone(String phone) {
