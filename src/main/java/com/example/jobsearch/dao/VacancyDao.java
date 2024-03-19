@@ -84,6 +84,28 @@ public class VacancyDao {
         return template.queryForObject(sql, Boolean.class, id);
     }
 
+    public void changeVacancy(VacancyDto vacancy) {
+        String sql = """
+                update vacancies
+                set name = :name, description = :description, category_id = :category_id,
+                    salary = :salary, exp_from = :exp_from, exp_to = :exp_to, is_active = :is_active,
+                    user_id = :user_id, created_date = :created_date, UPDATE_TIME = :update_time
+                where id = :id;
+                """;
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
+                .addValue("id", vacancy.getId())
+                .addValue("name", vacancy.getName())
+                .addValue("description", vacancy.getDescription())
+                .addValue("category_id", vacancy.getCategoryId())
+                .addValue("salary", vacancy.getSalary())
+                .addValue("exp_from", vacancy.getExpFrom())
+                .addValue("exp_to", vacancy.getExpTo())
+                .addValue("is_active", vacancy.getIsActive())
+                .addValue("user_id", vacancy.getUserId())
+                .addValue("created_date", vacancy.getCreatedDate())
+                .addValue("update_time", vacancy.getUpdateTime()));
+    }
+
     public void changeVacancyName(int id, String name) {
         String sql = """
                 update vacancies
@@ -172,4 +194,6 @@ public class VacancyDao {
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId, category);
     }
+
+
 }

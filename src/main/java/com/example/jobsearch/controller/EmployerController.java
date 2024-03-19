@@ -37,6 +37,11 @@ public class EmployerController {
         return vacancyService.createVacancy(vacancy);
     }
 
+    @PostMapping("vacancies/change/{userId}")
+    public HttpStatus changeVacancy(@PathVariable int userId, VacancyDto vacancy) {
+        return vacancyService.changeVacancy(userId, vacancy);
+    }
+
     @PostMapping("vacancies/{id}/name")
     public HttpStatus changeVacancyName(@PathVariable int id, String name) {
         return vacancyService.changeVacancyName(id, name);

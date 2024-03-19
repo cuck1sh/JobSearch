@@ -89,6 +89,18 @@ public class VacancyServiceImpl implements VacancyService {
 
     @SneakyThrows
     @Override
+    public HttpStatus changeVacancy(int userId, VacancyDto vacancy) {
+        if (isVacancyInSystem(vacancy.getId())) {
+            if (isEmployer(userId)) {
+                vacancyDao.changeVacancy(vacancy);
+                return HttpStatus.OK;
+            }
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @SneakyThrows
+    @Override
     public HttpStatus changeVacancyName(int id, String name) {
         if (isVacancyInSystem(id)) {
             vacancyDao.changeVacancyName(id, name);
