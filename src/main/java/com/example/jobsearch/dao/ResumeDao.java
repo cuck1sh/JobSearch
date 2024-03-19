@@ -95,6 +95,25 @@ public class ResumeDao {
         return template.queryForObject(sql, Boolean.class, id);
     }
 
+    public void changeResume(ResumeDto resume) {
+        String sql = """
+                update resumes
+                set user_id = :user_id, name = :name, category_id = :category_id, salary = :salary, is_active = :is_active, created_date = :created_date, update_time = :update_time
+                where id = :id;
+                """;
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
+                .addValue("id", resume.getId())
+                .addValue("user_id", resume.getUser().getId())
+                .addValue("name", resume.getName())
+                .addValue("category_id", resume.getCategory().getId())
+                .addValue("salary", resume.getSalary())
+                .addValue("is_active", resume.getIsActive())
+                .addValue("created_date", resume.getCreatedDate())
+                .addValue("update_time", resume.getUpdateTime()));
+
+
+    }
+
     public void changeResumeName(int id, String name) {
         String sql = """
                 update resumes

@@ -23,4 +23,5 @@ public interface ResumeService {
 
     List<ResumeDto> getActiveResumes(int userId);
 
+    HttpStatus changeResume(int userId, ResumeDto resume);
 }

@@ -37,6 +37,13 @@ public class EmployeeController {
         return resumeService.createResume(resume);
     }
 
+
+    @PostMapping("resumes/change/{userId}")
+    public HttpStatus changeResume(@PathVariable int userId, ResumeDto resume) {
+        return resumeService.changeResume(userId, resume);
+    }
+
+
     @PostMapping("resumes/{id}/name")
     public HttpStatus changeName(@PathVariable int id, String name) {
         return resumeService.changeResumeName(id, name);

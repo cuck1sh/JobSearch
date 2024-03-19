@@ -26,4 +26,6 @@ public interface VacancyService {
     List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category);
 
     List<Vacancy> getActiveVacancies(int userId);
+
+    HttpStatus changeVacancy(int userId, VacancyDto vacancy);
 }

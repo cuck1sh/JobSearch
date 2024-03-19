@@ -90,6 +90,17 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public HttpStatus changeResume(int userId, ResumeDto resume) {
+        if (isResumeInSystem(resume.getId())) {
+            if (isEmployee(userId)) {
+                resumeDao.changeResume(resume);
+                return HttpStatus.OK;
+            }
+        }
+        return HttpStatus.BAD_REQUEST;
+    }
+
+    @Override
     public HttpStatus changeResumeName(int id, String name) {
         if (isResumeInSystem(id)) {
             resumeDao.changeResumeName(id, name);
