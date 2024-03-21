@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -18,6 +19,9 @@ public class ResumeDto {
     private String name;
     private CategoryDto category;
     private Double salary;
+
+    private List<WorkExperienceInfoDto> workExperienceInfos;
+    private List<EducationInfoDto> educationInfos;
 
     @JsonProperty("is_active")
     private Boolean isActive;

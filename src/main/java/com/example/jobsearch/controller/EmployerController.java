@@ -42,9 +42,9 @@ public class EmployerController {
         return vacancyService.changeVacancy(userId, vacancy);
     }
 
-    @DeleteMapping("vacancies/{id}")
-    public HttpStatus delete(@PathVariable int id) {
-        return vacancyService.delete(id);
+    @DeleteMapping("{userId}/vacancies/{id}")
+    public HttpStatus delete(@PathVariable int userId, @PathVariable int id) {
+        return vacancyService.delete(userId, id);
     }
 
     @GetMapping("vacancies")

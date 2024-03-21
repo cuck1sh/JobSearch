@@ -13,7 +13,8 @@ public interface VacancyService {
     List<VacancyDto> getVacancies();
     HttpStatus createVacancy(VacancyDto vacancy);
     Boolean isVacancyInSystem(int id);
-    HttpStatus delete(int id);
+
+    HttpStatus delete(int userId, int id);
 
     List<VacancyDto> getAllVacanciesByCompany(int userId);
     List<VacancyDto> getVacanciesByCategory(String category);

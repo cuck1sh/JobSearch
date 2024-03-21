@@ -43,9 +43,9 @@ public class EmployeeController {
         return resumeService.changeResume(userId, resume);
     }
 
-    @DeleteMapping("resumes/{id}")
-    public HttpStatus deleteResumeById(@PathVariable int id) {
-        return resumeService.deleteResumeById(id);
+    @DeleteMapping("{userId}/resumes/{id}")
+    public HttpStatus deleteResumeById(@PathVariable int userId, @PathVariable int id) {
+        return resumeService.deleteResumeById(userId, id);
     }
 
     @GetMapping("vacancies")

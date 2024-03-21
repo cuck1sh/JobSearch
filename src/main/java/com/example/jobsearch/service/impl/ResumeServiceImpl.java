@@ -103,10 +103,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public HttpStatus deleteResumeById(int id) {
+    public HttpStatus deleteResumeById(int userId, int id) {
         if (isResumeInSystem(id)) {
-            resumeDao.deleteResumeById(id);
-            return HttpStatus.OK;
+            if (isEmployee(userId)) {
+                resumeDao.deleteResumeById(id);
+                return HttpStatus.OK;
+            }
         }
         return HttpStatus.BAD_REQUEST;
     }

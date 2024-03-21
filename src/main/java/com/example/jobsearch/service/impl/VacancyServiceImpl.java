@@ -102,10 +102,12 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public HttpStatus delete(int id) {
+    public HttpStatus delete(int userId, int id) {
         if (isVacancyInSystem(id)) {
-            vacancyDao.delete(id);
-            return HttpStatus.OK;
+            if (isEmployer(userId)) {
+                vacancyDao.delete(id);
+                return HttpStatus.OK;
+            }
         }
         return HttpStatus.BAD_REQUEST;
     }

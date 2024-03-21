@@ -15,7 +15,8 @@ public interface ResumeService {
 
     HttpStatus createResume(ResumeDto resume);
     Boolean isResumeInSystem(int id);
-    HttpStatus deleteResumeById(int id);
+
+    HttpStatus deleteResumeById(int userId, int id);
 
     List<ResumeDto> getActiveResumes(int userId);
 

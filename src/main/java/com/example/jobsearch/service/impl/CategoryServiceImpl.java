@@ -1,9 +1,10 @@
-package com.example.jobsearch.service;
+package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.CategoryDao;
 import com.example.jobsearch.dto.CategoryDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.model.Category;
+import com.example.jobsearch.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;

@@ -36,7 +36,7 @@ values ('Phone number'),
        ('LinkedIn'),
        ('Telegram');
 
-insert into contact_info (type_id, resume_id, "value")
+insert into contacts_info (type_id, resume_id, info)
 values ((select id from CONTACT_TYPES where type = 'Phone number'),
         (select id
          from RESUMES
