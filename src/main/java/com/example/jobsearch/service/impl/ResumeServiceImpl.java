@@ -93,45 +93,11 @@ public class ResumeServiceImpl implements ResumeService {
     public HttpStatus changeResume(int userId, ResumeDto resume) {
         if (isResumeInSystem(resume.getId())) {
             if (isEmployee(userId)) {
-                resumeDao.changeResume(resume);
-                return HttpStatus.OK;
+                if (isEmployee(resume.getUser().getId())) {
+                    resumeDao.changeResume(resume);
+                    return HttpStatus.OK;
+                }
             }
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeResumeName(int id, String name) {
-        if (isResumeInSystem(id)) {
-            resumeDao.changeResumeName(id, name);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeResumeCategory(int id, String category) {
-        if (isResumeInSystem(id)) {
-            resumeDao.changeResumeCategory(id, category);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeResumeSalary(int id, Double salary) {
-        if (isResumeInSystem(id)) {
-            resumeDao.changeResumeSalary(id, salary);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeResumeActive(int id, Boolean status) {
-        if (isResumeInSystem(id)) {
-            resumeDao.changeResumeActive(id, status);
-            return HttpStatus.OK;
         }
         return HttpStatus.BAD_REQUEST;
     }

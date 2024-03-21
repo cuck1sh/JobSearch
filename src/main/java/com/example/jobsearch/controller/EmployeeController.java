@@ -39,29 +39,8 @@ public class EmployeeController {
 
 
     @PostMapping("resumes/change/{userId}")
-    public HttpStatus changeResume(@PathVariable int userId, ResumeDto resume) {
+    public HttpStatus changeResume(@PathVariable int userId, @RequestBody ResumeDto resume) {
         return resumeService.changeResume(userId, resume);
-    }
-
-
-    @PostMapping("resumes/{id}/name")
-    public HttpStatus changeName(@PathVariable int id, String name) {
-        return resumeService.changeResumeName(id, name);
-    }
-
-    @PostMapping("resumes/{id}/category")
-    public HttpStatus changeCategory(@PathVariable int id, String category) {
-        return resumeService.changeResumeCategory(id, category);
-    }
-
-    @PostMapping("resumes/{id}/salary")
-    public HttpStatus changeSalary(@PathVariable int id, Double salary) {
-        return resumeService.changeResumeSalary(id, salary);
-    }
-
-    @PostMapping("resumes/{id}/active")
-    public HttpStatus changeActive(@PathVariable int id, Boolean isActive) {
-        return resumeService.changeResumeActive(id, isActive);
     }
 
     @DeleteMapping("resumes/{id}")

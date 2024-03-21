@@ -92,64 +92,11 @@ public class VacancyServiceImpl implements VacancyService {
     public HttpStatus changeVacancy(int userId, VacancyDto vacancy) {
         if (isVacancyInSystem(vacancy.getId())) {
             if (isEmployer(userId)) {
-                vacancyDao.changeVacancy(vacancy);
-                return HttpStatus.OK;
+                if (isEmployer(vacancy.getUserId())) {
+                    vacancyDao.changeVacancy(vacancy);
+                    return HttpStatus.OK;
+                }
             }
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @SneakyThrows
-    @Override
-    public HttpStatus changeVacancyName(int id, String name) {
-        if (isVacancyInSystem(id)) {
-            vacancyDao.changeVacancyName(id, name);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeVacancyDescription(int id, String description) {
-        if (isVacancyInSystem(id)) {
-            vacancyDao.changeVacancyDescription(id, description);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeVacancyCategory(int id, String category) {
-        if (isVacancyInSystem(id)) {
-            vacancyDao.changeVacancyCategory(id, category);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeVacancySalary(int id, Double salary) {
-        if (isVacancyInSystem(id)) {
-            vacancyDao.changeVacancySalary(id, salary);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeVacancyExp(int id, int expFrom, int expTo) {
-        if (isVacancyInSystem(id)) {
-            vacancyDao.changeVacancyExp(id, expFrom, expTo);
-            return HttpStatus.OK;
-        }
-        return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public HttpStatus changeVacancyActive(int id, Boolean isActive) {
-        if (isVacancyInSystem(id)) {
-            vacancyDao.changeVacancyActive(id, isActive);
-            return HttpStatus.OK;
         }
         return HttpStatus.BAD_REQUEST;
     }

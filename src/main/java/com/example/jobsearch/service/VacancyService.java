@@ -13,12 +13,6 @@ public interface VacancyService {
     List<VacancyDto> getVacancies();
     HttpStatus createVacancy(VacancyDto vacancy);
     Boolean isVacancyInSystem(int id);
-    HttpStatus changeVacancyName(int id, String name);
-    HttpStatus changeVacancyDescription(int id, String description);
-    HttpStatus changeVacancyCategory(int id, String category);
-    HttpStatus changeVacancySalary(int id, Double salary);
-    HttpStatus changeVacancyExp(int id, int expFrom, int expTo);
-    HttpStatus changeVacancyActive(int id, Boolean isActive);
     HttpStatus delete(int id);
 
     List<VacancyDto> getAllVacanciesByCompany(int userId);

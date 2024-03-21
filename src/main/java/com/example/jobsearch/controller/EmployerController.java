@@ -38,38 +38,8 @@ public class EmployerController {
     }
 
     @PostMapping("vacancies/change/{userId}")
-    public HttpStatus changeVacancy(@PathVariable int userId, VacancyDto vacancy) {
+    public HttpStatus changeVacancy(@PathVariable int userId, @RequestBody VacancyDto vacancy) {
         return vacancyService.changeVacancy(userId, vacancy);
-    }
-
-    @PostMapping("vacancies/{id}/name")
-    public HttpStatus changeVacancyName(@PathVariable int id, String name) {
-        return vacancyService.changeVacancyName(id, name);
-    }
-
-    @PostMapping("vacancies/{id}/description")
-    public HttpStatus changeVacancyDescription(@PathVariable int id, String description) {
-        return vacancyService.changeVacancyDescription(id, description);
-    }
-
-    @PostMapping("vacancies/{id}/category")
-    public HttpStatus changeVacancyCategory(@PathVariable int id, String category) {
-        return vacancyService.changeVacancyCategory(id, category);
-    }
-
-    @PostMapping("vacancies/{id}/salary")
-    public HttpStatus changeVacancySalary(@PathVariable int id, Double salary) {
-        return vacancyService.changeVacancySalary(id, salary);
-    }
-
-    @PostMapping("vacancies/{id}/exp")
-    public HttpStatus changeVacancyExp(@PathVariable int id, int expFrom, int expTo) {
-        return vacancyService.changeVacancyExp(id, expFrom, expTo);
-    }
-
-    @PostMapping("vacancies/{id}/active")
-    public HttpStatus changeVacancyActive(@PathVariable int id, boolean isActive) {
-        return vacancyService.changeVacancyActive(id, isActive);
     }
 
     @DeleteMapping("vacancies/{id}")

@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,61 +103,6 @@ public class VacancyDao {
                 .addValue("user_id", vacancy.getUserId())
                 .addValue("created_date", vacancy.getCreatedDate())
                 .addValue("update_time", vacancy.getUpdateTime()));
-    }
-
-    public void changeVacancyName(int id, String name) {
-        String sql = """
-                update vacancies
-                set name = ?, UPDATE_TIME = ?
-                where id = ?;
-                """;
-        template.update(sql, name, LocalDateTime.now(), id);
-    }
-
-    public void changeVacancyDescription(int id, String description) {
-        String sql = """
-                update vacancies
-                set description = ?, UPDATE_TIME = ?
-                where id = ?;
-                """;
-        template.update(sql, description, LocalDateTime.now(), id);
-    }
-
-    public void changeVacancyCategory(int id, String category) {
-        String sql = """
-                update vacancies
-                set category_id = (select id from CATEGORIES where name = ?),
-                    UPDATE_TIME = ?
-                where id = ?;
-                """;
-        template.update(sql, category, LocalDateTime.now(), id);
-    }
-
-    public void changeVacancySalary(int id, Double salary) {
-        String sql = """
-                update vacancies
-                set salary = ?, UPDATE_TIME = ?
-                where id = ?;
-                """;
-        template.update(sql, salary, LocalDateTime.now(), id);
-    }
-
-    public void changeVacancyExp(int id, int expFrom, int expTo) {
-        String sql = """
-                update vacancies
-                set EXP_FROM = ?, EXP_TO = ?, UPDATE_TIME = ?
-                where id = ?;
-                """;
-        template.update(sql, expFrom, expTo, LocalDateTime.now(), id);
-    }
-
-    public void changeVacancyActive(int id, Boolean isActive) {
-        String sql = """
-                update vacancies
-                set IS_ACTIVE = ?, UPDATE_TIME = ?
-                where id = ?;
-                """;
-        template.update(sql, isActive, LocalDateTime.now(), id);
     }
 
     public void delete(int id) {
