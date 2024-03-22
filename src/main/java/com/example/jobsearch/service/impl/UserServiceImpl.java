@@ -10,6 +10,7 @@ import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -54,8 +55,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getEmployee(String name, String surname) {
-        List<User> users = userDao.getEmployee(name, surname);
+    public List<UserDto> getEmployee(String name, String surname, String email) {
+        List<User> users = userDao.getEmployee(name, surname, email);
         return getUserDtos(users);
     }
 
@@ -148,32 +149,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeUserName(int id, String name) {
-        // TODO Реализовать смену имени
-    }
+    public HttpStatus changeUser(int userId, UserDto userDto) {
+        if (isUserInSystem(userId)) {
+            if (userId == userDto.getId()) {
+                User user = User.builder()
+                        .id(userDto.getId())
+                        .name(userDto.getName())
+                        .surname(userDto.getSurname())
+                        .age(userDto.getAge())
+                        .password(userDto.getPassword())
+                        .phoneNumber(userDto.getPhoneNumber())
+                        .accountType(userDto.getAccountType())
+                        .build();
 
-    @Override
-    public void changeUserSurname(int id, String surname) {
-        // TODO Реализовать смену фамилии
-    }
-
-    @Override
-    public void changeUserAge(int id, int age) {
-        // TODO Реализовать смену возраста
-    }
-
-    @Override
-    public void changeUserPassword(int id, String password) {
-        // TODO Реализовать смену пароля
-    }
-
-    @Override
-    public void changeUserPhoneNumber(int id, String PhoneNumber) {
-        // TODO Реализовать смену номера телефона
-    }
-
-    @Override
-    public void changeUserAvatar(int id, String path) {
-        // TODO Реализовать смену аватарки
+                userDao.changeUser(user);
+                return HttpStatus.OK;
+            }
+        }
+        return HttpStatus.BAD_REQUEST;
     }
 }

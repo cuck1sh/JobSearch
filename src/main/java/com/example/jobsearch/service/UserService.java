@@ -3,6 +3,7 @@ package com.example.jobsearch.service;
 import com.example.jobsearch.dto.UserAvatarDto;
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -19,18 +20,10 @@ public interface UserService {
     Boolean isUserInSystem(int id);
     void createUser(UserDto user);
 
-    void changeUserName(int id, String name);
-    void changeUserSurname(int id, String surname);
-    void changeUserAge(int id, int age);
-    void changeUserPassword(int id, String password);
-    void changeUserPhoneNumber(int id, String PhoneNumber);
-    void changeUserAvatar(int id, String path);
-
+    HttpStatus changeUser(int userId, UserDto user);
     void uploadUserAvatar(UserAvatarDto avatarDto);
-
     ResponseEntity<?> downloadAvatar(int userId);
 
-    List<UserDto> getEmployee(String name, String surname);
-
+    List<UserDto> getEmployee(String name, String surname, String email);
     List<UserDto> getEmployer(String name);
 }

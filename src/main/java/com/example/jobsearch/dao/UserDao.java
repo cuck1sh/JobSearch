@@ -47,12 +47,18 @@ public class UserDao {
         return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip());
     }
 
-    public List<User> getEmployee(String name, String surname) {
+    public List<User> getEmployee(String name, String surname, String email) {
         String sql = """
                 select * from users
-                where LCASE(NAME) = ? and LCASE(SURNAME) = ? and ACCOUNT_TYPE not like 'Работодатель';
+                where (LCASE(NAME) = ? and LCASE(SURNAME) = ? or EMAIL = ?)
+                and ACCOUNT_TYPE not like 'Работодатель';
                 """;
-        return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip(), surname.toLowerCase().strip());
+
+        return template.query(sql,
+                new BeanPropertyRowMapper<>(User.class),
+                name.toLowerCase().strip(),
+                surname.toLowerCase().strip(),
+                email);
     }
 
     public List<User> getEmployer(String name) {
@@ -131,58 +137,19 @@ public class UserDao {
                 .addValue("account_type", user.getAccountType()));
     }
 
-    public void changeUserName(int id, String name) {
+    public void changeUser(User user) {
         String sql = """
                 update users
-                set name = ?
-                where id = ?;
+                set name = :name, surname = :surname, age = :age, password = :password, phone_number = :phone_number
+                where id = :id;
                 """;
-        template.update(sql, name, id);
-    }
-
-    public void changeUserSurname(int id, String surname) {
-        String sql = """
-                update users
-                set surname = ?
-                where id = ?;
-                """;
-        template.update(sql, surname, id);
-    }
-
-    public void changeUserAge(int id, int age) {
-        String sql = """
-                update users
-                set age = ?
-                where id = ?;
-                """;
-        template.update(sql, age, id);
-    }
-
-    public void changeUserPassword(int id, String password) {
-        String sql = """
-                update users
-                set password = ?
-                where id = ?;
-                """;
-        template.update(sql, password, id);
-    }
-
-    public void changeUserPhoneNumber(int id, String PhoneNumber) {
-        String sql = """
-                update users
-                set PHONE_NUMBER = ?
-                where id = ?;
-                """;
-        template.update(sql, PhoneNumber, id);
-    }
-
-    public void changeUserAvatar(int id, String path) {
-        String sql = """
-                update users
-                set AVATAR = ?
-                where id = ?;
-                """;
-        template.update(sql, path, id);
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
+                .addValue("id", user.getId())
+                .addValue("name", user.getName())
+                .addValue("surname", user.getSurname())
+                .addValue("age", user.getAge())
+                .addValue("password", user.getPassword())
+                .addValue("phone_number", user.getPhoneNumber()));
     }
 
     public void saveAvatar(UserAvatar userAvatar) {
@@ -193,6 +160,4 @@ public class UserDao {
                 """;
         template.update(sql, userAvatar.getFileName(), userAvatar.getUserId());
     }
-
-
 }

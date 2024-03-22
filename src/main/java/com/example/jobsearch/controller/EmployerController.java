@@ -37,7 +37,7 @@ public class EmployerController {
         return vacancyService.createVacancy(vacancy);
     }
 
-    @PostMapping("vacancies/change/{userId}")
+    @PostMapping("{userId}/vacancies/change")
     public HttpStatus changeVacancy(@PathVariable int userId, @RequestBody VacancyDto vacancy) {
         return vacancyService.changeVacancy(userId, vacancy);
     }
@@ -69,8 +69,8 @@ public class EmployerController {
     }
 
     @PostMapping("employee")
-    public ResponseEntity<List<UserDto>> getEmployee(String name, String surname) {
-        List<UserDto> users = userService.getEmployee(name, surname);
+    public ResponseEntity<List<UserDto>> getEmployee(String name, String surname, String email) {
+        List<UserDto> users = userService.getEmployee(name, surname, email);
         return ResponseEntity.ok(users);
     }
 

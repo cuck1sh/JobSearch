@@ -92,7 +92,7 @@ public class VacancyServiceImpl implements VacancyService {
     public HttpStatus changeVacancy(int userId, VacancyDto vacancy) {
         if (isVacancyInSystem(vacancy.getId())) {
             if (isEmployer(userId)) {
-                if (isEmployer(vacancy.getUserId())) {
+                if (userId == vacancy.getUserId()) {
                     vacancyDao.changeVacancy(vacancy);
                     return HttpStatus.OK;
                 }
@@ -101,12 +101,15 @@ public class VacancyServiceImpl implements VacancyService {
         return HttpStatus.BAD_REQUEST;
     }
 
+    @SneakyThrows
     @Override
     public HttpStatus delete(int userId, int id) {
         if (isVacancyInSystem(id)) {
             if (isEmployer(userId)) {
-                vacancyDao.delete(id);
-                return HttpStatus.OK;
+                if (userId == getVacancyById(id).getUserId()) {
+                    vacancyDao.delete(id);
+                    return HttpStatus.OK;
+                }
             }
         }
         return HttpStatus.BAD_REQUEST;
@@ -132,7 +135,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public List<Vacancy> getActiveVacancies(int userId) {
-        // TODO реализовать выборку активный вакансий компании
+        // TODO реализовать выборку активных вакансий компании
         return null;
     }
 }
