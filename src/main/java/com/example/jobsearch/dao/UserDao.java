@@ -123,17 +123,16 @@ public class UserDao {
 
     public void createUser(UserDto user) {
         String sql = """
-                insert into users(name, surname, age, email, password, phone_number, avatar, account_type)
-                values (:name, :surname, :age, :email, :password, :phone_number, :avatar, :account_type);
+                insert into users(name, surname, age, email, password, phone_number, account_type)
+                values (:name, :surname, :age, :email, :password, :phone_number, :account_type);
                 """;
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("name", user.getName())
                 .addValue("surname", user.getSurname())
                 .addValue("age", user.getAge())
-                .addValue("email", user.getAge())
+                .addValue("email", user.getEmail())
                 .addValue("password", user.getPassword())
                 .addValue("phone_number", user.getPhoneNumber())
-                .addValue("avatar", user.getAvatar())
                 .addValue("account_type", user.getAccountType()));
     }
 

@@ -66,6 +66,20 @@ public class ResumeDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), email);
     }
 
+    public Boolean isResumeInSystem(int id) {
+        String sql = """
+                select case
+                when exists(select *
+                            from RESUMES
+                            where id = ?)
+                    then true
+                else false
+                end;
+                """;
+
+        return template.queryForObject(sql, Boolean.class, id);
+    }
+
     public Integer createResume(Resume resume) {
         String sql = """
                 insert into resumes(user_id, name, category_id, salary, is_active, created_date)
@@ -84,20 +98,6 @@ public class ResumeDao {
 
         namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
         return keyHolder.getKeyAs(Integer.class);
-    }
-
-    public Boolean isResumeInSystem(int id) {
-        String sql = """
-                select case
-                when exists(select *
-                            from RESUMES
-                            where id = ?)
-                    then true
-                else false
-                end;
-                """;
-
-        return template.queryForObject(sql, Boolean.class, id);
     }
 
     public void changeResume(Resume resume) {

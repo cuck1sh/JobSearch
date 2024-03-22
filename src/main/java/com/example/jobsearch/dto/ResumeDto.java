@@ -1,6 +1,9 @@
 package com.example.jobsearch.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +18,13 @@ import java.util.List;
 @NoArgsConstructor
 public class ResumeDto {
     private Integer id;
+
+    @NotNull
     private UserDto user;
+
+    @NotBlank
     private String name;
+
     private CategoryDto category;
     private Double salary;
 
@@ -32,8 +40,10 @@ public class ResumeDto {
     private Boolean isActive;
 
     @JsonProperty("created_date")
+    @PastOrPresent
     private LocalDateTime createdDate;
 
     @JsonProperty("update_time")
+    @PastOrPresent
     private LocalDateTime updateTime;
 }

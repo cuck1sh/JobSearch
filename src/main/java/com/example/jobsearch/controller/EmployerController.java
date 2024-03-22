@@ -8,6 +8,7 @@ import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +34,12 @@ public class EmployerController {
     private final UserService userService;
 
     @PostMapping("vacancies")
-    public HttpStatus createVacancy(@RequestBody VacancyDto vacancy) {
+    public HttpStatus createVacancy(@RequestBody @Valid VacancyDto vacancy) {
         return vacancyService.createVacancy(vacancy);
     }
 
     @PostMapping("{userId}/vacancies/change")
-    public HttpStatus changeVacancy(@PathVariable int userId, @RequestBody VacancyDto vacancy) {
+    public HttpStatus changeVacancy(@PathVariable int userId, @RequestBody @Valid VacancyDto vacancy) {
         return vacancyService.changeVacancy(userId, vacancy);
     }
 
