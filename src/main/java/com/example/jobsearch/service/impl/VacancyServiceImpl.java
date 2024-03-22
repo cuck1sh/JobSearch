@@ -2,7 +2,9 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.VacancyDao;
 import com.example.jobsearch.dto.VacancyDto;
+import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
+import com.example.jobsearch.exception.VacancyNotFoundException;
 import com.example.jobsearch.model.Vacancy;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
@@ -22,7 +24,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDto getVacancyById(int id) throws UserNotFoundException {
-        Vacancy vacancy = vacancyDao.getVacancyById(id).orElseThrow(() -> new UserNotFoundException("Can not find vacancy with id: " + id));
+        Vacancy vacancy = vacancyDao.getVacancyById(id).orElseThrow(() -> new VacancyNotFoundException("Can not find vacancy with id: " + id));
         return VacancyDto.builder()
                 .id(vacancy.getId())
                 .name(vacancy.getName())
@@ -47,9 +49,13 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public List<VacancyDto> getVacanciesByCategory(String category) {
         List<Vacancy> vacancies = vacancyDao.getVacanciesByCategory(category);
-        return getVacancyDtos(vacancies);
+        if (!vacancies.isEmpty()) {
+            return getVacancyDtos(vacancies);
+        }
+        throw new VacancyNotFoundException("Can not find vacancy with category: " + category);
     }
 
+    // Служебный метод
     private List<VacancyDto> getVacancyDtos(List<Vacancy> vacancies) {
         List<VacancyDto> dtos = new ArrayList<>();
         vacancies.forEach(e -> dtos.add(VacancyDto.builder()
@@ -68,23 +74,28 @@ public class VacancyServiceImpl implements VacancyService {
         return dtos;
     }
 
+    // Служебный метод
     @SneakyThrows
     private boolean isEmployer(int userId) {
         return "Работодатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
     }
 
+    // Служебный метод
     @Override
     public Boolean isVacancyInSystem(int id) {
         return vacancyDao.isVacancyInSystem(id);
     }
 
     @Override
-    public HttpStatus createVacancy(VacancyDto vacancy) {
-        if (isEmployer(vacancy.getUserId())) {
-            vacancyDao.createVacancy(vacancy);
-            return HttpStatus.OK;
+    public HttpStatus createVacancy(int userId, VacancyDto vacancy) {
+        if (isEmployer(userId)) {
+            if (userId == vacancy.getUserId()) {
+                vacancyDao.createVacancy(vacancy);
+                return HttpStatus.OK;
+            }
+            throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в вакансии");
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
     }
 
     @SneakyThrows
@@ -96,9 +107,11 @@ public class VacancyServiceImpl implements VacancyService {
                     vacancyDao.changeVacancy(vacancy);
                     return HttpStatus.OK;
                 }
+                throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в вакансии");
             }
+            throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new ResumeNotFoundException("Вакансия с айди " + vacancy.getId() + " не найдена в системе");
     }
 
     @SneakyThrows
@@ -110,27 +123,35 @@ public class VacancyServiceImpl implements VacancyService {
                     vacancyDao.delete(id);
                     return HttpStatus.OK;
                 }
+                throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в вакансии");
             }
+            throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new ResumeNotFoundException("Вакансия с айди " + id + " не найдена в системе");
     }
 
     @Override
     public List<VacancyDto> getAllVacanciesByCompany(int userId) {
         if (userService.isUserInSystem(userId)) {
             List<Vacancy> vacancies = vacancyDao.getAllVacancyByCompany(userId);
-            return getVacancyDtos(vacancies);
+            if (!vacancies.isEmpty()) {
+                return getVacancyDtos(vacancies);
+            }
+            throw new VacancyNotFoundException("У Юзера " + userId + " не найдено вакансий");
         }
-        return null;
+        throw new VacancyNotFoundException("Юзер " + userId + " не найден");
     }
 
     @Override
     public List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category) {
         if (userService.isUserInSystem(userId)) {
             List<Vacancy> vacancies = vacancyDao.getVacanciesByCategoryAndUser(userId, category);
-            return getVacancyDtos(vacancies);
+            if (!vacancies.isEmpty()) {
+                return getVacancyDtos(vacancies);
+            }
+            throw new VacancyNotFoundException("У Юзера " + userId + " не найдено вакансий");
         }
-        return null;
+        throw new VacancyNotFoundException("Юзер " + userId + " не найден");
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.EducationInfoDao;
 import com.example.jobsearch.dto.EducationInfoDto;
+import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.model.EducationInfo;
 import com.example.jobsearch.service.EducationInfoService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
 
             return educationInfoDtos;
         }
-        return null;
+        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
     }
 
     @Override

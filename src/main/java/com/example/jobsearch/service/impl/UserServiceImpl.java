@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(int id) {
-        User user = userDao.getUserById(id).orElseThrow(() -> new NoSuchElementException("Can not find user with id: " + id));
+        User user = userDao.getUserById(id).orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + id));
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -51,19 +51,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUserByName(String name) {
         List<User> users = userDao.getUsersByName(name);
-        return getUserDtos(users);
+        if (!users.isEmpty()) {
+            return getUserDtos(users);
+        }
+        throw new NoSuchElementException("Нет юзера с именем: " + name);
     }
 
     @Override
     public List<UserDto> getEmployee(String name, String surname, String email) {
         List<User> users = userDao.getEmployee(name, surname, email);
-        return getUserDtos(users);
+        if (!users.isEmpty()) {
+            return getUserDtos(users);
+        }
+        throw new NoSuchElementException("Нет совпадений соискателя по этим параметрам");
     }
 
     @Override
     public List<UserDto> getEmployer(String name) {
         List<User> users = userDao.getEmployer(name);
-        return getUserDtos(users);
+        if (!users.isEmpty()) {
+            return getUserDtos(users);
+        }
+        throw new NoSuchElementException("Нет совпадений работодателя с названием: " + name);
     }
 
     private List<UserDto> getUserDtos(List<User> users) {

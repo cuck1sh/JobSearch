@@ -2,7 +2,7 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.CategoryDao;
 import com.example.jobsearch.dto.CategoryDto;
-import com.example.jobsearch.exception.ResumeNotFoundException;
+import com.example.jobsearch.exception.CategoryNotFoundException;
 import com.example.jobsearch.model.Category;
 import com.example.jobsearch.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategoryById(int id) {
         Category category = categoryDao.getCategoryById(id)
-                .orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id:" + id));
+                .orElseThrow(() -> new CategoryNotFoundException("Can not find category with id:" + id));
 
         return CategoryDto.builder()
                 .id(category.getId())

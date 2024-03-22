@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @PostMapping("avatar")
-    public ResponseEntity<Void> uploadAvatar(UserAvatarDto avatarDto) {
+    public ResponseEntity<Void> uploadAvatar(@Valid UserAvatarDto avatarDto) {
         userService.uploadUserAvatar(avatarDto);
         return ResponseEntity.ok().build();
     }

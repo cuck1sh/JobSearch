@@ -22,6 +22,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorService.makeResponse(ex), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponseBody> runtimeException(RuntimeException ex) {
+        return new ResponseEntity<>(errorService.makeResponse(ex), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseBody> validationHandler(MethodArgumentNotValidException ex) {
         return new ResponseEntity<>(errorService.makeResponse(ex.getBindingResult()), HttpStatus.BAD_REQUEST);

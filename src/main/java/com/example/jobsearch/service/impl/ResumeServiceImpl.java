@@ -2,6 +2,7 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.ResumeDao;
 import com.example.jobsearch.dto.ResumeDto;
+import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Resume;
 import com.example.jobsearch.service.CategoryService;
@@ -39,7 +40,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public ResumeDto getResumeById(int id) throws UserNotFoundException {
-        Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new UserNotFoundException("Can not find resume with id: " + id));
+        Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
         return ResumeDto.builder()
                 .id(resume.getId())
                 .user(userService.getUserById(resume.getUserId()))
@@ -55,16 +56,23 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public List<ResumeDto> getResumesByCategory(String category) {
         List<Resume> resumes = resumeDao.getResumesByCategory(category);
-        return getResumeDtos(resumes);
+        if (!resumes.isEmpty()) {
+            return getResumeDtos(resumes);
+        }
+        throw new ResumeNotFoundException("Can not find resume with category: " + category);
     }
 
     @Override
     public List<ResumeDto> getResumesByUserEmail(String email) {
         List<Resume> resumes = resumeDao.getResumesByUserEmail(email);
-        return getResumeDtos(resumes);
+        if (!resumes.isEmpty()) {
+            return getResumeDtos(resumes);
+        }
+        throw new ResumeNotFoundException("Can not find resume with email: " + email);
     }
 
 
+    // Служебный метод
     private List<ResumeDto> getResumeDtos(List<Resume> resumes) {
         List<ResumeDto> dtos = new ArrayList<>();
         resumes.forEach(e -> dtos.add(ResumeDto.builder()
@@ -80,11 +88,13 @@ public class ResumeServiceImpl implements ResumeService {
         return dtos;
     }
 
+    // Служебный метод
     @Override
     public Boolean isResumeInSystem(int id) {
         return resumeDao.isResumeInSystem(id);
     }
 
+    // Служебный метод
     @SneakyThrows
     private boolean isEmployee(int userId) {
         return "Соискатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
@@ -110,8 +120,9 @@ public class ResumeServiceImpl implements ResumeService {
 
                 return HttpStatus.OK;
             }
+            throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
     }
 
     @Override
@@ -136,20 +147,26 @@ public class ResumeServiceImpl implements ResumeService {
 
                     return HttpStatus.OK;
                 }
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
             }
+            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new ResumeNotFoundException("Резюме с айди " + resume.getId() + " не найдено в системе");
     }
 
     @Override
     public HttpStatus deleteResumeById(int userId, int id) {
         if (isResumeInSystem(id)) {
             if (isEmployee(userId)) {
-                resumeDao.deleteResumeById(id);
-                return HttpStatus.OK;
+                if (userId == getResumeById(id).getUser().getId()) {
+                    resumeDao.deleteResumeById(id);
+                    return HttpStatus.OK;
+                }
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
             }
+            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе");
     }
 
     @Override

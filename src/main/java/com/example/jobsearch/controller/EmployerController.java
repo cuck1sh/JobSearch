@@ -33,9 +33,9 @@ public class EmployerController {
     private final RespondedApplicantsService respondedApplicantsService;
     private final UserService userService;
 
-    @PostMapping("vacancies")
-    public HttpStatus createVacancy(@RequestBody @Valid VacancyDto vacancy) {
-        return vacancyService.createVacancy(vacancy);
+    @PostMapping("{userId}/vacancies")
+    public HttpStatus createVacancy(@PathVariable int userId, @RequestBody @Valid VacancyDto vacancy) {
+        return vacancyService.createVacancy(userId, vacancy);
     }
 
     @PostMapping("{userId}/vacancies/change")

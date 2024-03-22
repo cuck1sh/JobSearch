@@ -2,6 +2,7 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.WorkExperienceInfoDao;
 import com.example.jobsearch.dto.WorkExperienceInfoDto;
+import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.model.WorkExperienceInfo;
 import com.example.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
 
             return workExperienceInfoDtos;
         }
-        return null;
+        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
     }
 
     @Override
