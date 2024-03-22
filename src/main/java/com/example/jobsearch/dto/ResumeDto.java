@@ -20,8 +20,13 @@ public class ResumeDto {
     private CategoryDto category;
     private Double salary;
 
+    @JsonProperty("work_experience_infos")
     private List<WorkExperienceInfoDto> workExperienceInfos;
+
+    @JsonProperty("education_infos")
     private List<EducationInfoDto> educationInfos;
+
+    private List<ContactsInfoDto> contacts;
 
     @JsonProperty("is_active")
     private Boolean isActive;

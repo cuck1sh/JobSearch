@@ -5,22 +5,31 @@ import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Resume;
 import com.example.jobsearch.service.CategoryService;
+import com.example.jobsearch.service.ContactsInfoService;
+import com.example.jobsearch.service.EducationInfoService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
+import com.example.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeDao resumeDao;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final EducationInfoService educationInfoService;
+    private final WorkExperienceInfoService workExperienceInfoService;
+    private final ContactsInfoService contactsInfoService;
 
     @Override
     public List<ResumeDto> getResumes() {
@@ -42,6 +51,7 @@ public class ResumeServiceImpl implements ResumeService {
                 .updateTime(resume.getUpdateTime())
                 .build();
     }
+
     @Override
     public List<ResumeDto> getResumesByCategory(String category) {
         List<Resume> resumes = resumeDao.getResumesByCategory(category);
@@ -70,31 +80,60 @@ public class ResumeServiceImpl implements ResumeService {
         return dtos;
     }
 
+    @Override
+    public Boolean isResumeInSystem(int id) {
+        return resumeDao.isResumeInSystem(id);
+    }
+
     @SneakyThrows
     private boolean isEmployee(int userId) {
         return "Соискатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
     }
 
     @Override
-    public HttpStatus createResume(ResumeDto resume) {
-        if (isEmployee(resume.getUser().getId())) {
-            resumeDao.createResume(resume);
-            return HttpStatus.OK;
+    public HttpStatus createResume(int userId, ResumeDto resume) {
+        if (isEmployee(userId)) {
+            if (isEmployee(resume.getUser().getId())) {
+                Resume newResume = Resume.builder()
+                        .userId(resume.getUser().getId())
+                        .name(resume.getName())
+                        .categoryId(resume.getCategory().getId())
+                        .salary(resume.getSalary())
+                        .isActive(resume.getIsActive())
+                        .createdDate(LocalDateTime.now())
+                        .build();
+                Integer newResumeKey = resumeDao.createResume(newResume);
+
+                educationInfoService.createEducationInfo(resume.getEducationInfos(), newResumeKey);
+                workExperienceInfoService.createWorkExperienceInfo(resume.getWorkExperienceInfos(), newResumeKey);
+                contactsInfoService.createContactInfo(resume.getContacts(), newResumeKey);
+
+                return HttpStatus.OK;
+            }
         }
         return HttpStatus.BAD_REQUEST;
-    }
-
-    @Override
-    public Boolean isResumeInSystem(int id) {
-        return resumeDao.isResumeInSystem(id);
     }
 
     @Override
     public HttpStatus changeResume(int userId, ResumeDto resume) {
         if (isResumeInSystem(resume.getId())) {
             if (isEmployee(userId)) {
-                if (isEmployee(resume.getUser().getId())) {
-                    resumeDao.changeResume(resume);
+                if (userId == resume.getUser().getId()) {
+                    Resume newResume = Resume.builder()
+                            .id(resume.getId())
+                            .userId(resume.getUser().getId())
+                            .name(resume.getName())
+                            .categoryId(resume.getCategory().getId())
+                            .salary(resume.getSalary())
+                            .isActive(resume.getIsActive())
+                            .updateTime(LocalDateTime.now())
+                            .build();
+
+                    resumeDao.changeResume(newResume);
+                    educationInfoService.changeEducationInfo(resume.getEducationInfos(), resume.getId());
+                    workExperienceInfoService.changeWorkExperienceInfo(resume.getWorkExperienceInfos(), resume.getId());
+                    contactsInfoService.changeContactInfo(resume.getContacts(), resume.getId());
+
                     return HttpStatus.OK;
                 }
             }

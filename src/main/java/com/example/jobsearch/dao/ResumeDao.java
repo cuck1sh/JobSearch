@@ -1,6 +1,5 @@
 package com.example.jobsearch.dao;
 
-import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.model.Resume;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.support.DataAccessUtils;
@@ -8,6 +7,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -65,19 +66,24 @@ public class ResumeDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), email);
     }
 
-    public void createResume(ResumeDto resume) {
+    public Integer createResume(Resume resume) {
         String sql = """
-                insert into resumes(user_id, name, category_id, salary, is_active, created_date, update_time)
-                values (:user_id, :name, :category_id, :salary, :is_active, :created_date, :update_time);
+                insert into resumes(user_id, name, category_id, salary, is_active, created_date)
+                values (:user_id, :name, :category_id, :salary, :is_active, :created_date);
                 """;
-        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
-                .addValue("user_id", resume.getUser().getId())
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("user_id", resume.getUserId())
                 .addValue("name", resume.getName())
-                .addValue("category_id", resume.getCategory().getId())
+                .addValue("category_id", resume.getCategoryId())
                 .addValue("salary", resume.getSalary())
                 .addValue("is_active", resume.getIsActive())
-                .addValue("created_date", resume.getCreatedDate())
-                .addValue("update_time", resume.getUpdateTime()));
+                .addValue("created_date", resume.getCreatedDate());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
+        return keyHolder.getKeyAs(Integer.class);
     }
 
     public Boolean isResumeInSystem(int id) {
@@ -94,20 +100,19 @@ public class ResumeDao {
         return template.queryForObject(sql, Boolean.class, id);
     }
 
-    public void changeResume(ResumeDto resume) {
+    public void changeResume(Resume resume) {
         String sql = """
                 update resumes
-                set user_id = :user_id, name = :name, category_id = :category_id, salary = :salary, is_active = :is_active, created_date = :created_date, update_time = :update_time
+                set name = :name, category_id = :category_id, salary = :salary, is_active = :is_active, update_time = :update_time
                 where id = :id;
                 """;
+
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("id", resume.getId())
-                .addValue("user_id", resume.getUser().getId())
                 .addValue("name", resume.getName())
-                .addValue("category_id", resume.getCategory().getId())
+                .addValue("category_id", resume.getCategoryId())
                 .addValue("salary", resume.getSalary())
                 .addValue("is_active", resume.getIsActive())
-                .addValue("created_date", resume.getCreatedDate())
                 .addValue("update_time", resume.getUpdateTime()));
     }
 

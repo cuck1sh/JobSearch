@@ -32,13 +32,13 @@ public class EmployeeController {
     private final RespondedApplicantsService respondedApplicantsService;
     private final UserService userService;
 
-    @PostMapping("resumes")
-    public HttpStatus createResume(@RequestBody ResumeDto resume) {
-        return resumeService.createResume(resume);
+    @PostMapping("{userId}/resumes")
+    public HttpStatus createResume(@PathVariable int userId, @RequestBody ResumeDto resume) {
+        return resumeService.createResume(userId, resume);
     }
 
 
-    @PostMapping("resumes/change/{userId}")
+    @PostMapping("{userId}/resumes/change")
     public HttpStatus changeResume(@PathVariable int userId, @RequestBody ResumeDto resume) {
         return resumeService.changeResume(userId, resume);
     }
