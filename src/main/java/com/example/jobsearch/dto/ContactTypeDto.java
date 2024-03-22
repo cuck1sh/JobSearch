@@ -1,6 +1,7 @@
 package com.example.jobsearch.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,11 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RespondedApplicantsDto {
+public class ContactTypeDto {
 
     @NotNull
-    private ResumeDto resume;
-    @NotNull
-    private VacancyDto vacancy;
-    private Boolean confirmation;
+    @Positive
+    private Integer id;
+
+    private String type;
 }

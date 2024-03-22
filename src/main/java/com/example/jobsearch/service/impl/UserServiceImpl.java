@@ -10,12 +10,14 @@ import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +32,6 @@ public class UserServiceImpl implements UserService {
         return getUserDtos(users);
     }
 
-    @SneakyThrows
     @Override
     public UserDto getUserById(int id) {
         User user = userDao.getUserById(id).orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + id));
@@ -50,19 +51,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUserByName(String name) {
         List<User> users = userDao.getUsersByName(name);
-        return getUserDtos(users);
+        if (!users.isEmpty()) {
+            return getUserDtos(users);
+        }
+        throw new NoSuchElementException("Нет юзера с именем: " + name);
     }
 
     @Override
-    public List<UserDto> getEmployee(String name, String surname) {
-        List<User> users = userDao.getEmployee(name, surname);
-        return getUserDtos(users);
+    public List<UserDto> getEmployee(String name, String surname, String email) {
+        List<User> users = userDao.getEmployee(name, surname, email);
+        if (!users.isEmpty()) {
+            return getUserDtos(users);
+        }
+        throw new NoSuchElementException("Нет совпадений соискателя по этим параметрам");
     }
 
     @Override
     public List<UserDto> getEmployer(String name) {
         List<User> users = userDao.getEmployer(name);
-        return getUserDtos(users);
+        if (!users.isEmpty()) {
+            return getUserDtos(users);
+        }
+        throw new NoSuchElementException("Нет совпадений работодателя с названием: " + name);
     }
 
     private List<UserDto> getUserDtos(List<User> users) {
@@ -148,32 +158,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeUserName(int id, String name) {
-        // TODO Реализовать смену имени
-    }
+    public HttpStatus changeUser(int userId, UserDto userDto) {
+        if (isUserInSystem(userId)) {
+            if (userId == userDto.getId()) {
+                User user = User.builder()
+                        .id(userDto.getId())
+                        .name(userDto.getName())
+                        .surname(userDto.getSurname())
+                        .age(userDto.getAge())
+                        .password(userDto.getPassword())
+                        .phoneNumber(userDto.getPhoneNumber())
+                        .accountType(userDto.getAccountType())
+                        .build();
 
-    @Override
-    public void changeUserSurname(int id, String surname) {
-        // TODO Реализовать смену фамилии
-    }
-
-    @Override
-    public void changeUserAge(int id, int age) {
-        // TODO Реализовать смену возраста
-    }
-
-    @Override
-    public void changeUserPassword(int id, String password) {
-        // TODO Реализовать смену пароля
-    }
-
-    @Override
-    public void changeUserPhoneNumber(int id, String PhoneNumber) {
-        // TODO Реализовать смену номера телефона
-    }
-
-    @Override
-    public void changeUserAvatar(int id, String path) {
-        // TODO Реализовать смену аватарки
+                userDao.changeUser(user);
+                return HttpStatus.OK;
+            }
+        }
+        return HttpStatus.BAD_REQUEST;
     }
 }

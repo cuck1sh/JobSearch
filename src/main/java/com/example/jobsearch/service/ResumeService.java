@@ -13,13 +13,10 @@ public interface ResumeService {
     List<ResumeDto> getResumesByCategory(String category);
     List<ResumeDto> getResumesByUserEmail(String email);
 
-    HttpStatus createResume(ResumeDto resume);
+    HttpStatus createResume(int userId, ResumeDto resume);
     Boolean isResumeInSystem(int id);
-    HttpStatus changeResumeName(int id, String name);
-    HttpStatus changeResumeCategory(int id, String category);
-    HttpStatus changeResumeSalary(int id, Double salary);
-    HttpStatus changeResumeActive(int id, Boolean status);
-    HttpStatus deleteResumeById(int id);
+
+    HttpStatus deleteResumeById(int userId, int id);
 
     List<ResumeDto> getActiveResumes(int userId);
 

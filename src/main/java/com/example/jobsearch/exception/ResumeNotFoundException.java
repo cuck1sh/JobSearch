@@ -1,9 +1,8 @@
 package com.example.jobsearch.exception;
 
-public class ResumeNotFoundException extends Exception {
-    public ResumeNotFoundException() {
-    }
+import java.util.NoSuchElementException;
 
+public class ResumeNotFoundException extends NoSuchElementException {
     public ResumeNotFoundException(String message) {
         super(message);
     }

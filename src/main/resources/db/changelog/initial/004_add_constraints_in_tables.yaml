@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-constraint-in-contacts_info
+      author: Egor Kirin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: resume_id
+            baseTableName: contacts_info
+            constraintName: fk_resumes_to_contacts_info
+            referencedColumnNames: id
+            referencedTableName: resumes
+            onUpdate: CASCADE
+            onDelete: CASCADE
+  - changeSet:
+      id: add-constraint-in-work_experience_info
+      author: Egor Kirin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: resume_id
+            baseTableName: work_experience_info
+            constraintName: fk_resumes_to_work_experience_info
+            referencedColumnNames: id
+            referencedTableName: resumes
+            onUpdate: CASCADE
+            onDelete: CASCADE
+  - changeSet:
+      id: add-constraint-in-education_info
+      author: Egor Kirin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: resume_id
+            baseTableName: education_info
+            constraintName: fk_resumes_to_education_info
+            referencedColumnNames: id
+            referencedTableName: resumes
+            onUpdate: CASCADE
+            onDelete: CASCADE
+  - changeSet:
+      id: add-resumes-constraint-in-responded_applicants
+      author: Egor Kirin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: resume_id
+            baseTableName: responded_applicants
+            constraintName: fk_resumes_to_responded_applicants
+            referencedColumnNames: id
+            referencedTableName: resumes
+            onUpdate: CASCADE
+            onDelete: CASCADE
+  - changeSet:
+      id: add-vacancies-constraint-in-responded_applicants
+      author: Egor Kirin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: vacancy_id
+            baseTableName: responded_applicants
+            constraintName: fk_vacancies_to_responded_applicants
+            referencedColumnNames: id
+            referencedTableName: vacancies
+            onUpdate: CASCADE
+            onDelete: CASCADE
+  - changeSet:
+      id: add-constraint-in-messages
+      author: Egor Kirin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: responded_applicants_id
+            baseTableName: messages
+            constraintName: fk_responded_applicants_to_messages
+            referencedColumnNames: id
+            referencedTableName: responded_applicants
+            onUpdate: CASCADE
+            onDelete: CASCADE

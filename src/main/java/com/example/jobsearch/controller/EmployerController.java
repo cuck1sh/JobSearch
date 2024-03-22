@@ -8,6 +8,7 @@ import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,49 +33,19 @@ public class EmployerController {
     private final RespondedApplicantsService respondedApplicantsService;
     private final UserService userService;
 
-    @PostMapping("vacancies")
-    public HttpStatus createVacancy(@RequestBody VacancyDto vacancy) {
-        return vacancyService.createVacancy(vacancy);
+    @PostMapping("{userId}/vacancies")
+    public HttpStatus createVacancy(@PathVariable int userId, @RequestBody @Valid VacancyDto vacancy) {
+        return vacancyService.createVacancy(userId, vacancy);
     }
 
-    @PostMapping("vacancies/change/{userId}")
-    public HttpStatus changeVacancy(@PathVariable int userId, VacancyDto vacancy) {
+    @PostMapping("{userId}/vacancies/change")
+    public HttpStatus changeVacancy(@PathVariable int userId, @RequestBody @Valid VacancyDto vacancy) {
         return vacancyService.changeVacancy(userId, vacancy);
     }
 
-    @PostMapping("vacancies/{id}/name")
-    public HttpStatus changeVacancyName(@PathVariable int id, String name) {
-        return vacancyService.changeVacancyName(id, name);
-    }
-
-    @PostMapping("vacancies/{id}/description")
-    public HttpStatus changeVacancyDescription(@PathVariable int id, String description) {
-        return vacancyService.changeVacancyDescription(id, description);
-    }
-
-    @PostMapping("vacancies/{id}/category")
-    public HttpStatus changeVacancyCategory(@PathVariable int id, String category) {
-        return vacancyService.changeVacancyCategory(id, category);
-    }
-
-    @PostMapping("vacancies/{id}/salary")
-    public HttpStatus changeVacancySalary(@PathVariable int id, Double salary) {
-        return vacancyService.changeVacancySalary(id, salary);
-    }
-
-    @PostMapping("vacancies/{id}/exp")
-    public HttpStatus changeVacancyExp(@PathVariable int id, int expFrom, int expTo) {
-        return vacancyService.changeVacancyExp(id, expFrom, expTo);
-    }
-
-    @PostMapping("vacancies/{id}/active")
-    public HttpStatus changeVacancyActive(@PathVariable int id, boolean isActive) {
-        return vacancyService.changeVacancyActive(id, isActive);
-    }
-
-    @DeleteMapping("vacancies/{id}")
-    public HttpStatus delete(@PathVariable int id) {
-        return vacancyService.delete(id);
+    @DeleteMapping("{userId}/vacancies/{id}")
+    public HttpStatus delete(@PathVariable int userId, @PathVariable int id) {
+        return vacancyService.delete(userId, id);
     }
 
     @GetMapping("vacancies")
@@ -99,8 +70,8 @@ public class EmployerController {
     }
 
     @PostMapping("employee")
-    public ResponseEntity<List<UserDto>> getEmployee(String name, String surname) {
-        List<UserDto> users = userService.getEmployee(name, surname);
+    public ResponseEntity<List<UserDto>> getEmployee(String name, String surname, String email) {
+        List<UserDto> users = userService.getEmployee(name, surname, email);
         return ResponseEntity.ok(users);
     }
 

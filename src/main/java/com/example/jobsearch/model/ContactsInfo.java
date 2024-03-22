@@ -13,5 +13,5 @@ public class ContactsInfo {
     private Integer id;
     private Integer typeId;
     private Integer resumeId;
-    private String value;
+    private String info;
 }

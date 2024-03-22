@@ -8,6 +8,7 @@ import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,41 +33,20 @@ public class EmployeeController {
     private final RespondedApplicantsService respondedApplicantsService;
     private final UserService userService;
 
-    @PostMapping("resumes")
-    public HttpStatus createResume(@RequestBody ResumeDto resume) {
-        return resumeService.createResume(resume);
+    @PostMapping("{userId}/resumes")
+    public HttpStatus createResume(@PathVariable int userId, @RequestBody @Valid ResumeDto resume) {
+        return resumeService.createResume(userId, resume);
     }
 
 
-    @PostMapping("resumes/change/{userId}")
-    public HttpStatus changeResume(@PathVariable int userId, ResumeDto resume) {
+    @PostMapping("{userId}/resumes/change")
+    public HttpStatus changeResume(@PathVariable int userId, @RequestBody @Valid ResumeDto resume) {
         return resumeService.changeResume(userId, resume);
     }
 
-
-    @PostMapping("resumes/{id}/name")
-    public HttpStatus changeName(@PathVariable int id, String name) {
-        return resumeService.changeResumeName(id, name);
-    }
-
-    @PostMapping("resumes/{id}/category")
-    public HttpStatus changeCategory(@PathVariable int id, String category) {
-        return resumeService.changeResumeCategory(id, category);
-    }
-
-    @PostMapping("resumes/{id}/salary")
-    public HttpStatus changeSalary(@PathVariable int id, Double salary) {
-        return resumeService.changeResumeSalary(id, salary);
-    }
-
-    @PostMapping("resumes/{id}/active")
-    public HttpStatus changeActive(@PathVariable int id, Boolean isActive) {
-        return resumeService.changeResumeActive(id, isActive);
-    }
-
-    @DeleteMapping("resumes/{id}")
-    public HttpStatus deleteResumeById(@PathVariable int id) {
-        return resumeService.deleteResumeById(id);
+    @DeleteMapping("{userId}/resumes/{id}")
+    public HttpStatus deleteResumeById(@PathVariable int userId, @PathVariable int id) {
+        return resumeService.deleteResumeById(userId, id);
     }
 
     @GetMapping("vacancies")

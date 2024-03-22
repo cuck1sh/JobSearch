@@ -41,7 +41,7 @@ databaseChangeLog:
               - column:
                   name: avatar
                   type: text
-                  defaultValue: './images/default.png'
+                  defaultValue: 'images/default.png'
               - column:
                   name: account_type
                   type: varchar(50)
@@ -133,11 +133,11 @@ databaseChangeLog:
                   name: type
                   type: text
   - changeSet:
-      id: create-contact_info-table
+      id: create-contacts_info-table
       author: Egor Kirin
       changes:
         - createTable:
-            tableName: contact_info
+            tableName: contacts_info
             columns:
               - column:
                   name: id
@@ -150,16 +150,16 @@ databaseChangeLog:
                   name: type_id
                   type: int
                   constraints:
-                    foreignKeyName: fk_contact_types_to_contact_info
+                    foreignKeyName: fk_contact_types_to_contacts_info
                     references: contact_types(id)
               - column:
                   name: resume_id
                   type: int
                   constraints:
-                    foreignKeyName: fk_resumes_to_contact_info
+                    foreignKeyName: fk_resumes_to_contacts_info
                     references: resumes(id)
               - column:
-                  name: value
+                  name: info
                   type: text
                   constraints:
                     nullable: false

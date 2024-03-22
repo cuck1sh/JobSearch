@@ -2,7 +2,9 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.RespondedApplicantsDao;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
+import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
+import com.example.jobsearch.exception.VacancyNotFoundException;
 import com.example.jobsearch.model.RespondedApplicants;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
@@ -50,22 +52,26 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     @SneakyThrows
     @Override
     public List<RespondedApplicantsDto> getResponsesForResume(int resumeId) {
-        if (isEmployee(resumeService.getResumeById(resumeId).getUser().getId())) {
-            List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForResume(resumeId);
-            return getRespondedApplicantsDtos(applicants);
+        if (resumeService.isResumeInSystem(resumeId)) {
+            if (isEmployee(resumeService.getResumeById(resumeId).getUser().getId())) {
+                List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForResume(resumeId);
+                return getRespondedApplicantsDtos(applicants);
+            }
+            throw new ResumeNotFoundException("Юзер " + resumeService.getResumeById(resumeId).getUser().getId() + " не найден среди соискателей");
         }
-        log.error("vacancy check by non-employee");
-        return null;
+        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
     }
 
     @Override
     public List<RespondedApplicantsDto> getResponsesForEmployee(int userId) {
-        if (isEmployee(userId)) {
-            List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForEmployee(userId);
-            return getRespondedApplicantsDtos(applicants);
+        if (userService.isUserInSystem(userId)) {
+            if (isEmployee(userId)) {
+                List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForEmployee(userId);
+                return getRespondedApplicantsDtos(applicants);
+            }
+            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
         }
-        log.error("vacancy check by non-employee");
-        return null;
+        throw new UserNotFoundException("Не найден юзер с айди: " + userId);
     }
 
     @Override
@@ -74,8 +80,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
             List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForEmployer(userId);
             return getRespondedApplicantsDtos(applicants);
         }
-        log.error("vacancy check by non-employer");
-        return null;
+        throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
     }
 
     private List<RespondedApplicantsDto> getRespondedApplicantsDtos(List<RespondedApplicants> applicants) {

@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: delete-constraint-in-contacts_info
+      author: Egor Kirin
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: contacts_info
+            constraintName: fk_resumes_to_contacts_info
+  - changeSet:
+      id: delete-constraint-in-work_experience_info
+      author: Egor Kirin
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: work_experience_info
+            constraintName: fk_resumes_to_work_experience_info
+  - changeSet:
+      id: delete-constraint-in-education_info
+      author: Egor Kirin
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: education_info
+            constraintName: fk_resumes_to_education_info
+  - changeSet:
+      id: delete-resumes-constraint-in-responded_applicants
+      author: Egor Kirin
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: responded_applicants
+            constraintName: fk_resumes_to_responded_applicants
+  - changeSet:
+      id: delete-vacancies-constraint-in-responded_applicants
+      author: Egor Kirin
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: responded_applicants
+            constraintName: fk_vacancies_to_responded_applicants
+  - changeSet:
+      id: delete-constraint-in-messages
+      author: Egor Kirin
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: messages
+            constraintName: fk_responded_applicants_to_messages
