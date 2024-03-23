@@ -11,9 +11,10 @@ public interface VacancyService {
 
     VacancyDto getVacancyById(int id) throws UserNotFoundException;
     List<VacancyDto> getVacancies();
-
     HttpStatus createVacancy(int userId, VacancyDto vacancy);
     Boolean isVacancyInSystem(int id);
+
+    Boolean isVacancyActive(int vacancyId);
     HttpStatus delete(int userId, int id);
     List<VacancyDto> getAllVacanciesByCompany(int userId);
     List<VacancyDto> getVacanciesByCategory(String category);

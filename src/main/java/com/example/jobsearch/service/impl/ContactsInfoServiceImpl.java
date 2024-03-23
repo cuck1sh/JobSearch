@@ -34,7 +34,7 @@ public class ContactsInfoServiceImpl implements ContactsInfoService {
         if (!contactsInfoDto.isEmpty()) {
             List<ContactsInfo> contactsInfos = new ArrayList<>();
             contactsInfoDto.forEach(e -> contactsInfos.add(ContactsInfo.builder()
-                    .typeId(e.getType().getId())
+                    .typeId(contactTypesService.isTypeInBase(e.getType().getId()))
                     .resumeId(newResumeKey)
                     .info(e.getInfo())
                     .build()));
@@ -48,7 +48,7 @@ public class ContactsInfoServiceImpl implements ContactsInfoService {
         if (!contactsInfoDtos.isEmpty()) {
             List<ContactsInfo> contactsInfos = new ArrayList<>();
             contactsInfoDtos.forEach(e -> contactsInfos.add(ContactsInfo.builder()
-                    .typeId(e.getType().getId())
+                    .typeId(contactTypesService.isTypeInBase(e.getType().getId()))
                     .resumeId(resumeId)
                     .info(e.getInfo())
                     .build()));

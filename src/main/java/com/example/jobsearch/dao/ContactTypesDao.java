@@ -20,4 +20,18 @@ public class ContactTypesDao {
 
         return template.queryForObject(sql, new BeanPropertyRowMapper<>(ContactType.class), id);
     }
+
+    public Boolean isTypeInBase(int id) {
+        String sql = """
+                select case
+                when exists(select *
+                            from CONTACT_TYPES
+                            where id = ?)
+                    then true
+                else false
+                end;
+                """;
+
+        return template.queryForObject(sql, Boolean.class, id);
+    }
 }

@@ -6,6 +6,7 @@ import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.UserAvatar;
+import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final FileUtil fileUtil;
+    private final CategoryService categoryService;
 
     @Override
     public List<UserDto> getUsers() {
@@ -92,7 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByPhone(String phone) throws UserNotFoundException {
+    public UserDto getUserByPhone(String phone) {
         User user = userDao.getUserByPhone(phone).orElseThrow(() -> new UserNotFoundException("Can not find user with phone: " + phone));
         return UserDto.builder()
                 .id(user.getId())
@@ -108,7 +110,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByEmail(String email) throws UserNotFoundException {
+    public UserDto getUserByEmail(String email) {
         User user = userDao.getUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Can not find user with email: " + email));
         return UserDto.builder()
                 .id(user.getId())
@@ -153,8 +155,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(UserDto user) {
-        userDao.createUser(user);
+    public Boolean isEmployee(String userEmail) {
+        return "Соискатель".equalsIgnoreCase(getUserByEmail(userEmail).getAccountType());
+    }
+
+    @Override
+    public Boolean isEmployee(int userId) {
+        return "Соискатель".equalsIgnoreCase(getUserById(userId).getAccountType());
+    }
+
+    @Override
+    public HttpStatus createUser(UserDto userDto) {
+        if (!isUserInSystem(userDto.getEmail())) {
+            if (userDto.getAccountType().equals("Работодатель") || userDto.getAccountType().equals("Соискатель")) {
+                User user = User.builder()
+                        .name(userDto.getName())
+                        .surname(userDto.getSurname())
+                        .age(userDto.getAge())
+                        .email(userDto.getEmail())
+                        .password(userDto.getPassword())
+                        .phoneNumber(userDto.getPhoneNumber())
+                        .accountType(userDto.getAccountType())
+                        .build();
+                userDao.createUser(user);
+                return HttpStatus.OK;
+            }
+            throw new UserNotFoundException("Категория '" + userDto.getAccountType() + "' не найдена в списке доступных");
+        }
+        throw new RuntimeException("Пользователь с таким Email уже существует");
     }
 
     @Override
@@ -168,13 +196,13 @@ public class UserServiceImpl implements UserService {
                         .age(userDto.getAge())
                         .password(userDto.getPassword())
                         .phoneNumber(userDto.getPhoneNumber())
-                        .accountType(userDto.getAccountType())
                         .build();
 
                 userDao.changeUser(user);
                 return HttpStatus.OK;
             }
+            throw new UserNotFoundException("Не найдено соответствие айди юзера и айди изменяемого профиля");
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new UserNotFoundException("Не найден юзер с айди: " + userId);
     }
 }

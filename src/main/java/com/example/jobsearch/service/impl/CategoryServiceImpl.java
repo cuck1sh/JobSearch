@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -34,5 +36,18 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryDao.getParentCategory(id);
         }
         return null;
+    }
+
+    @Override
+    public List<String> getAllCategories() {
+        return categoryDao.getAllCategories();
+    }
+
+    @Override
+    public Integer checkInCategories(int categoryId) {
+        if (categoryDao.isCategoryInSystem(categoryId)) {
+            return categoryId;
+        }
+        throw new CategoryNotFoundException("Не найдена категория с айди: " + categoryId);
     }
 }

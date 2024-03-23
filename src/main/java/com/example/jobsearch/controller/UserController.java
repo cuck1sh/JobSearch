@@ -2,6 +2,7 @@ package com.example.jobsearch.controller;
 
 import com.example.jobsearch.dto.UserAvatarDto;
 import com.example.jobsearch.dto.UserDto;
+import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final CategoryService categoryService;
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getUsers() {
@@ -31,6 +33,11 @@ public class UserController {
     @GetMapping("{id}")
     public ResponseEntity<?> getUserById(@PathVariable int id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("categories")
+    public ResponseEntity<?> getCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("name")
@@ -56,8 +63,7 @@ public class UserController {
 
     @PostMapping
     public HttpStatus createUser(@RequestBody @Valid UserDto user) {
-        userService.createUser(user);
-        return HttpStatus.OK;
+        return userService.createUser(user);
     }
 
     @PostMapping("avatar")

@@ -69,8 +69,10 @@ public class EmployerController {
         return ResponseEntity.ok(respondedApplicantsService.getResponsesForVacancy(vacancyId));
     }
 
+
+    // Проверить способ написания
     @PostMapping("employee")
-    public ResponseEntity<List<UserDto>> getEmployee(String name, String surname, String email) {
+    public ResponseEntity<List<UserDto>> getEmployee(@RequestBody String name, @RequestBody String surname, @RequestBody String email) {
         List<UserDto> users = userService.getEmployee(name, surname, email);
         return ResponseEntity.ok(users);
     }

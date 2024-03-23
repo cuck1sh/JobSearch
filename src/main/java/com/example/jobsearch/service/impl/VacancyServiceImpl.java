@@ -13,6 +13,7 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,21 +76,33 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     // Служебный метод
-    @SneakyThrows
-    private boolean isEmployer(int userId) {
-        return "Работодатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
-    }
-
-    // Служебный метод
     @Override
     public Boolean isVacancyInSystem(int id) {
         return vacancyDao.isVacancyInSystem(id);
     }
 
+    // Служебный метод
     @Override
-    public HttpStatus createVacancy(int userId, VacancyDto vacancy) {
-        if (isEmployer(userId)) {
-            if (userId == vacancy.getUserId()) {
+    public Boolean isVacancyActive(int vacancyId) {
+        return vacancyDao.isVacancyActive(vacancyId);
+    }
+
+    @Override
+    public HttpStatus createVacancy(int userId, VacancyDto vacancyDto) {
+        if (!userService.isEmployee(userId)) {
+            if (userId == vacancyDto.getUserId()) {
+                Vacancy vacancy = Vacancy.builder()
+                        .name(vacancyDto.getName())
+                        .description(vacancyDto.getDescription())
+                        .categoryId(vacancyDto.getCategoryId())
+                        .salary(vacancyDto.getSalary())
+                        .expFrom(vacancyDto.getExpFrom())
+                        .expTo(vacancyDto.getExpTo())
+                        .isActive(vacancyDto.getIsActive())
+                        .userId(userId)
+                        .createdDate(LocalDateTime.now())
+                        .build();
+
                 vacancyDao.createVacancy(vacancy);
                 return HttpStatus.OK;
             }
@@ -100,10 +113,22 @@ public class VacancyServiceImpl implements VacancyService {
 
     @SneakyThrows
     @Override
-    public HttpStatus changeVacancy(int userId, VacancyDto vacancy) {
-        if (isVacancyInSystem(vacancy.getId())) {
-            if (isEmployer(userId)) {
-                if (userId == vacancy.getUserId()) {
+    public HttpStatus changeVacancy(int userId, VacancyDto vacancyDto) {
+        if (isVacancyInSystem(vacancyDto.getId())) {
+            if (!userService.isEmployee(userId)) {
+                if (userId == vacancyDto.getUserId()) {
+                    Vacancy vacancy = Vacancy.builder()
+                            .id(vacancyDto.getId())
+                            .name(vacancyDto.getName())
+                            .description(vacancyDto.getDescription())
+                            .categoryId(vacancyDto.getCategoryId())
+                            .salary(vacancyDto.getSalary())
+                            .expFrom(vacancyDto.getExpFrom())
+                            .expTo(vacancyDto.getExpTo())
+                            .isActive(vacancyDto.getIsActive())
+                            .updateTime(LocalDateTime.now())
+                            .build();
+
                     vacancyDao.changeVacancy(vacancy);
                     return HttpStatus.OK;
                 }
@@ -111,14 +136,14 @@ public class VacancyServiceImpl implements VacancyService {
             }
             throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
         }
-        throw new ResumeNotFoundException("Вакансия с айди " + vacancy.getId() + " не найдена в системе");
+        throw new ResumeNotFoundException("Вакансия с айди " + vacancyDto.getId() + " не найдена в системе");
     }
 
     @SneakyThrows
     @Override
     public HttpStatus delete(int userId, int id) {
         if (isVacancyInSystem(id)) {
-            if (isEmployer(userId)) {
+            if (!userService.isEmployee(userId)) {
                 if (userId == getVacancyById(id).getUserId()) {
                     vacancyDao.delete(id);
                     return HttpStatus.OK;

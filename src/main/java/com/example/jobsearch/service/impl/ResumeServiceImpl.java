@@ -12,7 +12,6 @@ import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ public class ResumeServiceImpl implements ResumeService {
         Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
         return ResumeDto.builder()
                 .id(resume.getId())
-                .user(userService.getUserById(resume.getUserId()))
+                .userEmail(userService.getUserById(resume.getUserId()).getEmail())
                 .name(resume.getName())
                 .category(categoryService.getCategoryById(resume.getCategoryId()))
                 .salary(resume.getSalary())
@@ -77,7 +76,7 @@ public class ResumeServiceImpl implements ResumeService {
         List<ResumeDto> dtos = new ArrayList<>();
         resumes.forEach(e -> dtos.add(ResumeDto.builder()
                 .id(e.getId())
-                .user(userService.getUserById(e.getUserId()))
+                .userEmail(userService.getUserById(e.getUserId()).getEmail())
                 .name(e.getName())
                 .category(categoryService.getCategoryById(e.getCategoryId()))
                 .salary(e.getSalary())
@@ -94,20 +93,14 @@ public class ResumeServiceImpl implements ResumeService {
         return resumeDao.isResumeInSystem(id);
     }
 
-    // Служебный метод
-    @SneakyThrows
-    private boolean isEmployee(int userId) {
-        return "Соискатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
-    }
-
     @Override
     public HttpStatus createResume(int userId, ResumeDto resume) {
-        if (isEmployee(userId)) {
-            if (isEmployee(resume.getUser().getId())) {
+        if (userService.isEmployee(userId)) {
+            if (userService.isEmployee(resume.getUserEmail())) {
                 Resume newResume = Resume.builder()
-                        .userId(resume.getUser().getId())
+                        .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
                         .name(resume.getName())
-                        .categoryId(resume.getCategory().getId())
+                        .categoryId(categoryService.checkInCategories(resume.getCategory().getId()))
                         .salary(resume.getSalary())
                         .isActive(resume.getIsActive())
                         .createdDate(LocalDateTime.now())
@@ -128,13 +121,13 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public HttpStatus changeResume(int userId, ResumeDto resume) {
         if (isResumeInSystem(resume.getId())) {
-            if (isEmployee(userId)) {
-                if (userId == resume.getUser().getId()) {
+            if (userService.isEmployee(userId)) {
+                if (userId == userService.getUserByEmail(resume.getUserEmail()).getId()) {
                     Resume newResume = Resume.builder()
                             .id(resume.getId())
-                            .userId(resume.getUser().getId())
+                            .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
                             .name(resume.getName())
-                            .categoryId(resume.getCategory().getId())
+                            .categoryId(categoryService.checkInCategories(resume.getCategory().getId()))
                             .salary(resume.getSalary())
                             .isActive(resume.getIsActive())
                             .updateTime(LocalDateTime.now())
@@ -157,8 +150,8 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public HttpStatus deleteResumeById(int userId, int id) {
         if (isResumeInSystem(id)) {
-            if (isEmployee(userId)) {
-                if (userId == getResumeById(id).getUser().getId()) {
+            if (userService.isEmployee(userId)) {
+                if (userId == userService.getUserByEmail(getResumeById(id).getUserEmail()).getId()) {
                     resumeDao.deleteResumeById(id);
                     return HttpStatus.OK;
                 }

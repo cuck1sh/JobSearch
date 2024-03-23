@@ -1,8 +1,8 @@
 package com.example.jobsearch.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +19,10 @@ import java.util.List;
 public class ResumeDto {
     private Integer id;
 
-    @NotNull
-    private UserDto user;
+    @NotBlank
+    @Email
+    @JsonProperty("user_email")
+    private String userEmail;
 
     @NotBlank
     private String name;

@@ -54,6 +54,16 @@ public class EmployeeController {
         return ResponseEntity.ok(vacancyService.getVacancies());
     }
 
+    @GetMapping("vacancies/active/{id}")
+    public ResponseEntity<Boolean> isVacancyActive(@PathVariable int id) {
+        return ResponseEntity.ok(vacancyService.isVacancyActive(id));
+    }
+
+    @PostMapping("{userId}/vacancies/{vacancyId}")
+    public HttpStatus sendResponse(@PathVariable int userId, @PathVariable int vacancyId, @RequestBody Integer resumeId) {
+        return respondedApplicantsService.sendResponseForVacancy(userId, vacancyId, resumeId);
+    }
+
     @GetMapping("vacancies/category")
     public ResponseEntity<List<VacancyDto>> getVacanciesByCategory(@RequestParam(name = "name") String name) {
         return ResponseEntity.ok(vacancyService.getVacanciesByCategory(name));

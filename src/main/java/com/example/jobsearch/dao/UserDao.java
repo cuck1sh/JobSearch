@@ -1,6 +1,5 @@
 package com.example.jobsearch.dao;
 
-import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.UserAvatar;
 import lombok.RequiredArgsConstructor;
@@ -121,7 +120,7 @@ public class UserDao {
         return template.queryForObject(sql, Boolean.class, id);
     }
 
-    public void createUser(UserDto user) {
+    public void createUser(User user) {
         String sql = """
                 insert into users(name, surname, age, email, password, phone_number, account_type)
                 values (:name, :surname, :age, :email, :password, :phone_number, :account_type);
