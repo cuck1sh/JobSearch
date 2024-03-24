@@ -38,7 +38,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
 
     @Override
     public List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId) {
-        if (!userService.isEmployee(vacancyService.getVacancyById(vacancyId).getUserId())) {
+        if (!userService.isEmployee(vacancyService.getVacancyById(vacancyId).getUserEmail())) {
             List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForVacancy(vacancyId);
             return getRespondedApplicantsDtos(applicants);
         }

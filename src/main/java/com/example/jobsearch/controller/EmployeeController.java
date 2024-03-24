@@ -83,8 +83,6 @@ public class EmployeeController {
     @PostMapping("employer")
     public ResponseEntity<List<UserDto>> getEmployer(@RequestBody String name) {
         return ResponseEntity.ok(userService.getEmployer(name));
-
     }
-
 
 }

@@ -6,11 +6,13 @@ import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.exception.VacancyNotFoundException;
 import com.example.jobsearch.model.Vacancy;
+import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ import java.util.List;
 public class VacancyServiceImpl implements VacancyService {
     private final VacancyDao vacancyDao;
     private final UserService userService;
+    private final CategoryService categoryService;
 
     @Override
     public VacancyDto getVacancyById(int id) throws UserNotFoundException {
@@ -30,12 +33,12 @@ public class VacancyServiceImpl implements VacancyService {
                 .id(vacancy.getId())
                 .name(vacancy.getName())
                 .description(vacancy.getDescription())
-                .categoryId(vacancy.getCategoryId())
+                .category(categoryService.getCategoryById(vacancy.getCategoryId()))
                 .salary(vacancy.getSalary())
                 .expFrom(vacancy.getExpFrom())
                 .expTo(vacancy.getExpTo())
                 .isActive(vacancy.getIsActive())
-                .userId(vacancy.getUserId())
+                .userEmail(userService.getUserById(vacancy.getUserId()).getEmail())
                 .createdDate(vacancy.getCreatedDate())
                 .updateTime(vacancy.getUpdateTime())
                 .build();
@@ -63,12 +66,12 @@ public class VacancyServiceImpl implements VacancyService {
                 .id(e.getId())
                 .name(e.getName())
                 .description(e.getDescription())
-                .categoryId(e.getCategoryId())
+                .category(categoryService.getCategoryById(e.getCategoryId()))
                 .salary(e.getSalary())
                 .expFrom(e.getExpFrom())
                 .expTo(e.getExpTo())
                 .isActive(e.getIsActive())
-                .userId(e.getUserId())
+                .userEmail(userService.getUserById(e.getUserId()).getEmail())
                 .createdDate(e.getCreatedDate())
                 .updateTime(e.getUpdateTime())
                 .build()));
@@ -88,69 +91,73 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public HttpStatus createVacancy(int userId, VacancyDto vacancyDto) {
-        if (!userService.isEmployee(userId)) {
-            if (userId == vacancyDto.getUserId()) {
+    public HttpStatus createVacancy(Authentication auth, VacancyDto vacancyDto) {
+        User user = (User) auth.getPrincipal();
+        if (!userService.isEmployee(user.getUsername())) {
+            if (user.getUsername().equals(vacancyDto.getUserEmail())) {
                 Vacancy vacancy = Vacancy.builder()
                         .name(vacancyDto.getName())
                         .description(vacancyDto.getDescription())
-                        .categoryId(vacancyDto.getCategoryId())
+                        .categoryId(categoryService.checkInCategories(vacancyDto.getCategory().getId()))
                         .salary(vacancyDto.getSalary())
                         .expFrom(vacancyDto.getExpFrom())
                         .expTo(vacancyDto.getExpTo())
                         .isActive(vacancyDto.getIsActive())
-                        .userId(userId)
+                        .userId(userService.getUserByEmail(user.getUsername()).getId())
                         .createdDate(LocalDateTime.now())
                         .build();
 
                 vacancyDao.createVacancy(vacancy);
                 return HttpStatus.OK;
             }
-            throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в вакансии");
+            throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в вакансии");
         }
-        throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
+        throw new VacancyNotFoundException("Юзер " + user.getUsername() + " не найден среди работодателей");
     }
 
-    @SneakyThrows
     @Override
-    public HttpStatus changeVacancy(int userId, VacancyDto vacancyDto) {
-        if (isVacancyInSystem(vacancyDto.getId())) {
-            if (!userService.isEmployee(userId)) {
-                if (userId == vacancyDto.getUserId()) {
-                    Vacancy vacancy = Vacancy.builder()
-                            .id(vacancyDto.getId())
-                            .name(vacancyDto.getName())
-                            .description(vacancyDto.getDescription())
-                            .categoryId(vacancyDto.getCategoryId())
-                            .salary(vacancyDto.getSalary())
-                            .expFrom(vacancyDto.getExpFrom())
-                            .expTo(vacancyDto.getExpTo())
-                            .isActive(vacancyDto.getIsActive())
-                            .updateTime(LocalDateTime.now())
-                            .build();
+    public HttpStatus changeVacancy(Authentication auth, VacancyDto vacancyDto) {
+        User user = (User) auth.getPrincipal();
+        if (vacancyDto.getId() != null) {
+            if (isVacancyInSystem(vacancyDto.getId())) {
+                if (!userService.isEmployee(user.getUsername())) {
+                    if (user.getUsername().equals(vacancyDto.getUserEmail())) {
+                        Vacancy vacancy = Vacancy.builder()
+                                .id(vacancyDto.getId())
+                                .name(vacancyDto.getName())
+                                .description(vacancyDto.getDescription())
+                                .categoryId(categoryService.checkInCategories(vacancyDto.getCategory().getId()))
+                                .salary(vacancyDto.getSalary())
+                                .expFrom(vacancyDto.getExpFrom())
+                                .expTo(vacancyDto.getExpTo())
+                                .isActive(vacancyDto.getIsActive())
+                                .updateTime(LocalDateTime.now())
+                                .build();
 
-                    vacancyDao.changeVacancy(vacancy);
-                    return HttpStatus.OK;
+                        vacancyDao.changeVacancy(vacancy);
+                        return HttpStatus.OK;
+                    }
+                    throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в вакансии");
                 }
-                throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в вакансии");
+                throw new VacancyNotFoundException("Юзер " + user.getUsername() + " не найден среди работодателей");
             }
-            throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
+            throw new VacancyNotFoundException("Вакансия с айди " + vacancyDto.getId() + " не найдена в системе");
         }
-        throw new ResumeNotFoundException("Вакансия с айди " + vacancyDto.getId() + " не найдена в системе");
+        throw new VacancyNotFoundException("Айди изменяемой вакансии не указан");
     }
 
-    @SneakyThrows
     @Override
-    public HttpStatus delete(int userId, int id) {
+    public HttpStatus delete(Authentication auth, int id) {
+        User user = (User) auth.getPrincipal();
         if (isVacancyInSystem(id)) {
-            if (!userService.isEmployee(userId)) {
-                if (userId == getVacancyById(id).getUserId()) {
+            if (!userService.isEmployee(user.getUsername())) {
+                if (user.getUsername().equals(getVacancyById(id).getUserEmail())) {
                     vacancyDao.delete(id);
                     return HttpStatus.OK;
                 }
-                throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в вакансии");
+                throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в вакансии");
             }
-            throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
+            throw new VacancyNotFoundException("Юзер " + user.getUsername() + " не найден среди работодателей");
         }
         throw new ResumeNotFoundException("Вакансия с айди " + id + " не найдена в системе");
     }

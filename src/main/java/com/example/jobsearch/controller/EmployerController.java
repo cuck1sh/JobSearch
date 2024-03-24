@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,19 +34,19 @@ public class EmployerController {
     private final RespondedApplicantsService respondedApplicantsService;
     private final UserService userService;
 
-    @PostMapping("{userId}/vacancies")
-    public HttpStatus createVacancy(@PathVariable int userId, @RequestBody @Valid VacancyDto vacancy) {
-        return vacancyService.createVacancy(userId, vacancy);
+    @PostMapping("vacancies")
+    public HttpStatus createVacancy(Authentication auth, @RequestBody @Valid VacancyDto vacancy) {
+        return vacancyService.createVacancy(auth, vacancy);
     }
 
-    @PostMapping("{userId}/vacancies/change")
-    public HttpStatus changeVacancy(@PathVariable int userId, @RequestBody @Valid VacancyDto vacancy) {
-        return vacancyService.changeVacancy(userId, vacancy);
+    @PostMapping("vacancies/change")
+    public HttpStatus changeVacancy(Authentication auth, @RequestBody @Valid VacancyDto vacancy) {
+        return vacancyService.changeVacancy(auth, vacancy);
     }
 
-    @DeleteMapping("{userId}/vacancies/{id}")
-    public HttpStatus delete(@PathVariable int userId, @PathVariable int id) {
-        return vacancyService.delete(userId, id);
+    @DeleteMapping("vacancies/{id}")
+    public HttpStatus delete(Authentication auth, @PathVariable int id) {
+        return vacancyService.delete(auth, id);
     }
 
     @GetMapping("vacancies")
