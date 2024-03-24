@@ -45,7 +45,7 @@ public class UserDto {
     String avatar;
 
     @JsonProperty("account_type")
-    @Pattern(regexp = "^((Работодатель|Соискатель)$)", message = "Тип может быть либо 'Работодатель' или 'Соискатель'")
+    @Pattern(regexp = "^((EMPLOYER|EMPLOYEE)$)", message = "Тип может быть либо 'EMPLOYER' или 'EMPLOYEE'")
     String accountType;
 }
 

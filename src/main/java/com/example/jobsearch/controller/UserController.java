@@ -61,7 +61,7 @@ public class UserController {
         return ResponseEntity.ok(check);
     }
 
-    @PostMapping
+    @PostMapping("register")
     public HttpStatus createUser(@RequestBody @Valid UserDto user) {
         return userService.createUser(user);
     }

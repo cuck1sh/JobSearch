@@ -1,8 +1,10 @@
 INSERT INTO users (name, surname, age, email, password, phone_number, avatar, account_type)
-VALUES ('Егор', 'Кирин', 23, 'egor.kirin20@gmail.com', 'Qwe123', '996-779-08-88-97', 'images/default.png',
-        'Соискатель'),
-       ('Жмых Airlines', null, 75, 'zhmych@gmail.com', 'Qwert1', '996-779-24-25-26', 'images/default.png',
-        'Работодатель');
+VALUES ('Егор', 'Кирин', 23, 'egor.kirin20@gmail.com', '$2a$10$hiVUeDlbsrdTDRbQNCwlIebvpNqjcjl3nE.xCVSgqBuV5QOn1drjm',
+        '996-779-08-88-97', 'images/default.png',
+        'EMPLOYEE'),
+       ('Жмых Airlines', null, 75, 'zhmych@gmail.com', '$2a$10$uH/AT3FXpvRCQ8SdD4Dqi..4vw1NeuddeqUEEON9ZxbEkFOtC.z0S',
+        '996-779-24-25-26', 'images/default.png',
+        'EMPLOYER');
 
 insert into categories (name, parent_id)
 values ('Программирование', null),

@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-enable-column-in-USERS_table
+      author: Egor Kirin
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: enabled
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false

@@ -11,6 +11,5 @@ public interface RespondedApplicantsService {
     List<RespondedApplicantsDto> getResponsesForResume(int resumeId);
     List<RespondedApplicantsDto> getResponsesForEmployee(int userId);
     List<RespondedApplicantsDto> getResponsesForEmployer(int userId);
-
     HttpStatus sendResponseForVacancy(int userId, int vacancyId, int resumeId);
 }

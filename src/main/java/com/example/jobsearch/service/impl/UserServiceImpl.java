@@ -156,18 +156,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean isEmployee(String userEmail) {
-        return "Соискатель".equalsIgnoreCase(getUserByEmail(userEmail).getAccountType());
+        return "EMPLOYEE".equalsIgnoreCase(getUserByEmail(userEmail).getAccountType());
     }
 
     @Override
     public Boolean isEmployee(int userId) {
-        return "Соискатель".equalsIgnoreCase(getUserById(userId).getAccountType());
+        return "EMPLOYEE".equalsIgnoreCase(getUserById(userId).getAccountType());
     }
 
     @Override
     public HttpStatus createUser(UserDto userDto) {
         if (!isUserInSystem(userDto.getEmail())) {
-            if (userDto.getAccountType().equals("Работодатель") || userDto.getAccountType().equals("Соискатель")) {
+            if (userDto.getAccountType().equals("EMPLOYER") || userDto.getAccountType().equals("EMPLOYEE")) {
                 User user = User.builder()
                         .name(userDto.getName())
                         .surname(userDto.getSurname())
