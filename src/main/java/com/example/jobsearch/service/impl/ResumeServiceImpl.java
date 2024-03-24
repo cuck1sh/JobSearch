@@ -14,6 +14,8 @@ import com.example.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -94,8 +96,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public HttpStatus createResume(int userId, ResumeDto resume) {
-        if (userService.isEmployee(userId)) {
+    public HttpStatus createResume(Authentication auth, ResumeDto resume) {
+        User user = (User) auth.getPrincipal();
+        if (userService.isEmployee(user.getUsername())) {
             if (userService.isEmployee(resume.getUserEmail())) {
                 Resume newResume = Resume.builder()
                         .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
@@ -113,16 +116,17 @@ public class ResumeServiceImpl implements ResumeService {
 
                 return HttpStatus.OK;
             }
-            throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
+            throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
         }
-        throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
+        throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
     }
 
     @Override
-    public HttpStatus changeResume(int userId, ResumeDto resume) {
+    public HttpStatus changeResume(Authentication auth, ResumeDto resume) {
+        User user = (User) auth.getPrincipal();
         if (isResumeInSystem(resume.getId())) {
-            if (userService.isEmployee(userId)) {
-                if (userId == userService.getUserByEmail(resume.getUserEmail()).getId()) {
+            if (userService.isEmployee(user.getUsername())) {
+                if (user.getUsername().equals(userService.getUserByEmail(resume.getUserEmail()).getEmail())) {
                     Resume newResume = Resume.builder()
                             .id(resume.getId())
                             .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
@@ -140,24 +144,25 @@ public class ResumeServiceImpl implements ResumeService {
 
                     return HttpStatus.OK;
                 }
-                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
             }
-            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
+            throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
         }
         throw new ResumeNotFoundException("Резюме с айди " + resume.getId() + " не найдено в системе");
     }
 
     @Override
-    public HttpStatus deleteResumeById(int userId, int id) {
+    public HttpStatus deleteResumeById(Authentication auth, int id) {
+        User user = (User) auth.getPrincipal();
         if (isResumeInSystem(id)) {
-            if (userService.isEmployee(userId)) {
-                if (userId == userService.getUserByEmail(getResumeById(id).getUserEmail()).getId()) {
+            if (userService.isEmployee(user.getUsername())) {
+                if (user.getUsername().equals(userService.getUserByEmail(getResumeById(id).getUserEmail()).getEmail())) {
                     resumeDao.deleteResumeById(id);
                     return HttpStatus.OK;
                 }
-                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
             }
-            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
+            throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
         }
         throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе");
     }

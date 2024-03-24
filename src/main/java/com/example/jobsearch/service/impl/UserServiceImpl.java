@@ -6,7 +6,6 @@ import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.UserAvatar;
-import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final FileUtil fileUtil;
-    private final CategoryService categoryService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserDto> getUsers() {
@@ -173,7 +173,7 @@ public class UserServiceImpl implements UserService {
                         .surname(userDto.getSurname())
                         .age(userDto.getAge())
                         .email(userDto.getEmail())
-                        .password(userDto.getPassword())
+                        .password(passwordEncoder.encode(userDto.getPassword()))
                         .phoneNumber(userDto.getPhoneNumber())
                         .accountType(userDto.getAccountType())
                         .build();
@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
                         .name(userDto.getName())
                         .surname(userDto.getSurname())
                         .age(userDto.getAge())
-                        .password(userDto.getPassword())
+                        .password(passwordEncoder.encode(userDto.getPassword()))
                         .phoneNumber(userDto.getPhoneNumber())
                         .build();
 
