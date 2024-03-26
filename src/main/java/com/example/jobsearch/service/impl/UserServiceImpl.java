@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.UserDao;
+import com.example.jobsearch.dto.EmployeeFindDto;
 import com.example.jobsearch.dto.UserAvatarDto;
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +62,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getEmployee(String name, String surname, String email) {
+    public List<UserDto> getEmployee(EmployeeFindDto employeeFindDto) {
+        String name = Objects.requireNonNullElse(employeeFindDto.getName(), "null");
+        String surname = Objects.requireNonNullElse(employeeFindDto.getSurname(), "null");
+        String email = Objects.requireNonNullElse(employeeFindDto.getEmail(), "null");
+
         List<User> users = userDao.getEmployee(name, surname, email);
         if (!users.isEmpty()) {
             return getUserDtos(users);
@@ -146,7 +152,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean isUserInSystem(String email) {
-        return userDao.isUserInSystem(email);
+        if (email != null) {
+            return userDao.isUserInSystem(email);
+        }
+        throw new NoSuchElementException("Значение не найдено");
     }
 
     @Override

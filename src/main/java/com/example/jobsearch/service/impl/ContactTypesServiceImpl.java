@@ -17,7 +17,10 @@ public class ContactTypesServiceImpl implements ContactTypesService {
     @Override
     public ContactTypeDto getContactTypeById(int id) {
         ContactType type = contactTypesDao.getContactTypeById(id);
-        return ContactTypeDto.builder().type(type.getType()).build();
+        return ContactTypeDto.builder()
+                .id(type.getId())
+                .type(type.getType())
+                .build();
     }
 
     @Override

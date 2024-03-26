@@ -37,10 +37,18 @@ public class VacancyDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
+    public List<Vacancy> getActiveVacancies() {
+        String sql = """
+                select * from VACANCIES
+                where IS_ACTIVE = true;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class));
+    }
+
     public List<Vacancy> getVacanciesByCategory(String category) {
         String sql = """
                 select * from PUBLIC.VACANCIES
-                where CATEGORY_ID = (
+                where IS_ACTIVE = true and CATEGORY_ID = (
                     select
                         c.id
                     from CATEGORIES c
@@ -108,19 +116,10 @@ public class VacancyDao {
         template.update(sql, id);
     }
 
-    public List<Vacancy> getActiveVacancies(int userId) {
-        String sql = """
-                select * from VACANCIES
-                where IS_ACTIVE = true
-                and USER_ID = ?;
-                """;
-        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
-    }
-
     public List<Vacancy> getAllVacancyByCompany(int userId) {
         String sql = """
                 select * from vacancies
-                where user_id = ?;
+                where IS_ACTIVE = true and user_id = ?;
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
     }
@@ -129,6 +128,7 @@ public class VacancyDao {
         String sql = """
                 select * from vacancies
                 where user_id = ?
+                and IS_ACTIVE = true
                 and category_id = (select id from categories where name = ?);
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId, category);

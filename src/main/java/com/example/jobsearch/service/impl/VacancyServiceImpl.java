@@ -51,6 +51,12 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
+    public List<VacancyDto> getActiveVacancies() {
+        List<Vacancy> vacancies = vacancyDao.getActiveVacancies();
+        return getVacancyDtos(vacancies);
+    }
+
+    @Override
     public List<VacancyDto> getVacanciesByCategory(String category) {
         List<Vacancy> vacancies = vacancyDao.getVacanciesByCategory(category);
         if (!vacancies.isEmpty()) {
@@ -186,9 +192,5 @@ public class VacancyServiceImpl implements VacancyService {
         throw new VacancyNotFoundException("Юзер " + userId + " не найден");
     }
 
-    @Override
-    public List<Vacancy> getActiveVacancies(int userId) {
-        // TODO реализовать выборку активных вакансий компании
-        return null;
-    }
+
 }

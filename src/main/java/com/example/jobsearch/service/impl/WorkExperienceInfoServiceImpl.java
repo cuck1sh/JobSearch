@@ -28,6 +28,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
             List<WorkExperienceInfo> workExperienceInfo = workExperienceInfoDao.getWorkExperienceInfoByResumeId(resumeId);
             List<WorkExperienceInfoDto> workExperienceInfoDtos = new ArrayList<>();
             workExperienceInfo.forEach(e -> workExperienceInfoDtos.add(WorkExperienceInfoDto.builder()
+                    .id(e.getId())
                     .years(e.getYears())
                     .companyName(e.getCompanyName())
                     .position(e.getPosition())

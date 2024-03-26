@@ -50,7 +50,7 @@ public class UserDao {
         String sql = """
                 select * from users
                 where (LCASE(NAME) = ? and LCASE(SURNAME) = ? or EMAIL = ?)
-                and ACCOUNT_TYPE not like 'Работодатель';
+                and ACCOUNT_TYPE not like 'EMPLOYER';
                 """;
 
         return template.query(sql,
@@ -63,7 +63,7 @@ public class UserDao {
     public List<User> getEmployer(String name) {
         String sql = """
                 select * from users
-                where LCASE(NAME) = ? and ACCOUNT_TYPE not like 'Соискатель';
+                where LCASE(NAME) = ? and ACCOUNT_TYPE not like 'EMPLOYEE';
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip());
     }

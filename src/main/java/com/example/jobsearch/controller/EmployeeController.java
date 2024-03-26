@@ -52,7 +52,7 @@ public class EmployeeController {
 
     @GetMapping("vacancies")
     public ResponseEntity<List<VacancyDto>> getVacancies() {
-        return ResponseEntity.ok(vacancyService.getVacancies());
+        return ResponseEntity.ok(vacancyService.getActiveVacancies());
     }
 
     @GetMapping("vacancies/active/{id}")

@@ -13,13 +13,11 @@ public interface ResumeService {
     ResumeDto getResumeById(int id) throws UserNotFoundException;
     List<ResumeDto> getResumesByCategory(String category);
     List<ResumeDto> getResumesByUserEmail(String email);
-
     HttpStatus createResume(Authentication auth, ResumeDto resume);
     Boolean isResumeInSystem(int id);
-
     HttpStatus deleteResumeById(Authentication auth, int id);
-    List<ResumeDto> getActiveResumes(int userId);
 
+    List<ResumeDto> getActiveResumes();
     HttpStatus changeResume(Authentication auth, ResumeDto resume);
 
 }

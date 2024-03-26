@@ -1,5 +1,6 @@
 package com.example.jobsearch.controller;
 
+import com.example.jobsearch.dto.EmployeeFindDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
 import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.dto.UserDto;
@@ -49,9 +50,9 @@ public class EmployerController {
         return vacancyService.delete(auth, id);
     }
 
-    @GetMapping("vacancies")
+    @GetMapping("resumes")
     public ResponseEntity<List<ResumeDto>> getResumes() {
-        return ResponseEntity.ok(resumeService.getResumes());
+        return ResponseEntity.ok(resumeService.getActiveResumes());
     }
 
     @GetMapping("resumes/category")
@@ -71,10 +72,9 @@ public class EmployerController {
     }
 
 
-    // Проверить способ написания
     @PostMapping("employee")
-    public ResponseEntity<List<UserDto>> getEmployee(@RequestBody String name, @RequestBody String surname, @RequestBody String email) {
-        List<UserDto> users = userService.getEmployee(name, surname, email);
+    public ResponseEntity<List<UserDto>> getEmployee(@RequestBody @Valid EmployeeFindDto employee) {
+        List<UserDto> users = userService.getEmployee(employee);
         return ResponseEntity.ok(users);
     }
 

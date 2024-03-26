@@ -31,34 +31,33 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getUserById(@PathVariable int id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable int id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping("categories")
-    public ResponseEntity<?> getCategories() {
+    public ResponseEntity<List<String>> getCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("name")
-    public ResponseEntity<?> getUserByName(@RequestParam(name = "name") String name) {
+    public ResponseEntity<List<UserDto>> getUserByName(@RequestParam(name = "name") String name) {
         return ResponseEntity.ok(userService.getUserByName(name));
     }
 
     @GetMapping("phone")
-    public ResponseEntity<?> getUserByPhone(@RequestParam(name = "phone") String phone) {
+    public ResponseEntity<UserDto> getUserByPhone(@RequestParam(name = "phone") String phone) {
         return ResponseEntity.ok(userService.getUserByPhone(phone));
     }
 
     @GetMapping("email")
-    public ResponseEntity<?> getUserByEmail(@RequestParam(name = "email") String email) {
+    public ResponseEntity<UserDto> getUserByEmail(@RequestParam(name = "email") String email) {
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
     @GetMapping("check/{email}")
-    public ResponseEntity<?> isUserInSystem(@PathVariable String email) {
-        Boolean check = userService.isUserInSystem(email);
-        return ResponseEntity.ok(check);
+    public ResponseEntity<Boolean> isUserInSystem(@PathVariable String email) {
+        return ResponseEntity.ok(userService.isUserInSystem(email));
     }
 
     @PostMapping("register")
@@ -67,9 +66,9 @@ public class UserController {
     }
 
     @PostMapping("avatar")
-    public ResponseEntity<Void> uploadAvatar(@Valid UserAvatarDto avatarDto) {
+    public HttpStatus uploadAvatar(@Valid UserAvatarDto avatarDto) {
         userService.uploadUserAvatar(avatarDto);
-        return ResponseEntity.ok().build();
+        return HttpStatus.OK;
     }
 
     @GetMapping("avatar/{userId}")

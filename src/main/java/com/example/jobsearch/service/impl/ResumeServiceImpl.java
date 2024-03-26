@@ -40,6 +40,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public List<ResumeDto> getActiveResumes() {
+        List<Resume> resumes = resumeDao.getActiveResumes();
+        return getResumeDtos(resumes);
+    }
+
+    @Override
     public ResumeDto getResumeById(int id) throws UserNotFoundException {
         Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
         return ResumeDto.builder()
@@ -48,6 +54,9 @@ public class ResumeServiceImpl implements ResumeService {
                 .name(resume.getName())
                 .category(categoryService.getCategoryById(resume.getCategoryId()))
                 .salary(resume.getSalary())
+                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .workExperienceInfos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
+                .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
                 .isActive(resume.getIsActive())
                 .createdDate(resume.getCreatedDate())
                 .updateTime(resume.getUpdateTime())
@@ -82,6 +91,9 @@ public class ResumeServiceImpl implements ResumeService {
                 .name(e.getName())
                 .category(categoryService.getCategoryById(e.getCategoryId()))
                 .salary(e.getSalary())
+                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
+                .workExperienceInfos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
+                .educationInfos(educationInfoService.getEducationInfoById(e.getId()))
                 .isActive(e.getIsActive())
                 .createdDate(e.getCreatedDate())
                 .updateTime(e.getUpdateTime())
@@ -167,10 +179,5 @@ public class ResumeServiceImpl implements ResumeService {
         throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе");
     }
 
-    @Override
-    public List<ResumeDto> getActiveResumes(int userId) {
-        // TODO реализовать выборку активных резюме
-        return null;
-    }
 
 }
