@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -27,11 +28,34 @@ public class CategoryDao {
         );
     }
 
+    public Boolean isCategoryInSystem(int id) {
+        String sql = """
+                select case
+                when exists(select *
+                            from CATEGORIES
+                            where id = ?)
+                    then true
+                else false
+                end;
+                """;
+
+        return template.queryForObject(sql, Boolean.class, id);
+    }
+
+
     public String getParentCategory(int id) {
         String sql = """
                 select NAME from categories
                 where id = ?;
                 """;
         return template.queryForObject(sql, String.class, id);
+    }
+
+    public List<String> getAllCategories() {
+        String sql = """
+                select name from categories;
+                """;
+
+        return template.queryForList(sql, String.class);
     }
 }

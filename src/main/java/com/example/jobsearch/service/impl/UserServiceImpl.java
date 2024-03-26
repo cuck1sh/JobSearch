@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.UserDao;
+import com.example.jobsearch.dto.EmployeeFindDto;
 import com.example.jobsearch.dto.UserAvatarDto;
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -13,11 +14,13 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final FileUtil fileUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserDto> getUsers() {
@@ -58,7 +62,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getEmployee(String name, String surname, String email) {
+    public List<UserDto> getEmployee(EmployeeFindDto employeeFindDto) {
+        String name = Objects.requireNonNullElse(employeeFindDto.getName(), "null");
+        String surname = Objects.requireNonNullElse(employeeFindDto.getSurname(), "null");
+        String email = Objects.requireNonNullElse(employeeFindDto.getEmail(), "null");
+
         List<User> users = userDao.getEmployee(name, surname, email);
         if (!users.isEmpty()) {
             return getUserDtos(users);
@@ -92,7 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByPhone(String phone) throws UserNotFoundException {
+    public UserDto getUserByPhone(String phone) {
         User user = userDao.getUserByPhone(phone).orElseThrow(() -> new UserNotFoundException("Can not find user with phone: " + phone));
         return UserDto.builder()
                 .id(user.getId())
@@ -108,7 +116,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByEmail(String email) throws UserNotFoundException {
+    public UserDto getUserByEmail(String email) {
         User user = userDao.getUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Can not find user with email: " + email));
         return UserDto.builder()
                 .id(user.getId())
@@ -144,7 +152,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean isUserInSystem(String email) {
-        return userDao.isUserInSystem(email);
+        if (email != null) {
+            return userDao.isUserInSystem(email);
+        }
+        throw new NoSuchElementException("Значение не найдено");
     }
 
     @Override
@@ -153,8 +164,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(UserDto user) {
-        userDao.createUser(user);
+    public Boolean isEmployee(String userEmail) {
+        return "EMPLOYEE".equalsIgnoreCase(getUserByEmail(userEmail).getAccountType());
+    }
+
+    @Override
+    public Boolean isEmployee(int userId) {
+        return "EMPLOYEE".equalsIgnoreCase(getUserById(userId).getAccountType());
+    }
+
+    @Override
+    public HttpStatus createUser(UserDto userDto) {
+        if (!isUserInSystem(userDto.getEmail())) {
+            if (userDto.getAccountType().equals("EMPLOYER") || userDto.getAccountType().equals("EMPLOYEE")) {
+                User user = User.builder()
+                        .name(userDto.getName())
+                        .surname(userDto.getSurname())
+                        .age(userDto.getAge())
+                        .email(userDto.getEmail())
+                        .password(passwordEncoder.encode(userDto.getPassword()))
+                        .phoneNumber(userDto.getPhoneNumber())
+                        .accountType(userDto.getAccountType())
+                        .build();
+                userDao.createUser(user);
+                return HttpStatus.OK;
+            }
+            throw new UserNotFoundException("Категория '" + userDto.getAccountType() + "' не найдена в списке доступных");
+        }
+        throw new RuntimeException("Пользователь с таким Email уже существует");
     }
 
     @Override
@@ -166,15 +203,15 @@ public class UserServiceImpl implements UserService {
                         .name(userDto.getName())
                         .surname(userDto.getSurname())
                         .age(userDto.getAge())
-                        .password(userDto.getPassword())
+                        .password(passwordEncoder.encode(userDto.getPassword()))
                         .phoneNumber(userDto.getPhoneNumber())
-                        .accountType(userDto.getAccountType())
                         .build();
 
                 userDao.changeUser(user);
                 return HttpStatus.OK;
             }
+            throw new UserNotFoundException("Не найдено соответствие айди юзера и айди изменяемого профиля");
         }
-        return HttpStatus.BAD_REQUEST;
+        throw new UserNotFoundException("Не найден юзер с айди: " + userId);
     }
 }

@@ -1,6 +1,5 @@
 package com.example.jobsearch.dao;
 
-import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.UserAvatar;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +50,7 @@ public class UserDao {
         String sql = """
                 select * from users
                 where (LCASE(NAME) = ? and LCASE(SURNAME) = ? or EMAIL = ?)
-                and ACCOUNT_TYPE not like 'Работодатель';
+                and ACCOUNT_TYPE not like 'EMPLOYER';
                 """;
 
         return template.query(sql,
@@ -64,7 +63,7 @@ public class UserDao {
     public List<User> getEmployer(String name) {
         String sql = """
                 select * from users
-                where LCASE(NAME) = ? and ACCOUNT_TYPE not like 'Соискатель';
+                where LCASE(NAME) = ? and ACCOUNT_TYPE not like 'EMPLOYEE';
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(User.class), name.toLowerCase().strip());
     }
@@ -121,7 +120,7 @@ public class UserDao {
         return template.queryForObject(sql, Boolean.class, id);
     }
 
-    public void createUser(UserDto user) {
+    public void createUser(User user) {
         String sql = """
                 insert into users(name, surname, age, email, password, phone_number, account_type)
                 values (:name, :surname, :age, :email, :password, :phone_number, :account_type);

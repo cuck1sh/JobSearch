@@ -28,6 +28,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
             List<EducationInfo> educationInfo = educationInfoDao.getEducationInfoById(resumeId);
             List<EducationInfoDto> educationInfoDtos = new ArrayList<>();
             educationInfo.forEach(e -> educationInfoDtos.add(EducationInfoDto.builder()
+                    .id(e.getId())
                     .institution(e.getInstitution())
                     .program(e.getProgram())
                     .startDate(e.getStartDate())

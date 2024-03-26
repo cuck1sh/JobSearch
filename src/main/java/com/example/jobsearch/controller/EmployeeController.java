@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,25 +34,35 @@ public class EmployeeController {
     private final RespondedApplicantsService respondedApplicantsService;
     private final UserService userService;
 
-    @PostMapping("{userId}/resumes")
-    public HttpStatus createResume(@PathVariable int userId, @RequestBody @Valid ResumeDto resume) {
-        return resumeService.createResume(userId, resume);
+    @PostMapping("resumes")
+    public HttpStatus createResume(Authentication auth, @RequestBody @Valid ResumeDto resume) {
+        return resumeService.createResume(auth, resume);
     }
 
 
-    @PostMapping("{userId}/resumes/change")
-    public HttpStatus changeResume(@PathVariable int userId, @RequestBody @Valid ResumeDto resume) {
-        return resumeService.changeResume(userId, resume);
+    @PostMapping("resumes/change")
+    public HttpStatus changeResume(Authentication auth, @RequestBody @Valid ResumeDto resume) {
+        return resumeService.changeResume(auth, resume);
     }
 
-    @DeleteMapping("{userId}/resumes/{id}")
-    public HttpStatus deleteResumeById(@PathVariable int userId, @PathVariable int id) {
-        return resumeService.deleteResumeById(userId, id);
+    @DeleteMapping("resumes/{id}")
+    public HttpStatus deleteResumeById(Authentication auth, @PathVariable int id) {
+        return resumeService.deleteResumeById(auth, id);
     }
 
     @GetMapping("vacancies")
     public ResponseEntity<List<VacancyDto>> getVacancies() {
-        return ResponseEntity.ok(vacancyService.getVacancies());
+        return ResponseEntity.ok(vacancyService.getActiveVacancies());
+    }
+
+    @GetMapping("vacancies/active/{id}")
+    public ResponseEntity<Boolean> isVacancyActive(@PathVariable int id) {
+        return ResponseEntity.ok(vacancyService.isVacancyActive(id));
+    }
+
+    @PostMapping("vacancies/{vacancyId}")
+    public HttpStatus sendResponse(Authentication auth, @PathVariable int vacancyId, @RequestBody Integer resumeId) {
+        return respondedApplicantsService.sendResponseForVacancy(auth, vacancyId, resumeId);
     }
 
     @GetMapping("vacancies/category")
@@ -70,10 +81,8 @@ public class EmployeeController {
     }
 
     @PostMapping("employer")
-    public ResponseEntity<List<UserDto>> getEmployer(String name) {
+    public ResponseEntity<List<UserDto>> getEmployer(@RequestBody String name) {
         return ResponseEntity.ok(userService.getEmployer(name));
-
     }
-
 
 }

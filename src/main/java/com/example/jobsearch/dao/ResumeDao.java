@@ -24,7 +24,14 @@ public class ResumeDao {
         String sql = """
                 select * from resumes;
                 """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class));
+    }
 
+    public List<Resume> getActiveResumes() {
+        String sql = """
+                select * from PUBLIC.RESUMES
+                where IS_ACTIVE = true;
+                """;
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class));
     }
 
@@ -43,12 +50,11 @@ public class ResumeDao {
     public List<Resume> getResumesByCategory(String category) {
         String sql = """
                 select * from PUBLIC.RESUMES
-                where CATEGORY_ID = (
+                where IS_ACTIVE = true and CATEGORY_ID = (
                     select
                         c.id
                     from CATEGORIES c
-                    where c.NAME = ?
-                    ) ;
+                    where c.NAME = ?);
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), category);
     }
@@ -56,7 +62,7 @@ public class ResumeDao {
     public List<Resume> getResumesByUserEmail(String email) {
         String sql = """
                 select * from PUBLIC.RESUMES
-                where USER_ID = (
+                where IS_ACTIVE = true and USER_ID = (
                     select
                         u.id
                     from USERS u
@@ -122,15 +128,6 @@ public class ResumeDao {
                 where id = ?;
                 """;
         template.update(sql, id);
-    }
-
-    public List<Resume> getActiveResumes(int userId) {
-        String sql = """
-                select * from PUBLIC.RESUMES
-                where IS_ACTIVE = true 
-                and USER_ID = ?;
-                """;
-        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), userId);
     }
 
 

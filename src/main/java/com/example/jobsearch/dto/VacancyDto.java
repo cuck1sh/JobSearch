@@ -1,10 +1,10 @@
 package com.example.jobsearch.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -25,9 +25,7 @@ public class VacancyDto {
     private String name;
     private String description;
 
-    @Positive
-    @JsonProperty("category_id")
-    private Integer categoryId;
+    private CategoryDto category;
 
     @Positive
     private Double salary;
@@ -45,10 +43,10 @@ public class VacancyDto {
     @JsonProperty("is_active")
     private Boolean isActive;
 
-    @NotNull
-    @Positive
-    @JsonProperty("user_id")
-    private Integer userId;
+    @NotBlank
+    @Email
+    @JsonProperty("user_email")
+    private String userEmail;
 
     @PastOrPresent
     @JsonProperty("created_date")

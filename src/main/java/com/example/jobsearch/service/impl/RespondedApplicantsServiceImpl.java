@@ -13,6 +13,9 @@ import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,31 +36,25 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
         return getRespondedApplicantsDtos(applicants);
     }
 
-    @SneakyThrows
-    private boolean isEmployee(int userId) {
-        return "Соискатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
-    }
-
-    @SneakyThrows
     @Override
     public List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId) {
-        if (!isEmployee(vacancyService.getVacancyById(vacancyId).getUserId())) {
+        if (!userService.isEmployee(vacancyService.getVacancyById(vacancyId).getUserEmail())) {
             List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForVacancy(vacancyId);
             return getRespondedApplicantsDtos(applicants);
         }
         log.error("vacancy check by non-employer");
-        return null;
+        throw new UserNotFoundException("vacancy check by non-employer");
     }
 
     @SneakyThrows
     @Override
     public List<RespondedApplicantsDto> getResponsesForResume(int resumeId) {
         if (resumeService.isResumeInSystem(resumeId)) {
-            if (isEmployee(resumeService.getResumeById(resumeId).getUser().getId())) {
+            if (userService.isEmployee(resumeService.getResumeById(resumeId).getUserEmail())) {
                 List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForResume(resumeId);
                 return getRespondedApplicantsDtos(applicants);
             }
-            throw new ResumeNotFoundException("Юзер " + resumeService.getResumeById(resumeId).getUser().getId() + " не найден среди соискателей");
+            throw new ResumeNotFoundException("Юзер " + resumeService.getResumeById(resumeId).getUserEmail() + " не найден среди соискателей");
         }
         throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
     }
@@ -65,7 +62,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     @Override
     public List<RespondedApplicantsDto> getResponsesForEmployee(int userId) {
         if (userService.isUserInSystem(userId)) {
-            if (isEmployee(userId)) {
+            if (userService.isEmployee(userId)) {
                 List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForEmployee(userId);
                 return getRespondedApplicantsDtos(applicants);
             }
@@ -76,7 +73,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
 
     @Override
     public List<RespondedApplicantsDto> getResponsesForEmployer(int userId) {
-        if (!isEmployee(userId)) {
+        if (!userService.isEmployee(userId)) {
             List<RespondedApplicants> applicants = respondedApplicantsDao.getResponsesForEmployer(userId);
             return getRespondedApplicantsDtos(applicants);
         }
@@ -98,5 +95,24 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
             }
         });
         return dtos;
+    }
+
+    @Override
+    public HttpStatus sendResponseForVacancy(Authentication auth, int vacancyId, int resumeId) {
+        User user = (User) auth.getPrincipal();
+        if (resumeService.isResumeInSystem(resumeId)) {
+            if (userService.isEmployee(user.getUsername())) {
+                if (user.getUsername().equals(userService.getUserByEmail(resumeService.getResumeById(resumeId).getUserEmail()).getEmail())) {
+                    if (vacancyService.isVacancyInSystem(vacancyId) && vacancyService.isVacancyActive(vacancyId)) {
+                        respondedApplicantsDao.createResponse(vacancyId, resumeId);
+                        return HttpStatus.OK;
+                    }
+                    throw new VacancyNotFoundException("Вакансия с айди: " + vacancyId + "не найдена в системе или не активна");
+                }
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
+            }
+            throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
+        }
+        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
     }
 }

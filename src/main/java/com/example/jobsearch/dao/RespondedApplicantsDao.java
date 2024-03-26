@@ -82,4 +82,13 @@ public class RespondedApplicantsDao {
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), userId);
     }
+
+    public void createResponse(int vacancyId, int resumeId) {
+        String sql = """
+                insert into responded_applicants(resume_id, vacancy_id)
+                values(?, ?);
+                """;
+
+        template.update(sql, resumeId, vacancyId);
+    }
 }

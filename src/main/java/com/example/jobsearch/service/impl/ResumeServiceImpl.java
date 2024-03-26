@@ -12,9 +12,10 @@ import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,14 +40,23 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public List<ResumeDto> getActiveResumes() {
+        List<Resume> resumes = resumeDao.getActiveResumes();
+        return getResumeDtos(resumes);
+    }
+
+    @Override
     public ResumeDto getResumeById(int id) throws UserNotFoundException {
         Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
         return ResumeDto.builder()
                 .id(resume.getId())
-                .user(userService.getUserById(resume.getUserId()))
+                .userEmail(userService.getUserById(resume.getUserId()).getEmail())
                 .name(resume.getName())
                 .category(categoryService.getCategoryById(resume.getCategoryId()))
                 .salary(resume.getSalary())
+                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .workExperienceInfos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
+                .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
                 .isActive(resume.getIsActive())
                 .createdDate(resume.getCreatedDate())
                 .updateTime(resume.getUpdateTime())
@@ -77,10 +87,13 @@ public class ResumeServiceImpl implements ResumeService {
         List<ResumeDto> dtos = new ArrayList<>();
         resumes.forEach(e -> dtos.add(ResumeDto.builder()
                 .id(e.getId())
-                .user(userService.getUserById(e.getUserId()))
+                .userEmail(userService.getUserById(e.getUserId()).getEmail())
                 .name(e.getName())
                 .category(categoryService.getCategoryById(e.getCategoryId()))
                 .salary(e.getSalary())
+                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
+                .workExperienceInfos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
+                .educationInfos(educationInfoService.getEducationInfoById(e.getId()))
                 .isActive(e.getIsActive())
                 .createdDate(e.getCreatedDate())
                 .updateTime(e.getUpdateTime())
@@ -94,20 +107,15 @@ public class ResumeServiceImpl implements ResumeService {
         return resumeDao.isResumeInSystem(id);
     }
 
-    // Служебный метод
-    @SneakyThrows
-    private boolean isEmployee(int userId) {
-        return "Соискатель".equalsIgnoreCase(userService.getUserById(userId).getAccountType());
-    }
-
     @Override
-    public HttpStatus createResume(int userId, ResumeDto resume) {
-        if (isEmployee(userId)) {
-            if (isEmployee(resume.getUser().getId())) {
+    public HttpStatus createResume(Authentication auth, ResumeDto resume) {
+        User user = (User) auth.getPrincipal();
+        if (userService.isEmployee(user.getUsername())) {
+            if (userService.isEmployee(resume.getUserEmail())) {
                 Resume newResume = Resume.builder()
-                        .userId(resume.getUser().getId())
+                        .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
                         .name(resume.getName())
-                        .categoryId(resume.getCategory().getId())
+                        .categoryId(categoryService.checkInCategories(resume.getCategory().getId()))
                         .salary(resume.getSalary())
                         .isActive(resume.getIsActive())
                         .createdDate(LocalDateTime.now())
@@ -120,21 +128,22 @@ public class ResumeServiceImpl implements ResumeService {
 
                 return HttpStatus.OK;
             }
-            throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
+            throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
         }
-        throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
+        throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
     }
 
     @Override
-    public HttpStatus changeResume(int userId, ResumeDto resume) {
+    public HttpStatus changeResume(Authentication auth, ResumeDto resume) {
+        User user = (User) auth.getPrincipal();
         if (isResumeInSystem(resume.getId())) {
-            if (isEmployee(userId)) {
-                if (userId == resume.getUser().getId()) {
+            if (userService.isEmployee(user.getUsername())) {
+                if (user.getUsername().equals(userService.getUserByEmail(resume.getUserEmail()).getEmail())) {
                     Resume newResume = Resume.builder()
                             .id(resume.getId())
-                            .userId(resume.getUser().getId())
+                            .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
                             .name(resume.getName())
-                            .categoryId(resume.getCategory().getId())
+                            .categoryId(categoryService.checkInCategories(resume.getCategory().getId()))
                             .salary(resume.getSalary())
                             .isActive(resume.getIsActive())
                             .updateTime(LocalDateTime.now())
@@ -147,32 +156,28 @@ public class ResumeServiceImpl implements ResumeService {
 
                     return HttpStatus.OK;
                 }
-                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
             }
-            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
+            throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
         }
         throw new ResumeNotFoundException("Резюме с айди " + resume.getId() + " не найдено в системе");
     }
 
     @Override
-    public HttpStatus deleteResumeById(int userId, int id) {
+    public HttpStatus deleteResumeById(Authentication auth, int id) {
+        User user = (User) auth.getPrincipal();
         if (isResumeInSystem(id)) {
-            if (isEmployee(userId)) {
-                if (userId == getResumeById(id).getUser().getId()) {
+            if (userService.isEmployee(user.getUsername())) {
+                if (user.getUsername().equals(userService.getUserByEmail(getResumeById(id).getUserEmail()).getEmail())) {
                     resumeDao.deleteResumeById(id);
                     return HttpStatus.OK;
                 }
-                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + userId + " с юзером указанным в резюме");
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
             }
-            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
+            throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
         }
         throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе");
     }
 
-    @Override
-    public List<ResumeDto> getActiveResumes(int userId) {
-        // TODO реализовать выборку активных резюме
-        return null;
-    }
 
 }

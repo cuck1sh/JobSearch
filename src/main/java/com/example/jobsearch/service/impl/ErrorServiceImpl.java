@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -19,25 +21,31 @@ public class ErrorServiceImpl implements ErrorService {
     @Override
     public ErrorResponseBody makeResponse(Exception exception) {
         String message = exception.getMessage();
-
+        log.error(Arrays.toString(exception.getStackTrace()));
         return ErrorResponseBody.builder()
                 .title(exception.getClass().getSimpleName())
-                .reasons(List.of(message))
+                .reasons(Map.of("errors", List.of(message)))
                 .build();
     }
 
     @Override
     public ErrorResponseBody makeResponse(BindingResult exception) {
-        List<String> errors = new ArrayList<>();
-
-        for (ObjectError error : exception.getAllErrors()) {
-            errors.add(error.getDefaultMessage());
-        }
+        Map<String, List<String>> reasons = new HashMap<>();
+        exception.getFieldErrors().stream()
+                .filter(e -> e.getDefaultMessage() != null)
+                .forEach(e -> {
+                    List<String> errors = new ArrayList<>();
+                    errors.add(e.getDefaultMessage());
+                    if (!reasons.containsKey(e.getField())) {
+                        reasons.put(e.getField(), errors);
+                    } else {
+                        reasons.get(e.getField()).addAll(errors);
+                    }
+                });
 
         return ErrorResponseBody.builder()
                 .title("Validation failed")
-                .reasons(errors)
+                .reasons(reasons)
                 .build();
-
     }
 }

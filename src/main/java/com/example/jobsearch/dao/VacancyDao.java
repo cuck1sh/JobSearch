@@ -1,6 +1,5 @@
 package com.example.jobsearch.dao;
 
-import com.example.jobsearch.dto.VacancyDto;
 import com.example.jobsearch.model.Vacancy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.support.DataAccessUtils;
@@ -38,10 +37,18 @@ public class VacancyDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
+    public List<Vacancy> getActiveVacancies() {
+        String sql = """
+                select * from VACANCIES
+                where IS_ACTIVE = true;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class));
+    }
+
     public List<Vacancy> getVacanciesByCategory(String category) {
         String sql = """
                 select * from PUBLIC.VACANCIES
-                where CATEGORY_ID = (
+                where IS_ACTIVE = true and CATEGORY_ID = (
                     select
                         c.id
                     from CATEGORIES c
@@ -51,10 +58,10 @@ public class VacancyDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), category);
     }
 
-    public void createVacancy(VacancyDto vacancy) {
+    public void createVacancy(Vacancy vacancy) {
         String sql = """
-                insert into VACANCIES(name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date, UPDATE_TIME)
-                values (:name, :description, :category_id, :salary, :exp_from, :exp_to, :is_active, :user_id, :created_date, :update_time);
+                insert into VACANCIES(name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date)
+                values (:name, :description, :category_id, :salary, :exp_from, :exp_to, :is_active, :user_id, :created_date);
                 """;
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("name", vacancy.getName())
@@ -65,8 +72,7 @@ public class VacancyDao {
                 .addValue("exp_to", vacancy.getExpTo())
                 .addValue("is_active", vacancy.getIsActive())
                 .addValue("user_id", vacancy.getUserId())
-                .addValue("created_date", vacancy.getCreatedDate())
-                .addValue("update_time", vacancy.getUpdateTime()));
+                .addValue("created_date", vacancy.getCreatedDate()));
     }
 
     public Boolean isVacancyInSystem(int id) {
@@ -83,12 +89,11 @@ public class VacancyDao {
         return template.queryForObject(sql, Boolean.class, id);
     }
 
-    public void changeVacancy(VacancyDto vacancy) {
+    public void changeVacancy(Vacancy vacancy) {
         String sql = """
                 update vacancies
-                set name = :name, description = :description, category_id = :category_id,
-                    salary = :salary, exp_from = :exp_from, exp_to = :exp_to, is_active = :is_active,
-                    user_id = :user_id, created_date = :created_date, UPDATE_TIME = :update_time
+                set name = :name, description = :description, category_id = :category_id, salary = :salary,
+                    exp_from = :exp_from, exp_to = :exp_to, is_active = :is_active, UPDATE_TIME = :update_time
                 where id = :id;
                 """;
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
@@ -100,8 +105,6 @@ public class VacancyDao {
                 .addValue("exp_from", vacancy.getExpFrom())
                 .addValue("exp_to", vacancy.getExpTo())
                 .addValue("is_active", vacancy.getIsActive())
-                .addValue("user_id", vacancy.getUserId())
-                .addValue("created_date", vacancy.getCreatedDate())
                 .addValue("update_time", vacancy.getUpdateTime()));
     }
 
@@ -113,19 +116,10 @@ public class VacancyDao {
         template.update(sql, id);
     }
 
-    public List<Vacancy> getActiveVacancies(int userId) {
-        String sql = """
-                select * from VACANCIES
-                where IS_ACTIVE = true
-                and USER_ID = ?;
-                """;
-        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
-    }
-
     public List<Vacancy> getAllVacancyByCompany(int userId) {
         String sql = """
                 select * from vacancies
-                where user_id = ?;
+                where IS_ACTIVE = true and user_id = ?;
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
     }
@@ -134,10 +128,18 @@ public class VacancyDao {
         String sql = """
                 select * from vacancies
                 where user_id = ?
+                and IS_ACTIVE = true
                 and category_id = (select id from categories where name = ?);
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId, category);
     }
 
 
+    public Boolean isVacancyActive(int vacancyId) {
+        String sql = """
+                select is_active from vacancies
+                where id = ?;
+                """;
+        return template.queryForObject(sql, Boolean.class, vacancyId);
+    }
 }
