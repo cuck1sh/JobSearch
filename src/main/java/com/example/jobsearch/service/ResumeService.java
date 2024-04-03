@@ -1,5 +1,6 @@
 package com.example.jobsearch.service;
 
+import com.example.jobsearch.dto.InputResumeDto;
 import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,13 @@ public interface ResumeService {
     ResumeDto getResumeById(int id) throws UserNotFoundException;
     List<ResumeDto> getResumesByCategory(String category);
     List<ResumeDto> getResumesByUserEmail(String email);
-    HttpStatus createResume(Authentication auth, ResumeDto resume);
+
+    HttpStatus createResume(Authentication auth, InputResumeDto resume);
     Boolean isResumeInSystem(int id);
     HttpStatus deleteResumeById(Authentication auth, int id);
 
     List<ResumeDto> getActiveResumes();
-    HttpStatus changeResume(Authentication auth, ResumeDto resume);
+
+    HttpStatus changeResume(Authentication auth, InputResumeDto resume);
 
 }

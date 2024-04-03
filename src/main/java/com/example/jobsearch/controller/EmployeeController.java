@@ -1,7 +1,7 @@
 package com.example.jobsearch.controller;
 
+import com.example.jobsearch.dto.InputResumeDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
-import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.dto.UserDto;
 import com.example.jobsearch.dto.VacancyDto;
 import com.example.jobsearch.service.RespondedApplicantsService;
@@ -35,13 +35,12 @@ public class EmployeeController {
     private final UserService userService;
 
     @PostMapping("resumes")
-    public HttpStatus createResume(Authentication auth, @RequestBody @Valid ResumeDto resume) {
+    public HttpStatus createResume(Authentication auth, @RequestBody @Valid InputResumeDto resume) {
         return resumeService.createResume(auth, resume);
     }
 
-
     @PostMapping("resumes/change")
-    public HttpStatus changeResume(Authentication auth, @RequestBody @Valid ResumeDto resume) {
+    public HttpStatus changeResume(Authentication auth, @RequestBody @Valid InputResumeDto resume) {
         return resumeService.changeResume(auth, resume);
     }
 

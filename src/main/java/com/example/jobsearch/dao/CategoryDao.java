@@ -38,8 +38,20 @@ public class CategoryDao {
                 else false
                 end;
                 """;
-
         return template.queryForObject(sql, Boolean.class, id);
+    }
+
+    public Boolean isCategoryInSystem(String category) {
+        String sql = """
+                select case
+                when exists(select *
+                            from CATEGORIES
+                            where lcase(name) = ?)
+                    then true
+                else false
+                end;
+                """;
+        return template.queryForObject(sql, Boolean.class, category.toLowerCase().strip());
     }
 
 
@@ -57,5 +69,13 @@ public class CategoryDao {
                 """;
 
         return template.queryForList(sql, String.class);
+    }
+
+    public Integer getCategoryByName(String category) {
+        String sql = """
+                select id from categories
+                where name = ?;
+                """;
+        return template.queryForObject(sql, Integer.class, category);
     }
 }

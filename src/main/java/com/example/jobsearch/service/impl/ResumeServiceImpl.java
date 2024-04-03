@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.ResumeDao;
+import com.example.jobsearch.dto.InputResumeDto;
 import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -108,14 +109,14 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public HttpStatus createResume(Authentication auth, ResumeDto resume) {
+    public HttpStatus createResume(Authentication auth, InputResumeDto resume) {
         User user = (User) auth.getPrincipal();
         if (userService.isEmployee(user.getUsername())) {
             if (userService.isEmployee(resume.getUserEmail())) {
                 Resume newResume = Resume.builder()
                         .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
                         .name(resume.getName())
-                        .categoryId(categoryService.checkInCategories(resume.getCategory().getId()))
+                        .categoryId(categoryService.checkInCategories(resume.getCategory()))
                         .salary(resume.getSalary())
                         .isActive(resume.getIsActive())
                         .createdDate(LocalDateTime.now())
@@ -134,7 +135,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public HttpStatus changeResume(Authentication auth, ResumeDto resume) {
+    public HttpStatus changeResume(Authentication auth, InputResumeDto resume) {
         User user = (User) auth.getPrincipal();
         if (isResumeInSystem(resume.getId())) {
             if (userService.isEmployee(user.getUsername())) {
@@ -143,7 +144,7 @@ public class ResumeServiceImpl implements ResumeService {
                             .id(resume.getId())
                             .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
                             .name(resume.getName())
-                            .categoryId(categoryService.checkInCategories(resume.getCategory().getId()))
+                            .categoryId(categoryService.checkInCategories(resume.getCategory()))
                             .salary(resume.getSalary())
                             .isActive(resume.getIsActive())
                             .updateTime(LocalDateTime.now())

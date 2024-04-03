@@ -10,4 +10,8 @@ public interface CategoryService {
     String getParentCategory(Object id);
     List<String> getAllCategories();
     Integer checkInCategories(int categoryId);
+
+    Integer checkInCategories(String category);
+
+    Integer getCategoryByName(String category);
 }
