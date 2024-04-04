@@ -1,4 +1,4 @@
-package com.example.jobsearch.controller;
+package com.example.jobsearch.controller.api;
 
 import com.example.jobsearch.dto.EmployeeFindDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("employer")
+@RequestMapping("api/employer")
 @RequiredArgsConstructor
-public class EmployerController {
+public class EmployerRestController {
 
     private final VacancyService vacancyService;
     private final ResumeService resumeService;

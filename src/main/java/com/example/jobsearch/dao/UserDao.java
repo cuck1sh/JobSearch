@@ -8,6 +8,9 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -120,19 +123,26 @@ public class UserDao {
         return template.queryForObject(sql, Boolean.class, id);
     }
 
-    public void createUser(User user) {
+    public Integer createUser(User user) {
         String sql = """
                 insert into users(name, surname, age, email, password, phone_number, account_type)
                 values (:name, :surname, :age, :email, :password, :phone_number, :account_type);
                 """;
-        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
+
+        SqlParameterSource parameter = new MapSqlParameterSource()
                 .addValue("name", user.getName())
                 .addValue("surname", user.getSurname())
                 .addValue("age", user.getAge())
                 .addValue("email", user.getEmail())
                 .addValue("password", user.getPassword())
                 .addValue("phone_number", user.getPhoneNumber())
-                .addValue("account_type", user.getAccountType()));
+                .addValue("account_type", user.getAccountType());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        namedParameterJdbcTemplate.update(sql, parameter, keyHolder);
+        return keyHolder.getKeyAs(Integer.class);
+
     }
 
     public void changeUser(User user) {

@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,7 +175,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HttpStatus createUser(UserDto userDto) {
+    public HttpStatus createUser(UserDto userDto, MultipartFile file) {
         if (!isUserInSystem(userDto.getEmail())) {
             if (userDto.getAccountType().equals("EMPLOYER") || userDto.getAccountType().equals("EMPLOYEE")) {
                 User user = User.builder()
@@ -186,7 +187,12 @@ public class UserServiceImpl implements UserService {
                         .phoneNumber(userDto.getPhoneNumber())
                         .accountType(userDto.getAccountType())
                         .build();
-                userDao.createUser(user);
+                int newKey = userDao.createUser(user);
+
+                uploadUserAvatar(UserAvatarDto.builder()
+                        .file(file)
+                        .userId(newKey)
+                        .build());
                 return HttpStatus.OK;
             }
             throw new UserNotFoundException("Категория '" + userDto.getAccountType() + "' не найдена в списке доступных");

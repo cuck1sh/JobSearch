@@ -1,4 +1,4 @@
-package com.example.jobsearch.controller;
+package com.example.jobsearch.controller.api;
 
 import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("resumes")
+@RequestMapping("api/resumes")
 @RequiredArgsConstructor
-public class ResumeController {
+public class ResumeRestController {
     private final ResumeService resumeService;
 
     @GetMapping

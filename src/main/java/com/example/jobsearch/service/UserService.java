@@ -5,6 +5,7 @@ import com.example.jobsearch.dto.UserAvatarDto;
 import com.example.jobsearch.dto.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,7 +19,8 @@ public interface UserService {
     Boolean isUserInSystem(int id);
     Boolean isEmployee(String userEmail);
     Boolean isEmployee(int userId);
-    HttpStatus createUser(UserDto user);
+
+    HttpStatus createUser(UserDto user, MultipartFile file);
     HttpStatus changeUser(int userId, UserDto user);
     void uploadUserAvatar(UserAvatarDto avatarDto);
     ResponseEntity<?> downloadAvatar(int userId);
