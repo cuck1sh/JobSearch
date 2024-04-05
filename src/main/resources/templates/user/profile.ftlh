@@ -37,7 +37,7 @@
                 <#else>
                     <div class="col">
                         <button type="button" class="btn btn-outline-danger border-4 w-75 h-100 rounded-4"><a
-                                    href="/employer/vacancies/add"></a>+
+                                    href="/vacancies/add"></a>+
                             <p>Создать вакансию</p></button>
                     </div>
                 </#if>
@@ -55,7 +55,7 @@
                         <#if user.accountType == "EMPLOYEE">
                         <a href="/employee/resumes/${item.id}">
                             <#else>
-                            <a href="/employer/vacancies/${item.id}">
+                            <a href="/vacancies/${item.id}">
                                 </#if>
                                 <div class="card border-2 rounded-2 p-3">
                                     <h5 class="card-title">${item.name}</h5>
@@ -72,6 +72,7 @@
                                     </div>
                                 </div>
                             </a>
+                        </a>
                     </div>
                 </#list>
             </div>

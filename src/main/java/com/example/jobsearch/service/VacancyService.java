@@ -22,5 +22,5 @@ public interface VacancyService {
     List<VacancyDto> getVacanciesByCategory(String category);
     List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category);
 
-    void getVacancy(Authentication auth, int id, Model model);
+    void getVacancy(int id, Model model);
 }

@@ -194,14 +194,13 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public void getVacancy(Authentication auth, int id, Model model) {
-        User user = (User) auth.getPrincipal();
+    public void getVacancy(int id, Model model) {
         VacancyDto vacancyDto = getVacancyById(id);
 
-        if (userService.getUserByEmail(user.getUsername()).getEmail().equals(vacancyDto.getUserEmail())) {
+        if (isVacancyInSystem(id)) {
             model.addAttribute("vacancy", vacancyDto);
         } else {
-            throw new ResumeNotFoundException("Несоответствие юзера и юзера в вакансии");
+            throw new ResumeNotFoundException("Не найдена вакансия");
         }
     }
 }

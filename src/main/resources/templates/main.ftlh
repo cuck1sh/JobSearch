@@ -6,7 +6,7 @@
         <div class="col">
             <div class="card h-100">
                 <div class="card-body">
-                    <a href="${vacancy.id}"><h3 class="card-title">${vacancy.name}</h3></a>
+                    <a href="vacancies/${vacancy.id}"><h3 class="card-title">${vacancy.name}</h3></a>
 
                     <#if vacancy.description??>
                         <h4 class="card-text">${vacancy.description}</h4>

@@ -27,13 +27,6 @@ public class UserController {
         return "user/register";
     }
 
-    @PostMapping("register")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String createUser(UserDto user, @RequestParam(name = "file") MultipartFile file) {
-        userService.createUser(user, file);
-        return "redirect:/users/register"; // TODO Поменять адрес редиректа
-    }
-
     @GetMapping("profile")
     public String getProfile(Authentication auth, Model model) {
         profileService.getProfile(auth, model);
@@ -49,7 +42,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateUser(Authentication auth, UserDto user, @RequestParam(name = "file") MultipartFile file) {
         userService.updateUser(auth, user, file);
-        return "redirect:/users/update"; // TODO Поменять адрес редиректа
+        return "redirect:/";
     }
 
 }

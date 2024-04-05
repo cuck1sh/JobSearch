@@ -44,8 +44,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/vacancies").permitAll()
                                 .requestMatchers("/").permitAll()
+                                .requestMatchers("/vacancies").permitAll()
                                 .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
                                 .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
                                 .requestMatchers(HttpMethod.POST, "/employee/**").hasAuthority("EMPLOYEE")
@@ -54,6 +54,7 @@ public class SecurityConfig {
                                 .requestMatchers("/login/").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                                .requestMatchers("/vacancies/*").permitAll()
                                 .anyRequest().fullyAuthenticated()
                 );
         return http.build();
