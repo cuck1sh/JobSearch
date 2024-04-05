@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -192,5 +193,15 @@ public class VacancyServiceImpl implements VacancyService {
         throw new VacancyNotFoundException("Юзер " + userId + " не найден");
     }
 
+    @Override
+    public void getVacancy(Authentication auth, int id, Model model) {
+        User user = (User) auth.getPrincipal();
+        VacancyDto vacancyDto = getVacancyById(id);
 
+        if (userService.getUserByEmail(user.getUsername()).getEmail().equals(vacancyDto.getUserEmail())) {
+            model.addAttribute("vacancy", vacancyDto);
+        } else {
+            throw new ResumeNotFoundException("Несоответствие юзера и юзера в вакансии");
+        }
+    }
 }

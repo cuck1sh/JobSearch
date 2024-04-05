@@ -20,7 +20,7 @@
             </#if>
 
             <#if resume.isActive??>
-                <h5 class="card-title">Активно: ${resume.isActive?string('yes', 'no')}</h5>
+                <h5 class="card-title">Активно: ${resume.isActive?string('Да', 'Нет')}</h5>
             </#if>
 
             <h6 class="card-title">Дата создания ${resume.createdDate} </h6>

@@ -4,6 +4,7 @@ import com.example.jobsearch.dto.VacancyDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface VacancyService {
     List<VacancyDto> getAllVacanciesByCompany(int userId);
     List<VacancyDto> getVacanciesByCategory(String category);
     List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category);
+
+    void getVacancy(Authentication auth, int id, Model model);
 }
