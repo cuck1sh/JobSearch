@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.ResumeDao;
+import com.example.jobsearch.dto.InputResumeDto;
 import com.example.jobsearch.dto.ResumeDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -73,12 +75,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> getResumesByUserEmail(String email) {
-        List<Resume> resumes = resumeDao.getResumesByUserEmail(email);
+    public List<ResumeDto> getResumesByUserId(int id) {
+        List<Resume> resumes = resumeDao.getResumesByUserEmail(id);
         if (!resumes.isEmpty()) {
             return getResumeDtos(resumes);
         }
-        throw new ResumeNotFoundException("Can not find resume with email: " + email);
+        throw new ResumeNotFoundException("Can not find resume with user id: " + id);
     }
 
 
@@ -108,14 +110,14 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public HttpStatus createResume(Authentication auth, ResumeDto resume) {
+    public HttpStatus createResume(Authentication auth, InputResumeDto resume) {
         User user = (User) auth.getPrincipal();
         if (userService.isEmployee(user.getUsername())) {
             if (userService.isEmployee(resume.getUserEmail())) {
                 Resume newResume = Resume.builder()
                         .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
                         .name(resume.getName())
-                        .categoryId(categoryService.checkInCategories(resume.getCategory().getId()))
+                        .categoryId(categoryService.checkInCategories(resume.getCategory()))
                         .salary(resume.getSalary())
                         .isActive(resume.getIsActive())
                         .createdDate(LocalDateTime.now())
@@ -134,7 +136,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public HttpStatus changeResume(Authentication auth, ResumeDto resume) {
+    public HttpStatus changeResume(Authentication auth, InputResumeDto resume) {
         User user = (User) auth.getPrincipal();
         if (isResumeInSystem(resume.getId())) {
             if (userService.isEmployee(user.getUsername())) {
@@ -143,7 +145,7 @@ public class ResumeServiceImpl implements ResumeService {
                             .id(resume.getId())
                             .userId(userService.getUserByEmail(resume.getUserEmail()).getId())
                             .name(resume.getName())
-                            .categoryId(categoryService.checkInCategories(resume.getCategory().getId()))
+                            .categoryId(categoryService.checkInCategories(resume.getCategory()))
                             .salary(resume.getSalary())
                             .isActive(resume.getIsActive())
                             .updateTime(LocalDateTime.now())
@@ -179,5 +181,15 @@ public class ResumeServiceImpl implements ResumeService {
         throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе");
     }
 
+    @Override
+    public void getResume(Authentication auth, int id, Model model) {
+        User user = (User) auth.getPrincipal();
+        ResumeDto resumeDto = getResumeById(id);
 
+        if (userService.getUserByEmail(user.getUsername()).getEmail().equals(resumeDto.getUserEmail())) {
+            model.addAttribute("resume", resumeDto);
+        } else {
+            throw new ResumeNotFoundException("Несоответствие юзера и юзера в резюме");
+        }
+    }
 }

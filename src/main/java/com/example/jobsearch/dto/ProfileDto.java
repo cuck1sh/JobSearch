@@ -1,7 +1,5 @@
 package com.example.jobsearch.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,12 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto {
-
-    @NotNull
-    @Positive
+public class ProfileDto {
     private Integer id;
-
-    private String parent;
     private String name;
+    private Integer age;
+    private String phoneNumber;
+    private String avatar;
+    private String accountType;
 }

@@ -1,9 +1,9 @@
 INSERT INTO users (name, surname, age, email, password, phone_number, avatar, account_type)
 VALUES ('Егор', 'Кирин', 23, 'egor.kirin20@gmail.com', '$2a$10$hiVUeDlbsrdTDRbQNCwlIebvpNqjcjl3nE.xCVSgqBuV5QOn1drjm',
-        '996-779-08-88-97', 'images/default.png',
+        '996-779-08-88-97', 'default.png',
         'EMPLOYEE'),
        ('Жмых Airlines', null, 75, 'zhmych@gmail.com', '$2a$10$uH/AT3FXpvRCQ8SdD4Dqi..4vw1NeuddeqUEEON9ZxbEkFOtC.z0S',
-        '996-779-24-25-26', 'images/default.png',
+        '996-779-24-25-26', 'default.png',
         'EMPLOYER');
 
 insert into categories (name, parent_id)
@@ -21,12 +21,12 @@ values ((select id from USERS where EMAIL = 'egor.kirin20@gmail.com'),
         999999.99,
         true,
         '2024-03-11 21:41:12',
-        null),
+        '2024-03-11 21:41:12'),
        ((select id from USERS where EMAIL = 'egor.kirin20@gmail.com'),
         'Для программирования',
         (select id from CATEGORIES where name = 'Программирование'),
         995999.99,
-        false,
+        true,
         '2024-03-11 21:41:12',
         '2024-03-11 21:48:12');
 
@@ -115,7 +115,7 @@ values ('Мобильный разработчик',
         true,
         (select id from USERS where EMAIL = 'zhmych@gmail.com'),
         '2024-03-11 22:53:11',
-        null),
+        '2024-03-11 22:53:11'),
        ('Web разработчик',
         'middle на java',
         (select id from CATEGORIES where NAME = 'WEB программист'),
@@ -125,7 +125,7 @@ values ('Мобильный разработчик',
         true,
         (select id from USERS where EMAIL = 'zhmych@gmail.com'),
         '2024-03-10 22:53:11',
-        null);
+        '2024-03-10 22:53:11');
 
 insert into responded_applicants (resume_id, vacancy_id, confirmation)
 values ((select id

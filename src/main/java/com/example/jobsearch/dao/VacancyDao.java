@@ -60,8 +60,8 @@ public class VacancyDao {
 
     public void createVacancy(Vacancy vacancy) {
         String sql = """
-                insert into VACANCIES(name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date)
-                values (:name, :description, :category_id, :salary, :exp_from, :exp_to, :is_active, :user_id, :created_date);
+                insert into VACANCIES(name, description, category_id, salary, exp_from, exp_to, is_active, user_id, created_date, update_time)
+                values (:name, :description, :category_id, :salary, :exp_from, :exp_to, :is_active, :user_id, :created_date, :update_time);
                 """;
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("name", vacancy.getName())
@@ -72,7 +72,9 @@ public class VacancyDao {
                 .addValue("exp_to", vacancy.getExpTo())
                 .addValue("is_active", vacancy.getIsActive())
                 .addValue("user_id", vacancy.getUserId())
-                .addValue("created_date", vacancy.getCreatedDate()));
+                .addValue("created_date", vacancy.getCreatedDate())
+                .addValue("update_time", vacancy.getCreatedDate())
+        );
     }
 
     public Boolean isVacancyInSystem(int id) {
