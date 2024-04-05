@@ -59,17 +59,12 @@ public class ResumeDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), category);
     }
 
-    public List<Resume> getResumesByUserEmail(String email) {
+    public List<Resume> getResumesByUserEmail(int userId) {
         String sql = """
                 select * from PUBLIC.RESUMES
-                where IS_ACTIVE = true and USER_ID = (
-                    select
-                        u.id
-                    from USERS u
-                    where u.EMAIL = ?
-                    );
+                where IS_ACTIVE = true and USER_ID = ?;
                 """;
-        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), email);
+        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), userId);
     }
 
     public Boolean isResumeInSystem(int id) {
@@ -88,8 +83,8 @@ public class ResumeDao {
 
     public Integer createResume(Resume resume) {
         String sql = """
-                insert into resumes(user_id, name, category_id, salary, is_active, created_date)
-                values (:user_id, :name, :category_id, :salary, :is_active, :created_date);
+                insert into resumes(user_id, name, category_id, salary, is_active, created_date, update_time)
+                values (:user_id, :name, :category_id, :salary, :is_active, :created_date, :update_time);
                 """;
 
         MapSqlParameterSource parameters = new MapSqlParameterSource()
@@ -98,7 +93,8 @@ public class ResumeDao {
                 .addValue("category_id", resume.getCategoryId())
                 .addValue("salary", resume.getSalary())
                 .addValue("is_active", resume.getIsActive())
-                .addValue("created_date", resume.getCreatedDate());
+                .addValue("created_date", resume.getCreatedDate())
+                .addValue("update_time", resume.getCreatedDate());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 

@@ -14,6 +14,7 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -189,10 +190,12 @@ public class UserServiceImpl implements UserService {
                         .build();
                 int newKey = userDao.createUser(user);
 
-                uploadUserAvatar(UserAvatarDto.builder()
-                        .file(file)
-                        .userId(newKey)
-                        .build());
+                if (file.getOriginalFilename().length() != 0) {
+                    uploadUserAvatar(UserAvatarDto.builder()
+                            .file(file)
+                            .userId(newKey)
+                            .build());
+                }
                 return HttpStatus.OK;
             }
             throw new UserNotFoundException("Категория '" + userDto.getAccountType() + "' не найдена в списке доступных");
@@ -219,5 +222,27 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("Не найдено соответствие айди юзера и айди изменяемого профиля");
         }
         throw new UserNotFoundException("Не найден юзер с айди: " + userId);
+    }
+
+    @Override
+    public void updateUser(Authentication auth, UserDto userDto, MultipartFile file) {
+        org.springframework.security.core.userdetails.User userAuth = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+        UserDto userFromAuth = getUserByEmail(userAuth.getUsername());
+        User user = User.builder()
+                .id(userFromAuth.getId())
+                .name(userDto.getName())
+                .surname(userDto.getSurname())
+                .age(userDto.getAge())
+                .password(passwordEncoder.encode(userDto.getPassword()))
+                .phoneNumber(userDto.getPhoneNumber())
+                .build();
+
+        userDao.changeUser(user);
+        if (file.getOriginalFilename().length() != 0) {
+            uploadUserAvatar(UserAvatarDto.builder()
+                    .file(file)
+                    .userId(userFromAuth.getId())
+                    .build());
+        }
     }
 }

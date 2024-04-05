@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -74,12 +75,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> getResumesByUserEmail(String email) {
-        List<Resume> resumes = resumeDao.getResumesByUserEmail(email);
+    public List<ResumeDto> getResumesByUserId(int id) {
+        List<Resume> resumes = resumeDao.getResumesByUserEmail(id);
         if (!resumes.isEmpty()) {
             return getResumeDtos(resumes);
         }
-        throw new ResumeNotFoundException("Can not find resume with email: " + email);
+        throw new ResumeNotFoundException("Can not find resume with user id: " + id);
     }
 
 
@@ -180,5 +181,15 @@ public class ResumeServiceImpl implements ResumeService {
         throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе");
     }
 
+    @Override
+    public void getResume(Authentication auth, int id, Model model) {
+        User user = (User) auth.getPrincipal();
+        ResumeDto resumeDto = getResumeById(id);
 
+        if (userService.getUserByEmail(user.getUsername()).getEmail().equals(resumeDto.getUserEmail())) {
+            model.addAttribute("resume", resumeDto);
+        } else {
+            throw new ResumeNotFoundException("Несоответствие юзера и юзера в резюме");
+        }
+    }
 }
