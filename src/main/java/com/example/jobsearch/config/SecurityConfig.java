@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,18 +43,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/").permitAll()
-                                .requestMatchers("/vacancies").permitAll()
-                                .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
-                                .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
-                                .requestMatchers(HttpMethod.POST, "/employee/**").hasAuthority("EMPLOYEE")
-                                .requestMatchers(HttpMethod.POST, "/employer/**").hasAuthority("EMPLOYER")
-                                .requestMatchers("/users/register").permitAll()
-                                .requestMatchers("/login/").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                                .requestMatchers("/vacancies/*").permitAll()
-                                .anyRequest().fullyAuthenticated()
+//                                .requestMatchers("/").permitAll()
+//                                .requestMatchers("/vacancies").permitAll()
+//                                .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
+//                                .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
+//                                .requestMatchers(HttpMethod.POST, "/employee/**").hasAuthority("EMPLOYEE")
+//                                .requestMatchers(HttpMethod.POST, "/employer/**").hasAuthority("EMPLOYER")
+//                                .requestMatchers("/users/register").permitAll()
+//                                .requestMatchers("/login/").permitAll()
+//                                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+//                                .requestMatchers(HttpMethod.POST, "/login").permitAll()
+//                                .requestMatchers("/vacancies/*").permitAll()
+//                                .anyRequest().fullyAuthenticated()
+                                .anyRequest().permitAll()
                 );
         return http.build();
     }

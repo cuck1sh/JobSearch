@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
         User user = userDao.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + userId));
         String filename = user.getAvatar();
-        return fileUtil.getOutputFile(filename, "images", MediaType.IMAGE_PNG);
+        return fileUtil.getOutputFile(filename, "images", MediaType.IMAGE_JPEG);
     }
 
     @Override

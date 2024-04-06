@@ -1,78 +1,103 @@
 <#import  "../layout.ftlh" as main>
 <@main.layout>
 
-    <div class="w-75 p-5 mx-auto border border-3 rounded-2">
+    <div class="w-75 p-5 mx-auto border border-2 border-black rounded-4">
         <#if user.accountType == "EMPLOYEE">
             <h1 class="text-center my-3 text-danger">Личный кабинер Соискателя</h1>
         <#else>
             <h1 class="text-center my-3 text-danger">Личный кабинер Работодателя</h1>
         </#if>
         <div class="d-flex justify-content-between mt-5">
-            <div class="row">
-                <div class="col border border-2">
-                    <img src="../../../../../data/images/default.png" alt="avatar">
+            <div class="row row-cols-1 row-cols-lg-2 g-3">
+                <div class="col">
+                    <div class="row">
+                        <div class="col border border-black border-2 rounded-4">
+                            <img src="/api/users/avatar/${user.id}" alt="avatar" class="card-img">
+                        </div>
+                        <div class="col ms-3">
+                            <h2>${user.name}</h2>
+                            <p>Возраст: ${user.age}</p>
+                            <button type="button"
+                                    class="btn border-black border-2 bg-success p-2 text-dark bg-opacity-10"><a
+                                        href="/users/update">Редактировать</a>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col ms-3">
-                    <h2>${user.name}</h2>
-                    <p>Возраст: ${user.age}</p>
-                    <button type="button" class="btn btn-outline-success border-4"><a
-                                href="/users/update">Редактировать</a>
-                    </button>
+
+                <div class="col d-flex justify-content-end">
+                    <div class="row">
+                        <#if user.accountType == "EMPLOYEE">
+                            <div class="col">
+                                <button type="button"
+                                        class="btn border-black border-2 w-75 h-100 rounded-4 bg-danger p-2 text-dark bg-opacity-10">
+                                    <a href="/employee/resumes/add">+ <p>Создать резюме</p></a>
+                                </button>
+                            </div>
+
+                            <div class="col">
+                                <button type="button"
+                                        class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
+                                    <a href="/api/employee/responses/users/${user.id}">Отклики </a>
+
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        ${responsesQuantity}
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+                                </button>
+                            </div>
+                        <#else>
+                            <div class="col">
+                                <button type="button"
+                                        class="btn border-black border-2 w-75 h-100 rounded-4 bg-danger p-2 text-dark bg-opacity-10">
+                                    <a href="/vacancies/add">+ <p>Создать вакансию</p></a>
+                                </button>
+                            </div>
+                        </#if>
+
+                    </div>
                 </div>
-            </div>
-
-            <div class="row">
-
-                <#if user.accountType == "EMPLOYEE">
-                    <div class="col">
-                        <button type="button" class="btn btn-outline-danger border-4 w-75 h-100 rounded-4"><a
-                                    href="/employee/resumes/add"></a>+
-                            <p>Создать резюме</p></button>
-                    </div>
-                    <div class="col">
-                        <button type="button" class="btn btn-outline-dark border-4 w-100 h-100 rounded-4"><a
-                                    href="/api/employee/responses/users/${user.id}">Отклики: ${responsesQuantity}</a>
-                        </button>
-                    </div>
-                <#else>
-                    <div class="col">
-                        <button type="button" class="btn btn-outline-danger border-4 w-75 h-100 rounded-4"><a
-                                    href="/vacancies/add"></a>+
-                            <p>Создать вакансию</p></button>
-                    </div>
-                </#if>
             </div>
         </div>
+
+
         <div class="my-4">
             <#if user.accountType == "EMPLOYEE">
                 <h2>Резюме:</h2>
             <#else>
                 <h2>Вакансии:</h2>
             </#if>
-            <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+            <div class="row row-cols-1 row-cols-lg-3 g-4 mt-3">
                 <#list userMainItems as item>
-                    <div class="col">
-                        <#if user.accountType == "EMPLOYEE">
-                        <a href="/employee/resumes/${item.id}">
-                            <#else>
-                            <a href="/vacancies/${item.id}">
+                    <div class="col card-group">
+                        <div class="card border-black border-2 rounded-4 p-3">
+                            <div class="card-body">
+                                <#if user.accountType == "EMPLOYEE">
+                                <a href="/employee/resumes/${item.id}">
+                                    <#else>
+                                    <a href="/vacancies/${item.id}">
                                 </#if>
-                                <div class="card border-2 rounded-2 p-3">
-                                    <h5 class="card-title">${item.name}</h5>
-                                    <p class="card-text">Дата обновления</p>
-                                    <p>${item.timestamp}</p>
-                                    <div class="card-footer">
-                                        <#if user.accountType == "EMPLOYEE">
-                                            <button type="button" class="btn btn-outline-success border-4"><a
-                                                        href="/employee/resumes/update">Редактировать</a></button>
-                                        <#else>
-                                            <button type="button" class="btn btn-outline-success border-4"><a
-                                                        href="/employer/vacancies/update">Редактировать</a></button>
-                                        </#if>
-                                    </div>
-                                </div>
-                            </a>
-                        </a>
+                                        <h5 class="card-title">${item.name}</h5>
+                                        <p class="card-text">Дата обновления</p>
+                                        <p>${item.timestamp}</p>
+                                    </a>
+                                </a>
+                            </div>
+
+                            <div class="card-footer bg-white">
+                                <#if user.accountType == "EMPLOYEE">
+                                    <button type="button"
+                                            class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
+                                        <a
+                                                href="/employee/resumes/update">Редактировать</a></button>
+                                <#else>
+                                    <button type="button"
+                                            class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
+                                        <a
+                                                href="/employer/vacancies/update">Редактировать</a></button>
+                                </#if>
+                            </div>
+                        </div>
                     </div>
                 </#list>
             </div>

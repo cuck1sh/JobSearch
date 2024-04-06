@@ -30,10 +30,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="users/profile">Profile</a>
+                        <a class="nav-link active" aria-current="page" href="/users/profile">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="register">Register</a>
+                        <a class="nav-link" href="/users/register">Register</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Pricing</a>

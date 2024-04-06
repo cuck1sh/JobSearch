@@ -22,14 +22,19 @@ public class UserController {
     private final UserService userService;
     private final ProfileService profileService;
 
+    // Заглушка для авторизации:
+    // профиль соискателя:     egor.kirin20@gmail.com
+    // профиль работодателя:   zhmych@gmail.com
+    private static final String TEST_USER_AUTH = "egor.kirin20@gmail.com";
+
     @GetMapping("register")
     public String createUser() {
         return "user/register";
     }
 
     @GetMapping("profile")
-    public String getProfile(Authentication auth, Model model) {
-        profileService.getProfile(auth, model);
+    public String getProfile(Model model) {
+        profileService.getProfile(TEST_USER_AUTH, model);
         return "user/profile";
     }
 

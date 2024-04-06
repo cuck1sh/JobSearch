@@ -9,7 +9,6 @@ import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -25,12 +24,13 @@ public class ProfileServiceImpl implements ProfileService {
     private final RespondedApplicantsService respondedApplicantsService;
 
     @Override
-    public void getProfile(Authentication auth, Model model) {
-        org.springframework.security.core.userdetails.User userAuth = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-        UserDto user = userService.getUserByEmail(userAuth.getUsername());
+    public void getProfile(String userAuth, Model model) {
+        UserDto user = userService.getUserByEmail(userAuth);
+        String userName = userService.isEmployee(user.getId()) ? String.join(" ", user.getName(), user.getSurname()) : user.getName();
+
         ProfileDto profileDto = ProfileDto.builder()
                 .id(user.getId())
-                .name(user.getName() + " " + user.getSurname())
+                .name(userName)
                 .age(user.getAge())
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
@@ -39,7 +39,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         model.addAttribute("user", profileDto);
 
-        if (userService.isEmployee(userAuth.getUsername())) {
+        if (userService.isEmployee(userAuth)) {
             var resumes = resumeService.getResumesByUserId(user.getId());
             List<UserMainItem> resumeDtos = new ArrayList<>();
             resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
@@ -59,8 +59,6 @@ public class ProfileServiceImpl implements ProfileService {
                     .build()));
             model.addAttribute("userMainItems", vacanciesDtos);
         }
-
-
     }
 
 }
