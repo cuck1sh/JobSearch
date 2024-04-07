@@ -70,10 +70,10 @@
             <#if user.accountType == "EMPLOYEE">
                 <h2>Резюме:</h2>
             <#else>
-                <h2>Вакансии:</h2>
+                <h2>Созданные вакансии:</h2>
             </#if>
             <#if userMainItems??>
-                <div class="row row-cols-1 row-cols-lg-3 g-4 mt-3">
+                <div class="row row-cols-1 row-cols-lg-3 g-4 mt-1">
                     <#list userMainItems as item>
                         <div class="col card-group">
                             <div class="card border-black border-2 rounded-4 p-3">
@@ -83,8 +83,8 @@
                                         <#else>
                                         <a href="/vacancies/${item.id}" class="text-decoration-none">
                                             </#if>
-                                            <h5 class="card-title">${item.name}</h5>
-                                            <p class="card-text">Дата обновления</p>
+                                            <h5 class="card-title mb-4">${item.name}</h5>
+                                            <p class="card-text mb-1">Дата обновления:</p>
                                             <p>${item.timestamp}</p>
                                         </a>
                                     </a>
@@ -95,13 +95,13 @@
                                         <button type="button"
                                                 class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
                                             <a
-                                                    href="/employee/resumes/update"
+                                                    href="/employee/resumes/update/${item.id}"
                                                     class="text-dark text-decoration-none">Редактировать</a></button>
                                     <#else>
                                         <button type="button"
                                                 class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
                                             <a
-                                                    href="/employer/vacancies/update"
+                                                    href="/employer/vacancies/update/${item.id}"
                                                     class="text-dark text-decoration-none">Редактировать</a></button>
                                     </#if>
                                 </div>

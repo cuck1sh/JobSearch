@@ -40,11 +40,6 @@ public class EmployeeRestController {
         return HttpStatus.OK;
     }
 
-    @PostMapping("resumes/change")
-    public HttpStatus changeResume(String userEmail, @RequestBody InputResumeDto resume) {
-        return resumeService.changeResume(userEmail, resume);
-    }
-
     @DeleteMapping("resumes/{id}")
     public HttpStatus deleteResumeById(Authentication auth, @PathVariable int id) {
         return resumeService.deleteResumeById(auth, id);

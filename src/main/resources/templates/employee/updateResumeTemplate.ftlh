@@ -2,24 +2,32 @@
 <@main.layout>
 
     <div class="col-12 col-lg-6 p-4 mx-auto border rounded-2 mb-4">
-        <h1 class="text-center mt-2 mb-3 text-danger">Создание резюме:</h1>
+        <h1 class="text-center mt-2 mb-3 text-danger">Редактирование резюме:</h1>
         <form action="/employee/resumes/add" method="post">
 
-            <input type="hidden" name="id" value=${resumeId}>
+            <input type="hidden" name="id" value=${resume.id}>
 
             <div class="row">
                 <div class="col-7">
 
                     <div class="mb-3">
                         <label for="name" class="form-label">Название резюме:</label>
-                        <input name="name" type="text" class="form-control" id="name" placeholder="Введите название"
+                        <input name="name" type="text"
+                                <#if resume.name??>
+                                    value="${resume.name}"
+                                </#if>
+                               class="form-control" id="name" placeholder="Введите название"
                                required>
                     </div>
 
                     <div class="mb-3">
                         <label for="category" class="form-label">Категория:</label>
                         <select name="category" id="category" class="form-select">
-                            <option selected>Выберите категорию</option>
+                            <option selected
+                                    <#if resume.category??>
+                                    value="${resume.category.id}">${resume.category.name}
+                                <#else>Выберите категорию
+                                </#if></option>
                             <#list categories as category>
                                 <option value=${category.id}>${category.name}</option>
                             </#list>
@@ -48,7 +56,7 @@
                     </div>
                 </div>
 
-                <a href="/employee/resume/add/workExp/${resumeId}" target="_blank"
+                <a href="/employee/resume/add/workExp/${resume.id}"
                    class="col-3 m-2 d-flex justify-content-center align-items-center text-decoration-none object-fit-cover border bg-success p-2 text-dark bg-opacity-10 rounded-3">
                     <span class="fs-1">+</span>
                 </a>
@@ -66,7 +74,7 @@
                     </div>
                 </div>
 
-                <a href="/employee/resume/add/education/${resumeId}" target="_blank"
+                <a href="/employee/resume/add/education/${resume.id}"
                    class="col-3 m-2 d-flex justify-content-center align-items-center text-decoration-none object-fit-cover border bg-info p-2 text-dark bg-opacity-10 rounded-3">
                     <span class="fs-1">+</span>
                 </a>
@@ -78,7 +86,7 @@
                 <div class="col">
 
                     <div class="d-flex">
-                        <input name="telegram" type="text" class="form-control me-2 my-3" id="telegram">
+                        <input name="telegram" value type="text" class="form-control me-2 my-3" id="telegram">
                         <i class="bi bi-telegram align-content-center fs-2"></i>
                     </div>
 

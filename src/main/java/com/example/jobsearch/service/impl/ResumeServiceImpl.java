@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.ResumeDao;
+import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
@@ -118,37 +119,37 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public Integer createResume(String userEmail) {
         if (userService.isEmployee(userEmail)) {
-            Integer newResumeKey = resumeDao.createResume(userService.getUserByEmail(userEmail).getId());
-
-            educationInfoService.createEducationInfo(newResumeKey);
-            workExperienceInfoService.createWorkExperienceInfo(newResumeKey);
-
-            return newResumeKey;
+            return resumeDao.createResume(userService.getUserByEmail(userEmail).getId());
         }
         throw new ResumeNotFoundException("Юзер " + userEmail + " не найден среди соискателей");
     }
 
     @Override
-    public HttpStatus changeResume(String userEmail, InputResumeDto resume) {
+    public void changeResume(String userEmail, InputResumeDto resume, InputContactInfoDto contacts) {
         if (isResumeInSystem(resume.getId())) {
+            Integer userId = userService.getUserByEmail(userEmail).getId();
+
             Resume newResume = Resume.builder()
                     .id(resume.getId())
-                    .userId(userService.getUserByEmail(userEmail).getId())
+                    .userId(userId)
                     .name(resume.getName())
-                    .categoryId(categoryService.checkInCategories(resume.getCategory()))
-                    .salary(resume.getSalary())
-                    .isActive(resume.getIsActive())
                     .updateTime(LocalDateTime.now())
                     .build();
 
-            resumeDao.changeResume(newResume);
-//            educationInfoService.changeEducationInfo(resume.getEducationInfos(), resume.getId());
-//            workExperienceInfoService.changeWorkExperienceInfo(resume.getWorkExperienceInfos(), resume.getId());
-            contactsInfoService.changeContactInfo(resume.getContacts(), resume.getId());
+            if (!resume.getCategory().equals("Выберите категорию")) {
+                newResume.setCategoryId(Integer.parseInt(resume.getCategory()));
+            }
 
-            return HttpStatus.OK;
+            if (resume.getSalary() != null) {
+                newResume.setSalary(resume.getSalary());
+            }
+
+            newResume.setIsActive(resume.getIsActive() != null);
+            resumeDao.changeResume(newResume);
+            contactsInfoService.updateContactInfo(newResume.getId(), contacts);
+        } else {
+            log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
         }
-        throw new ResumeNotFoundException("Резюме с айди " + resume.getId() + " не найдено в системе");
     }
 
     @Override
@@ -164,7 +165,7 @@ public class ResumeServiceImpl implements ResumeService {
             }
             throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
         }
-        throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе");
+        throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе для его удаления");
     }
 
     @Override

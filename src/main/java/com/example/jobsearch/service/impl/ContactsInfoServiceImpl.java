@@ -31,27 +31,90 @@ public class ContactsInfoServiceImpl implements ContactsInfoService {
     }
 
     @Override
-    public void createContactInfo(List<ContactsInfoDto> contactsInfoDto, Integer newResumeKey) {
-        if (!contactsInfoDto.isEmpty()) {
-            List<ContactsInfo> contactsInfos = new ArrayList<>();
-            contactsInfoDto.forEach(e -> contactsInfos.add(ContactsInfo.builder()
-                    .typeId(contactTypesService.isTypeInBase(e.getType().getId()))
-                    .resumeId(newResumeKey)
-                    .info(e.getInfo())
-                    .build()));
+    public void updateContactInfo(Integer resumeId, InputContactInfoDto contacts) {
+        if (!contacts.getPhoneNumber().isBlank()) {
+            if (Boolean.TRUE.equals(isContactsInSystem(contactTypesService.getTypeByName("Phone number"), resumeId))) {
+                contactsInfoDao.changeContactInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("Phone number"))
+                        .resumeId(resumeId)
+                        .info(contacts.getPhoneNumber())
+                        .build());
+            } else {
+                contactsInfoDao.createContactsInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("Phone number"))
+                        .resumeId(resumeId)
+                        .info(contacts.getPhoneNumber())
+                        .build());
+            }
+        }
 
-            contactsInfos.forEach(contactsInfoDao::createContactsInfo);
+        if (!contacts.getEmail().isBlank()) {
+            if (Boolean.TRUE.equals(isContactsInSystem(contactTypesService.getTypeByName("Email"), resumeId))) {
+                contactsInfoDao.changeContactInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("Email"))
+                        .resumeId(resumeId)
+                        .info(contacts.getEmail())
+                        .build());
+            } else {
+                contactsInfoDao.createContactsInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("Email"))
+                        .resumeId(resumeId)
+                        .info(contacts.getEmail())
+                        .build());
+            }
+        }
+
+        if (!contacts.getFacebook().isBlank()) {
+            if (Boolean.TRUE.equals(isContactsInSystem(contactTypesService.getTypeByName("Facebook"), resumeId))) {
+                contactsInfoDao.changeContactInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("Facebook"))
+                        .resumeId(resumeId)
+                        .info(contacts.getFacebook())
+                        .build());
+            } else {
+                contactsInfoDao.createContactsInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("Facebook"))
+                        .resumeId(resumeId)
+                        .info(contacts.getFacebook())
+                        .build());
+            }
+        }
+
+        if (!contacts.getLinkedIn().isBlank()) {
+            if (Boolean.TRUE.equals(isContactsInSystem(contactTypesService.getTypeByName("LinkedIn"), resumeId))) {
+                contactsInfoDao.changeContactInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("LinkedIn"))
+                        .resumeId(resumeId)
+                        .info(contacts.getLinkedIn())
+                        .build());
+            } else {
+                contactsInfoDao.createContactsInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("LinkedIn"))
+                        .resumeId(resumeId)
+                        .info(contacts.getLinkedIn())
+                        .build());
+            }
+        }
+
+        if (!contacts.getTelegram().isBlank()) {
+            if (Boolean.TRUE.equals(isContactsInSystem(contactTypesService.getTypeByName("Telegram"), resumeId))) {
+                contactsInfoDao.changeContactInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("Telegram"))
+                        .resumeId(resumeId)
+                        .info(contacts.getTelegram())
+                        .build());
+            } else {
+                contactsInfoDao.createContactsInfo(ContactsInfo.builder()
+                        .typeId(contactTypesService.getTypeByName("Telegram"))
+                        .resumeId(resumeId)
+                        .info(contacts.getTelegram())
+                        .build());
+            }
         }
     }
 
     @Override
-    public void changeContactInfo(InputContactInfoDto contacts, int resumeId) {
-//        ContactsInfo.builder()
-//                .typeId(contactTypesService.isTypeInBase(e.getType().getId()))
-//                .resumeId(resumeId)
-//                .info(e.getInfo())
-//                .build()
-//
-//        contactsInfos.forEach(contactsInfoDao::changeContactInfo);
+    public Boolean isContactsInSystem(int typeId, int resumeId) {
+        return contactsInfoDao.isContactsInSystem(typeId, resumeId);
     }
 }

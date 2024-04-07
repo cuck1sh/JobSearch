@@ -26,8 +26,6 @@ public class InputResumeDto {
     @Positive
     private Double salary;
 
-    private InputContactInfoDto contacts;
-
     @JsonProperty("is_active")
     private Boolean isActive;
 

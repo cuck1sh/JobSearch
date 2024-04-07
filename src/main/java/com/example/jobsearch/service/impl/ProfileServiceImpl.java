@@ -1,5 +1,6 @@
 package com.example.jobsearch.service.impl;
 
+import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.ProfileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.user.UserMainItem;
@@ -41,7 +42,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (userService.isEmployee(userAuth)) {
             if (resumeService.isUsersResumesInSystem(user.getId())) {
-                var resumes = resumeService.getResumesByUserId(user.getId());
+                List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
                 List<UserMainItem> resumeDtos = new ArrayList<>();
                 resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
                         .id(e.getId())

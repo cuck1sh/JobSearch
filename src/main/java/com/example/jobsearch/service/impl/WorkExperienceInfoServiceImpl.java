@@ -2,15 +2,16 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.WorkExperienceInfoDao;
 import com.example.jobsearch.dto.WorkExperienceInfoDto;
-import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.model.WorkExperienceInfo;
 import com.example.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService {
@@ -37,20 +38,22 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
                     .build()));
 
             return workExperienceInfoDtos;
+        } else {
+            log.error("Резюме с айди " + resumeId + " не найдено в системе для выдачи информации об опыте работы");
+            return null;
         }
-        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
     }
 
     @Override
-    public void createWorkExperienceInfo(Integer newResumeKey) {
-        workExperienceInfoDao.createWorkExperienceInfo(WorkExperienceInfo.builder()
-                .resumeId(newResumeKey)
-                .years(0)
-                .companyName(DEFAULT_VALUE)
-                .position(DEFAULT_VALUE)
-                .responsibilities(DEFAULT_VALUE)
-                .build());
-
+    public void createWorkExperienceInfo(WorkExperienceInfoDto workExperienceInfoDto) {
+        WorkExperienceInfo workExperienceInfo = WorkExperienceInfo.builder()
+                .resumeId(workExperienceInfoDto.getResumeId())
+                .years(workExperienceInfoDto.getYears())
+                .companyName(workExperienceInfoDto.getCompanyName())
+                .position(workExperienceInfoDto.getPosition())
+                .responsibilities(workExperienceInfoDto.getResponsibilities())
+                .build();
+        workExperienceInfoDao.createWorkExperienceInfo(workExperienceInfo);
     }
 
     @Override

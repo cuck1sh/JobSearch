@@ -2,21 +2,21 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.EducationInfoDao;
 import com.example.jobsearch.dto.EducationInfoDto;
-import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.model.EducationInfo;
 import com.example.jobsearch.service.EducationInfoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EducationInfoServiceImpl implements EducationInfoService {
 
     private final EducationInfoDao educationInfoDao;
-    private static final String DEFAULT_VALUE = "undefined";
 
     @Override
     public Boolean isResumeExist(int resumeId) {
@@ -38,18 +38,29 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                     .build()));
 
             return educationInfoDtos;
+        } else {
+            log.error("Резюме с айди " + resumeId + " не найдено в системе для выдачи информации об обучении");
+            return null;
         }
-        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
     }
 
     @Override
-    public void createEducationInfo(int newResumeKey) {
-        educationInfoDao.createEducationInfo(EducationInfo.builder()
-                .resumeId(newResumeKey)
-                .institution(DEFAULT_VALUE)
-                .program(DEFAULT_VALUE)
-                .degree(DEFAULT_VALUE)
-                .build());
+    public void createEducationInfo(EducationInfoDto educationInfoDto) {
+        EducationInfo educationInfo = EducationInfo.builder()
+                .resumeId(educationInfoDto.getResumeId())
+                .institution(educationInfoDto.getInstitution())
+                .program(educationInfoDto.getProgram())
+                .startDate(educationInfoDto.getStartDate())
+                .endDate(educationInfoDto.getEndDate())
+                .build();
+
+        if (educationInfoDto.getDegree() == null) {
+            educationInfo.setDegree(" ");
+        } else {
+            educationInfo.setDegree(educationInfoDto.getDegree());
+        }
+
+        educationInfoDao.createEducationInfo(educationInfo);
     }
 
     @Override

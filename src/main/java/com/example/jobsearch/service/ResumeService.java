@@ -1,5 +1,6 @@
 package com.example.jobsearch.service;
 
+import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -23,7 +24,7 @@ public interface ResumeService {
     HttpStatus deleteResumeById(Authentication auth, int id);
     List<ResumeDto> getActiveResumes();
 
-    HttpStatus changeResume(String userEmail, InputResumeDto resume);
+    void changeResume(String userEmail, InputResumeDto resume, InputContactInfoDto contacts);
 
     void getResume(String userEmail, int id, Model model);
 }
