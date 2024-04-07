@@ -10,7 +10,7 @@ public interface EducationInfoService {
 
     List<EducationInfoDto> getEducationInfoById(int resumeId);
 
-    void createEducationInfo(List<EducationInfoDto> educationInfo, int newResumeKey);
+    void createEducationInfo(int newResumeKey);
 
     void changeEducationInfo(List<EducationInfoDto> educationInfos, Integer resumeId);
 }

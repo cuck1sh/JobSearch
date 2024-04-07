@@ -1,8 +1,8 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dto.ProfileDto;
-import com.example.jobsearch.dto.UserDto;
-import com.example.jobsearch.dto.UserMainItem;
+import com.example.jobsearch.dto.user.ProfileDto;
+import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
@@ -40,24 +40,30 @@ public class ProfileServiceImpl implements ProfileService {
         model.addAttribute("user", profileDto);
 
         if (userService.isEmployee(userAuth)) {
-            var resumes = resumeService.getResumesByUserId(user.getId());
-            List<UserMainItem> resumeDtos = new ArrayList<>();
-            resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
-                    .id(e.getId())
-                    .name(e.getName())
-                    .timestamp(e.getUpdateTime())
-                    .build()));
-            model.addAttribute("userMainItems", resumeDtos);
-            model.addAttribute("responsesQuantity", respondedApplicantsService.getResponsesForEmployee(user.getId()).size());
+            if (resumeService.isUsersResumesInSystem(user.getId())) {
+                var resumes = resumeService.getResumesByUserId(user.getId());
+                List<UserMainItem> resumeDtos = new ArrayList<>();
+                resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
+                        .id(e.getId())
+                        .name(e.getName())
+                        .timestamp(e.getUpdateTime())
+                        .build()));
+                model.addAttribute("userMainItems", resumeDtos.reversed());
+                model.addAttribute("responsesQuantity", respondedApplicantsService.getResponsesForEmployee(user.getId()).size());
+            } else {
+                model.addAttribute("responsesQuantity", 0);
+            }
         } else {
-            var vacancies = vacancyService.getAllVacanciesByCompany(user.getId());
-            List<UserMainItem> vacanciesDtos = new ArrayList<>();
-            vacancies.forEach(e -> vacanciesDtos.add(UserMainItem.builder()
-                    .id(e.getId())
-                    .name(e.getName())
-                    .timestamp(e.getUpdateTime())
-                    .build()));
-            model.addAttribute("userMainItems", vacanciesDtos);
+            if (vacancyService.isUsersVacanciesInSystem(user.getId())) {
+                var vacancies = vacancyService.getAllVacanciesByCompany(user.getId());
+                List<UserMainItem> vacanciesDtos = new ArrayList<>();
+                vacancies.forEach(e -> vacanciesDtos.add(UserMainItem.builder()
+                        .id(e.getId())
+                        .name(e.getName())
+                        .timestamp(e.getUpdateTime())
+                        .build()));
+                model.addAttribute("userMainItems", vacanciesDtos);
+            }
         }
     }
 

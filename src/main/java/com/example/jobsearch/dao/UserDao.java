@@ -148,7 +148,7 @@ public class UserDao {
     public void changeUser(User user) {
         String sql = """
                 update users
-                set name = :name, surname = :surname, age = :age, password = :password, phone_number = :phone_number
+                set name = :name, surname = :surname, age = :age, phone_number = :phone_number
                 where id = :id;
                 """;
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
@@ -156,8 +156,18 @@ public class UserDao {
                 .addValue("name", user.getName())
                 .addValue("surname", user.getSurname())
                 .addValue("age", user.getAge())
-                .addValue("password", user.getPassword())
                 .addValue("phone_number", user.getPhoneNumber()));
+    }
+
+    public void changePassword(User user) {
+        String sql = """
+                update users
+                set password = :password
+                where id = :id;
+                """;
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
+                .addValue("password", user.getPassword())
+        );
     }
 
     public void saveAvatar(UserAvatar userAvatar) {

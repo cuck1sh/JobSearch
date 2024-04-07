@@ -16,6 +16,7 @@ import java.util.List;
 public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService {
 
     private final WorkExperienceInfoDao workExperienceInfoDao;
+    private static final String DEFAULT_VALUE = "undefined";
 
     @Override
     public Boolean isResumeExist(int resumeId) {
@@ -41,19 +42,15 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     }
 
     @Override
-    public void createWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfoDtos, Integer newResumeKey) {
-        if (!workExperienceInfoDtos.isEmpty()) {
-            List<WorkExperienceInfo> workExperienceInfos = new ArrayList<>();
-            workExperienceInfoDtos.forEach(e -> workExperienceInfos.add(WorkExperienceInfo.builder()
-                    .resumeId(newResumeKey)
-                    .years(e.getYears())
-                    .companyName(e.getCompanyName())
-                    .position(e.getPosition())
-                    .responsibilities(e.getResponsibilities())
-                    .build()));
+    public void createWorkExperienceInfo(Integer newResumeKey) {
+        workExperienceInfoDao.createWorkExperienceInfo(WorkExperienceInfo.builder()
+                .resumeId(newResumeKey)
+                .years(0)
+                .companyName(DEFAULT_VALUE)
+                .position(DEFAULT_VALUE)
+                .responsibilities(DEFAULT_VALUE)
+                .build());
 
-            workExperienceInfos.forEach(workExperienceInfoDao::createWorkExperienceInfo);
-        }
     }
 
     @Override

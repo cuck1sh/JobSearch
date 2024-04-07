@@ -2,6 +2,7 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.ContactsInfoDao;
 import com.example.jobsearch.dto.ContactsInfoDto;
+import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.model.ContactsInfo;
 import com.example.jobsearch.service.ContactTypesService;
 import com.example.jobsearch.service.ContactsInfoService;
@@ -44,16 +45,13 @@ public class ContactsInfoServiceImpl implements ContactsInfoService {
     }
 
     @Override
-    public void changeContactInfo(List<ContactsInfoDto> contactsInfoDtos, int resumeId) {
-        if (!contactsInfoDtos.isEmpty()) {
-            List<ContactsInfo> contactsInfos = new ArrayList<>();
-            contactsInfoDtos.forEach(e -> contactsInfos.add(ContactsInfo.builder()
-                    .typeId(contactTypesService.isTypeInBase(e.getType().getId()))
-                    .resumeId(resumeId)
-                    .info(e.getInfo())
-                    .build()));
-
-            contactsInfos.forEach(contactsInfoDao::changeContactInfo);
-        }
+    public void changeContactInfo(InputContactInfoDto contacts, int resumeId) {
+//        ContactsInfo.builder()
+//                .typeId(contactTypesService.isTypeInBase(e.getType().getId()))
+//                .resumeId(resumeId)
+//                .info(e.getInfo())
+//                .build()
+//
+//        contactsInfos.forEach(contactsInfoDao::changeContactInfo);
     }
 }

@@ -1,5 +1,9 @@
-package com.example.jobsearch.dto;
+package com.example.jobsearch.dto.resume;
 
+import com.example.jobsearch.dto.CategoryDto;
+import com.example.jobsearch.dto.ContactsInfoDto;
+import com.example.jobsearch.dto.EducationInfoDto;
+import com.example.jobsearch.dto.WorkExperienceInfoDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

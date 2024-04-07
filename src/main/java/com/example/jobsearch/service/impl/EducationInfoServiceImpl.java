@@ -16,6 +16,7 @@ import java.util.List;
 public class EducationInfoServiceImpl implements EducationInfoService {
 
     private final EducationInfoDao educationInfoDao;
+    private static final String DEFAULT_VALUE = "undefined";
 
     @Override
     public Boolean isResumeExist(int resumeId) {
@@ -42,20 +43,13 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     @Override
-    public void createEducationInfo(List<EducationInfoDto> educationInfoDtos, int newResumeKey) {
-        if (!educationInfoDtos.isEmpty()) {
-            List<EducationInfo> educationInfos = new ArrayList<>();
-            educationInfoDtos.forEach(e -> educationInfos.add(EducationInfo.builder()
-                    .resumeId(newResumeKey)
-                    .institution(e.getInstitution())
-                    .program(e.getProgram())
-                    .startDate(e.getStartDate())
-                    .endDate(e.getEndDate())
-                    .degree(e.getDegree())
-                    .build()));
-
-            educationInfos.forEach(educationInfoDao::createEducationInfo);
-        }
+    public void createEducationInfo(int newResumeKey) {
+        educationInfoDao.createEducationInfo(EducationInfo.builder()
+                .resumeId(newResumeKey)
+                .institution(DEFAULT_VALUE)
+                .program(DEFAULT_VALUE)
+                .degree(DEFAULT_VALUE)
+                .build());
     }
 
     @Override

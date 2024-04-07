@@ -87,8 +87,20 @@ public class VacancyDao {
                 else false
                 end;
                 """;
-
         return template.queryForObject(sql, Boolean.class, id);
+    }
+
+    public Boolean isUsersVacanciesInSystem(int userId) {
+        String sql = """
+                select case
+                when exists(select *
+                            from VACANCIES
+                            where USER_ID = ?)
+                    then true
+                else false
+                end;
+                """;
+        return template.queryForObject(sql, Boolean.class, userId);
     }
 
     public void changeVacancy(Vacancy vacancy) {
@@ -144,4 +156,6 @@ public class VacancyDao {
                 """;
         return template.queryForObject(sql, Boolean.class, vacancyId);
     }
+
+
 }

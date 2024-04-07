@@ -14,6 +14,8 @@ public interface VacancyService {
 
     List<VacancyDto> getActiveVacancies();
     Boolean isVacancyInSystem(int id);
+
+    Boolean isUsersVacanciesInSystem(int userId);
     Boolean isVacancyActive(int vacancyId);
     HttpStatus createVacancy(Authentication auth, VacancyDto vacancy);
     HttpStatus changeVacancy(Authentication auth, VacancyDto vacancy);

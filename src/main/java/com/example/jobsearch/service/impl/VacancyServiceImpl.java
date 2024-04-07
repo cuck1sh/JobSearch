@@ -91,6 +91,11 @@ public class VacancyServiceImpl implements VacancyService {
         return vacancyDao.isVacancyInSystem(id);
     }
 
+    @Override
+    public Boolean isUsersVacanciesInSystem(int userId) {
+        return vacancyDao.isUsersVacanciesInSystem(userId);
+    }
+
     // Служебный метод
     @Override
     public Boolean isVacancyActive(int vacancyId) {

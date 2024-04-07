@@ -19,7 +19,7 @@
                             <p>Возраст: ${user.age}</p>
                             <button type="button"
                                     class="btn border-black border-2 bg-success p-2 text-dark bg-opacity-10"><a
-                                        href="/users/update">Редактировать</a>
+                                        href="/users/update" class="text-dark text-decoration-none">Редактировать</a>
                             </button>
                         </div>
                     </div>
@@ -31,26 +31,31 @@
                             <div class="col">
                                 <button type="button"
                                         class="btn border-black border-2 w-75 h-100 rounded-4 bg-danger p-2 text-dark bg-opacity-10">
-                                    <a href="/employee/resumes/add">+ <p>Создать резюме</p></a>
+                                    <a href="/employee/resumes/add" class="text-dark text-decoration-none">+ <p>Создать
+                                            резюме</p></a>
                                 </button>
                             </div>
 
                             <div class="col">
                                 <button type="button"
                                         class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
-                                    <a href="/api/employee/responses/users/${user.id}">Отклики </a>
-
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    <a href="/api/employee/responses/users/${user.id}"
+                                       class="text-dark text-decoration-none">Отклики </a>
+                                    <#if responsesQuantity gt 0>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         ${responsesQuantity}
                                         <span class="visually-hidden">unread messages</span>
-                                    </span>
+                                        </span>
+                                    </#if>
+
                                 </button>
                             </div>
                         <#else>
                             <div class="col">
                                 <button type="button"
                                         class="btn border-black border-2 w-75 h-100 rounded-4 bg-danger p-2 text-dark bg-opacity-10">
-                                    <a href="/vacancies/add">+ <p>Создать вакансию</p></a>
+                                    <a href="/vacancies/add" class="text-dark text-decoration-none">+ <p>Создать
+                                            вакансию</p></a>
                                 </button>
                             </div>
                         </#if>
@@ -67,40 +72,44 @@
             <#else>
                 <h2>Вакансии:</h2>
             </#if>
-            <div class="row row-cols-1 row-cols-lg-3 g-4 mt-3">
-                <#list userMainItems as item>
-                    <div class="col card-group">
-                        <div class="card border-black border-2 rounded-4 p-3">
-                            <div class="card-body">
-                                <#if user.accountType == "EMPLOYEE">
-                                <a href="/employee/resumes/${item.id}">
-                                    <#else>
-                                    <a href="/vacancies/${item.id}">
-                                </#if>
-                                        <h5 class="card-title">${item.name}</h5>
-                                        <p class="card-text">Дата обновления</p>
-                                        <p>${item.timestamp}</p>
+            <#if userMainItems??>
+                <div class="row row-cols-1 row-cols-lg-3 g-4 mt-3">
+                    <#list userMainItems as item>
+                        <div class="col card-group">
+                            <div class="card border-black border-2 rounded-4 p-3">
+                                <div class="card-body">
+                                    <#if user.accountType == "EMPLOYEE">
+                                    <a href="/employee/resumes/${item.id}" class="text-decoration-none">
+                                        <#else>
+                                        <a href="/vacancies/${item.id}" class="text-decoration-none">
+                                            </#if>
+                                            <h5 class="card-title">${item.name}</h5>
+                                            <p class="card-text">Дата обновления</p>
+                                            <p>${item.timestamp}</p>
+                                        </a>
                                     </a>
-                                </a>
-                            </div>
+                                </div>
 
-                            <div class="card-footer bg-white">
-                                <#if user.accountType == "EMPLOYEE">
-                                    <button type="button"
-                                            class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
-                                        <a
-                                                href="/employee/resumes/update">Редактировать</a></button>
-                                <#else>
-                                    <button type="button"
-                                            class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
-                                        <a
-                                                href="/employer/vacancies/update">Редактировать</a></button>
-                                </#if>
+                                <div class="card-footer bg-white">
+                                    <#if user.accountType == "EMPLOYEE">
+                                        <button type="button"
+                                                class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
+                                            <a
+                                                    href="/employee/resumes/update"
+                                                    class="text-dark text-decoration-none">Редактировать</a></button>
+                                    <#else>
+                                        <button type="button"
+                                                class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
+                                            <a
+                                                    href="/employer/vacancies/update"
+                                                    class="text-dark text-decoration-none">Редактировать</a></button>
+                                    </#if>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </#list>
-            </div>
+                    </#list>
+                </div>
+            </#if>
 
         </div>
     </div>

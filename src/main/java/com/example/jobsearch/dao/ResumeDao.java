@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +63,7 @@ public class ResumeDao {
     public List<Resume> getResumesByUserEmail(int userId) {
         String sql = """
                 select * from PUBLIC.RESUMES
-                where IS_ACTIVE = true and USER_ID = ?;
+                where (IS_ACTIVE = true or IS_ACTIVE = false) and USER_ID = ?;
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), userId);
     }
@@ -77,24 +78,35 @@ public class ResumeDao {
                 else false
                 end;
                 """;
-
         return template.queryForObject(sql, Boolean.class, id);
     }
 
-    public Integer createResume(Resume resume) {
+    public Boolean isUsersResumesInSystem(int userId) {
         String sql = """
-                insert into resumes(user_id, name, category_id, salary, is_active, created_date, update_time)
-                values (:user_id, :name, :category_id, :salary, :is_active, :created_date, :update_time);
+                select case
+                when exists(select *
+                            from RESUMES
+                            where USER_ID = ?)
+                    then true
+                else false
+                end;
+                """;
+        return template.queryForObject(sql, Boolean.class, userId);
+    }
+
+    public Integer createResume(int userId) {
+        String sql = """
+                insert into resumes(user_id, name, created_date, update_time)
+                values (:user_id, :name, :created_date, :update_time);
                 """;
 
+        LocalDateTime now = LocalDateTime.now();
+
         MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("user_id", resume.getUserId())
-                .addValue("name", resume.getName())
-                .addValue("category_id", resume.getCategoryId())
-                .addValue("salary", resume.getSalary())
-                .addValue("is_active", resume.getIsActive())
-                .addValue("created_date", resume.getCreatedDate())
-                .addValue("update_time", resume.getCreatedDate());
+                .addValue("user_id", userId)
+                .addValue("name", "undefined")
+                .addValue("created_date", now)
+                .addValue("update_time", now);
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -125,6 +137,5 @@ public class ResumeDao {
                 """;
         template.update(sql, id);
     }
-
 
 }

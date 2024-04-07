@@ -1,6 +1,6 @@
 package com.example.jobsearch.controller;
 
-import com.example.jobsearch.dto.UserDto;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
