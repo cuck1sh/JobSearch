@@ -1,5 +1,6 @@
-package com.example.jobsearch.dto;
+package com.example.jobsearch.dto.vacancy;
 
+import com.example.jobsearch.dto.CategoryDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -23,6 +24,7 @@ public class VacancyDto {
 
     @NotBlank
     private String name;
+
     private String description;
 
     private CategoryDto category;

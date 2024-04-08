@@ -24,7 +24,7 @@ public class MainController {
 
     @GetMapping
     public String getMainPage(Model model) {
-        model.addAttribute("vacancies", vacancyService.getActiveVacancies());
+        model.addAttribute("vacancies", vacancyService.getActiveVacancies().reversed());
         return "main";
     }
 

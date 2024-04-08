@@ -54,7 +54,8 @@
                             <div class="col">
                                 <button type="button"
                                         class="btn border-black border-2 w-75 h-100 rounded-4 bg-danger p-2 text-dark bg-opacity-10">
-                                    <a href="/vacancies/add" class="text-dark text-decoration-none">+ <p>Создать
+                                    <a href="/employer/vacancies/add" class="text-dark text-decoration-none">+ <p>
+                                            Создать
                                             вакансию</p></a>
                                 </button>
                             </div>

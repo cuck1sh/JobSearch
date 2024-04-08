@@ -117,7 +117,8 @@
             </div>
 
             <div class="form-check mb-3">
-                <input class="form-check-input" name="isActive" type="checkbox" value=true id="isActive">
+                <input class="form-check-input" name="isActive" type="checkbox" value=true id="isActive"
+                       <#if resume.isActive == true>checked</#if>>
                 <label class="form-check-label" for="isActive">
                     Активно
                 </label>

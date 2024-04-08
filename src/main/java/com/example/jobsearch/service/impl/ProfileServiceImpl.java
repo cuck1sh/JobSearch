@@ -63,7 +63,7 @@ public class ProfileServiceImpl implements ProfileService {
                         .name(e.getName())
                         .timestamp(e.getUpdateTime())
                         .build()));
-                model.addAttribute("userMainItems", vacanciesDtos);
+                model.addAttribute("userMainItems", vacanciesDtos.reversed());
             }
         }
     }

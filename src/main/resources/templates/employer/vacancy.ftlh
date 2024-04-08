@@ -12,11 +12,15 @@
                 <h5 class="card-title">Описание: ${vacancy.description}</h5>
             </#if>
 
-            <#if vacancy.category.parent??>
-                <h5 class="card-title">Родительская категория: ${vacancy.category.parent}</h5>
-            </#if>
+            <#if vacancy.category??>
+                <#if vacancy.category.parent??>
+                    <h5 class="card-title">Родительская категория: ${vacancy.category.parent}</h5>
+                </#if>
 
-            <h5 class="card-title">Категория: ${vacancy.category.name}</h5>
+                <#if vacancy.category.name??>
+                    <h5 class="card-title">Категория: ${vacancy.category.name}</h5>
+                </#if>
+            </#if>
 
             <#if vacancy.salary??>
                 <h5 class="card-title">Заработная плата: ${vacancy.salary}</h5>

@@ -1,7 +1,8 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.VacancyDao;
-import com.example.jobsearch.dto.VacancyDto;
+import com.example.jobsearch.dto.vacancy.InputVacancyDto;
+import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.exception.VacancyNotFoundException;
@@ -10,6 +11,7 @@ import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
@@ -29,20 +32,25 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public VacancyDto getVacancyById(int id) throws UserNotFoundException {
-        Vacancy vacancy = vacancyDao.getVacancyById(id).orElseThrow(() -> new VacancyNotFoundException("Can not find vacancy with id: " + id));
-        return VacancyDto.builder()
-                .id(vacancy.getId())
-                .name(vacancy.getName())
-                .description(vacancy.getDescription())
-                .category(categoryService.getCategoryById(vacancy.getCategoryId()))
-                .salary(vacancy.getSalary())
-                .expFrom(vacancy.getExpFrom())
-                .expTo(vacancy.getExpTo())
-                .isActive(vacancy.getIsActive())
-                .userEmail(userService.getUserById(vacancy.getUserId()).getEmail())
-                .createdDate(vacancy.getCreatedDate())
-                .updateTime(vacancy.getUpdateTime())
-                .build();
+        if (isVacancyInSystem(id)) {
+            Vacancy vacancy = vacancyDao.getVacancyById(id);
+            return VacancyDto.builder()
+                    .id(vacancy.getId())
+                    .name(vacancy.getName())
+                    .description(vacancy.getDescription())
+                    .category(categoryService.getCategoryById(vacancy.getCategoryId()))
+                    .salary(vacancy.getSalary())
+                    .expFrom(vacancy.getExpFrom())
+                    .expTo(vacancy.getExpTo())
+                    .isActive(vacancy.getIsActive())
+                    .userEmail(userService.getUserById(vacancy.getUserId()).getEmail())
+                    .createdDate(vacancy.getCreatedDate())
+                    .updateTime(vacancy.getUpdateTime())
+                    .build();
+        } else {
+            log.error("Не найдена вакансия с айди: " + id + " для метода getVacancyById(id)");
+            return null;
+        }
     }
 
     @Override
@@ -103,59 +111,81 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public HttpStatus createVacancy(Authentication auth, VacancyDto vacancyDto) {
-        User user = (User) auth.getPrincipal();
-        if (!userService.isEmployee(user.getUsername())) {
-            if (user.getUsername().equals(vacancyDto.getUserEmail())) {
-                Vacancy vacancy = Vacancy.builder()
-                        .name(vacancyDto.getName())
-                        .description(vacancyDto.getDescription())
-                        .categoryId(categoryService.checkInCategories(vacancyDto.getCategory().getId()))
-                        .salary(vacancyDto.getSalary())
-                        .expFrom(vacancyDto.getExpFrom())
-                        .expTo(vacancyDto.getExpTo())
-                        .isActive(vacancyDto.getIsActive())
-                        .userId(userService.getUserByEmail(user.getUsername()).getId())
-                        .createdDate(LocalDateTime.now())
-                        .build();
+    public void createVacancy(String userEmail, InputVacancyDto vacancyDto) {
+        if (!userService.isEmployee(userEmail)) {
+            LocalDateTime now = LocalDateTime.now();
 
-                vacancyDao.createVacancy(vacancy);
-                return HttpStatus.OK;
+            Vacancy vacancy = Vacancy.builder()
+                    .name(vacancyDto.getName())
+                    .userId(userService.getUserByEmail(userEmail).getId())
+                    .createdDate(now)
+                    .updateTime(now)
+                    .build();
+
+            if (!vacancyDto.getCategory().equals("Выберите категорию")) {
+                vacancy.setCategoryId(Integer.parseInt(vacancyDto.getCategory()));
             }
-            throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в вакансии");
+
+            if (vacancyDto.getSalary() != null) {
+                vacancy.setSalary(vacancyDto.getSalary());
+            }
+
+            if (!vacancyDto.getDescription().isBlank()) {
+                vacancy.setDescription(vacancyDto.getDescription());
+            }
+
+            if (vacancyDto.getExpFrom() != null) {
+                vacancy.setExpFrom(vacancyDto.getExpFrom());
+            }
+
+            if (vacancyDto.getExpTo() != null) {
+                vacancy.setExpTo(vacancyDto.getExpTo());
+            }
+
+            vacancy.setIsActive(vacancyDto.getIsActive() != null);
+            vacancyDao.createVacancy(vacancy);
+        } else {
+            log.info("Юзер " + userEmail + " не найден среди работодателей для добавления вакансии");
         }
-        throw new VacancyNotFoundException("Юзер " + user.getUsername() + " не найден среди работодателей");
     }
 
     @Override
-    public HttpStatus changeVacancy(Authentication auth, VacancyDto vacancyDto) {
-        User user = (User) auth.getPrincipal();
+    public void changeVacancy(String userEmail, InputVacancyDto vacancyDto) {
         if (vacancyDto.getId() != null) {
             if (isVacancyInSystem(vacancyDto.getId())) {
-                if (!userService.isEmployee(user.getUsername())) {
-                    if (user.getUsername().equals(vacancyDto.getUserEmail())) {
-                        Vacancy vacancy = Vacancy.builder()
-                                .id(vacancyDto.getId())
-                                .name(vacancyDto.getName())
-                                .description(vacancyDto.getDescription())
-                                .categoryId(categoryService.checkInCategories(vacancyDto.getCategory().getId()))
-                                .salary(vacancyDto.getSalary())
-                                .expFrom(vacancyDto.getExpFrom())
-                                .expTo(vacancyDto.getExpTo())
-                                .isActive(vacancyDto.getIsActive())
-                                .updateTime(LocalDateTime.now())
-                                .build();
+                if (!userService.isEmployee(userEmail)) {
+                    Vacancy vacancy = Vacancy.builder()
+                            .id(vacancyDto.getId())
+                            .name(vacancyDto.getName())
+                            .description(vacancyDto.getDescription())
+                            .salary(vacancyDto.getSalary())
+                            .expFrom(vacancyDto.getExpFrom())
+                            .expTo(vacancyDto.getExpTo())
+                            .updateTime(LocalDateTime.now())
+                            .build();
 
-                        vacancyDao.changeVacancy(vacancy);
-                        return HttpStatus.OK;
+                    if (!vacancyDto.getCategory().equals("Выберите категорию")) {
+                        vacancy.setCategoryId(Integer.parseInt(vacancyDto.getCategory()));
+                    } else {
+                        vacancy.setCategoryId(null);
                     }
-                    throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в вакансии");
+
+                    if (vacancyDto.getIsActive() == null) {
+                        vacancy.setIsActive(false);
+                    } else {
+                        vacancy.setIsActive(vacancyDto.getIsActive());
+                    }
+
+                    vacancyDao.changeVacancy(vacancy);
+                } else {
+                    log.error("Юзер " + userEmail + " не найден среди работодателей");
                 }
-                throw new VacancyNotFoundException("Юзер " + user.getUsername() + " не найден среди работодателей");
+            } else {
+                log.error("Вакансия с айди " + vacancyDto.getId() + " не найдена в системе для редактирования");
             }
-            throw new VacancyNotFoundException("Вакансия с айди " + vacancyDto.getId() + " не найдена в системе");
+        } else {
+            log.error("Айди изменяемой вакансии не указан");
         }
-        throw new VacancyNotFoundException("Айди изменяемой вакансии не указан");
     }
 
     @Override

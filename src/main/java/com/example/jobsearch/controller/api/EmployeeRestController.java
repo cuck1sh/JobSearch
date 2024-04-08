@@ -1,9 +1,9 @@
 package com.example.jobsearch.controller.api;
 
 import com.example.jobsearch.dto.RespondedApplicantsDto;
-import com.example.jobsearch.dto.VacancyDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
