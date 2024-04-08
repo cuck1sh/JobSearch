@@ -4,10 +4,10 @@
 
     <div class="card text-center mb-4">
         <div class="card-header">
-            ${resume.name}
+            <h1>${resume.name}</h1>
         </div>
         <div class="card-body">
-            <h5 class="card-title">Имя: ${resume.userEmail}</h5>
+            <h5 class="card-title">Email: ${resume.userEmail}</h5>
 
             <#if resume.category??>
                 <#if resume.category.parent??>

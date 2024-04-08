@@ -12,20 +12,21 @@ import java.util.List;
 public interface VacancyService {
     VacancyDto getVacancyById(int id) throws UserNotFoundException;
     List<VacancyDto> getVacancies();
-
     List<VacancyDto> getActiveVacancies();
     Boolean isVacancyInSystem(int id);
-
     Boolean isUsersVacanciesInSystem(int userId);
     Boolean isVacancyActive(int vacancyId);
-
     void createVacancy(String userEmail, InputVacancyDto vacancy);
-
     void changeVacancy(String userEmail, InputVacancyDto vacancy);
     HttpStatus delete(Authentication auth, int id);
     List<VacancyDto> getAllVacanciesByCompany(int userId);
     List<VacancyDto> getVacanciesByCategory(String category);
     List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category);
-
     void getVacancy(int id, Model model);
+
+    List<VacancyDto> getVacanciesWithPaging(Integer page, Integer pageSize, String category);
+
+    Integer getVacanciesCount();
+
+    Integer getVacanciesWithCategoryCount(int categoryId);
 }

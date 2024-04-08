@@ -68,6 +68,25 @@ public class ResumeDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), userId);
     }
 
+    public Integer getCount() {
+        String sql = """
+                select count(id) from RESUMES
+                where IS_ACTIVE = true;
+                """;
+        return template.queryForObject(sql, Integer.class);
+    }
+
+    public List<Resume> getPagedResumes(Integer perPage, int offset) {
+        String sql = """
+                select *
+                from RESUMES
+                where IS_ACTIVE = true
+                limit ?
+                offset ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Resume.class), perPage, offset);
+    }
+
     public Boolean isResumeInSystem(int id) {
         String sql = """
                 select case

@@ -84,6 +84,29 @@ public class ResumeServiceImpl implements ResumeService {
         throw new ResumeNotFoundException("Can not find resume with user id: " + id);
     }
 
+    @Override
+    public Integer getResumesCount() {
+        return resumeDao.getCount();
+    }
+
+    @Override
+    public List<ResumeDto> getResumesWithPaging(Integer page, Integer pageSize) {
+        int count = getResumesCount();
+        int totalPages = count / pageSize;
+
+        if (totalPages <= page) {
+            page = totalPages;
+        } else if (page < 0) {
+            page = 0;
+        }
+
+        int offset = page * pageSize;
+
+        List<Resume> resumes = resumeDao.getPagedResumes(pageSize, offset);
+
+        return getResumeDtos(resumes);
+    }
+
 
     // Служебный метод
     private List<ResumeDto> getResumeDtos(List<Resume> resumes) {

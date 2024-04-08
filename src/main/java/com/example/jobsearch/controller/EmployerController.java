@@ -3,6 +3,7 @@ package com.example.jobsearch.controller;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ProfileService;
+import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
@@ -22,6 +24,7 @@ public class EmployerController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
     private final ProfileService profileService;
+    private final ResumeService resumeService;
 
     @GetMapping("vacancies/add")
     public String addVacancy(Model model) {
@@ -50,6 +53,23 @@ public class EmployerController {
         vacancyService.changeVacancy(FileUtil.TEST_USER_AUTH, inputVacancyDto);
         profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
         return "user/profile";
+    }
+
+    @GetMapping("resumes")
+    public String getMainPage(Model model,
+                              @RequestParam(name = "page", defaultValue = "0") Integer page,
+                              @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize
+    ) {
+        model.addAttribute("resumes", resumeService.getResumesWithPaging(page, pageSize));
+        model.addAttribute("page", page);
+        model.addAttribute("resumesCount", resumeService.getResumesCount());
+        return "employer/resumes";
+    }
+
+    @GetMapping("resumes/{id}")
+    public String getResume(@PathVariable int id, Model model) {
+        model.addAttribute("resume", resumeService.getResumeById(id));
+        return "employee/resume";
     }
 
 }

@@ -47,7 +47,6 @@
                                         <span class="visually-hidden">unread messages</span>
                                         </span>
                                     </#if>
-
                                 </button>
                             </div>
                         <#else>
@@ -57,6 +56,14 @@
                                     <a href="/employer/vacancies/add" class="text-dark text-decoration-none">+ <p>
                                             Создать
                                             вакансию</p></a>
+                                </button>
+                            </div>
+
+                            <div class="col">
+                                <button type="button"
+                                        class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
+                                    <a href="/employer/resumes"
+                                       class="text-dark text-decoration-none">Резюме </a>
                                 </button>
                             </div>
                         </#if>

@@ -66,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Integer getCategoryByName(String category) {
         if (categoryDao.isCategoryInSystem(category)) {
-            return categoryDao.getCategoryByName(category.toLowerCase().strip());
+            return categoryDao.getCategoryByName(category);
         }
         throw new CategoryNotFoundException("Не найдена категория: " + category);
     }

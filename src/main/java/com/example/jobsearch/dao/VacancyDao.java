@@ -31,6 +31,44 @@ public class VacancyDao {
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
+    public Integer getCount() {
+        String sql = """
+                select count(id) from VACANCIES
+                where IS_ACTIVE = true;
+                """;
+        return template.queryForObject(sql, Integer.class);
+    }
+
+    public Integer getVacanciesWithCategoryCount(int categoryId) {
+        String sql = """
+                select count(id) from VACANCIES
+                where IS_ACTIVE = true and CATEGORY_ID = ?;
+                """;
+        return template.queryForObject(sql, Integer.class, categoryId);
+    }
+
+    public List<Vacancy> getPagedVacancies(int perPage, int offset) {
+        String sql = """
+                select *
+                from VACANCIES
+                where IS_ACTIVE = true
+                limit ?
+                offset ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), perPage, offset);
+    }
+
+    public List<Vacancy> getPagedVacanciesWithCategory(Integer perPage, int offset, Integer categoryId) {
+        String sql = """
+                select *
+                from VACANCIES
+                where IS_ACTIVE = true and CATEGORY_ID = ?
+                limit ?
+                offset ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), categoryId, perPage, offset);
+    }
+
     public List<Vacancy> getActiveVacancies() {
         String sql = """
                 select * from VACANCIES

@@ -73,8 +73,8 @@ public class CategoryDao {
     public Integer getCategoryByName(String category) {
         String sql = """
                 select id from categories
-                where name = ?;
+                where lcase(name) = ?;
                 """;
-        return template.queryForObject(sql, Integer.class, category);
+        return template.queryForObject(sql, Integer.class, category.toLowerCase().strip());
     }
 }

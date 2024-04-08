@@ -21,7 +21,7 @@
     </head>
     <body>
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3" data-bs-theme="dark">
         <div class="container">
             <a class="navbar-brand" href="/">JobSearch</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"

@@ -66,6 +66,56 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
+    public Integer getVacanciesCount() {
+        return vacancyDao.getCount();
+    }
+
+    @Override
+    public Integer getVacanciesWithCategoryCount(int categoryId) {
+        return vacancyDao.getVacanciesWithCategoryCount(categoryId);
+    }
+
+    @Override
+    public List<VacancyDto> getVacanciesWithPaging(Integer page, Integer pageSize, String category) {
+        int count;
+        int totalPages;
+        int offset;
+        List<Vacancy> vacancies;
+
+        if (category.equals("none")) {
+            count = getVacanciesCount();
+            totalPages = count / pageSize;
+
+            if (totalPages <= page) {
+                page = totalPages;
+            } else if (page < 0) {
+                page = 0;
+            }
+
+            offset = page * pageSize;
+
+            vacancies = vacancyDao.getPagedVacancies(pageSize, offset);
+        } else {
+            int categoryId = categoryService.checkInCategories(category);
+
+            count = getVacanciesWithCategoryCount(categoryId);
+            totalPages = count / pageSize;
+
+            if (totalPages <= page) {
+                page = totalPages;
+            } else if (page < 0) {
+                page = 0;
+            }
+
+            offset = page * pageSize;
+
+            vacancies = vacancyDao.getPagedVacanciesWithCategory(pageSize, offset, categoryId);
+        }
+
+        return getVacancyDtos(vacancies);
+    }
+
+    @Override
     public List<VacancyDto> getVacanciesByCategory(String category) {
         List<Vacancy> vacancies = vacancyDao.getVacanciesByCategory(category);
         if (!vacancies.isEmpty()) {
