@@ -2,7 +2,6 @@ package com.example.jobsearch.dao;
 
 import com.example.jobsearch.model.Vacancy;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -10,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -18,16 +16,12 @@ public class VacancyDao {
     private final JdbcTemplate template;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public Optional<Vacancy> getVacancyById(int id) {
+    public Vacancy getVacancyById(int id) {
         String sql = """
                 select * from VACANCIES
                 where id = ?;
                 """;
-        return Optional.ofNullable(
-                DataAccessUtils.singleResult(
-                        template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), id)
-                )
-        );
+        return template.queryForObject(sql, new BeanPropertyRowMapper<>(Vacancy.class), id);
     }
 
     public List<Vacancy> getVacancies() {
@@ -35,6 +29,44 @@ public class VacancyDao {
                 select * from VACANCIES;
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class));
+    }
+
+    public Integer getCount() {
+        String sql = """
+                select count(id) from VACANCIES
+                where IS_ACTIVE = true;
+                """;
+        return template.queryForObject(sql, Integer.class);
+    }
+
+    public Integer getVacanciesWithCategoryCount(int categoryId) {
+        String sql = """
+                select count(id) from VACANCIES
+                where IS_ACTIVE = true and CATEGORY_ID = ?;
+                """;
+        return template.queryForObject(sql, Integer.class, categoryId);
+    }
+
+    public List<Vacancy> getPagedVacancies(int perPage, int offset) {
+        String sql = """
+                select *
+                from VACANCIES
+                where IS_ACTIVE = true
+                limit ?
+                offset ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), perPage, offset);
+    }
+
+    public List<Vacancy> getPagedVacanciesWithCategory(Integer perPage, int offset, Integer categoryId) {
+        String sql = """
+                select *
+                from VACANCIES
+                where IS_ACTIVE = true and CATEGORY_ID = ?
+                limit ?
+                offset ?;
+                """;
+        return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), categoryId, perPage, offset);
     }
 
     public List<Vacancy> getActiveVacancies() {
@@ -87,8 +119,20 @@ public class VacancyDao {
                 else false
                 end;
                 """;
-
         return template.queryForObject(sql, Boolean.class, id);
+    }
+
+    public Boolean isUsersVacanciesInSystem(int userId) {
+        String sql = """
+                select case
+                when exists(select *
+                            from VACANCIES
+                            where USER_ID = ?)
+                    then true
+                else false
+                end;
+                """;
+        return template.queryForObject(sql, Boolean.class, userId);
     }
 
     public void changeVacancy(Vacancy vacancy) {
@@ -121,7 +165,7 @@ public class VacancyDao {
     public List<Vacancy> getAllVacancyByCompany(int userId) {
         String sql = """
                 select * from vacancies
-                where IS_ACTIVE = true and user_id = ?;
+                where user_id = ?;
                 """;
         return template.query(sql, new BeanPropertyRowMapper<>(Vacancy.class), userId);
     }
@@ -144,4 +188,6 @@ public class VacancyDao {
                 """;
         return template.queryForObject(sql, Boolean.class, vacancyId);
     }
+
+
 }

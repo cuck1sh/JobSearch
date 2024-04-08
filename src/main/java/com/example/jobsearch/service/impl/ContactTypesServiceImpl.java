@@ -30,4 +30,9 @@ public class ContactTypesServiceImpl implements ContactTypesService {
         }
         throw new ResumeNotFoundException("Несуществующий айди контактной информации");
     }
+
+    @Override
+    public Integer getTypeByName(String type) {
+        return contactTypesDao.getTypeByName(type);
+    }
 }

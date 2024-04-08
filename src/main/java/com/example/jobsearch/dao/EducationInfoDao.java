@@ -41,16 +41,17 @@ public class EducationInfoDao {
     public void createEducationInfo(EducationInfo educationInfo) {
         String sql = """
                 insert into EDUCATION_INFO(RESUME_ID, INSTITUTION, PROGRAM, START_DATE, END_DATE, DEGREE)
-                values (:resume_id, :institution, :program, :start_date, :end_date, :degree)
+                values (:resume_id, :institution, :program, :startDate, :endDate, :degree)
                 """;
 
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("resume_id", educationInfo.getResumeId())
                 .addValue("institution", educationInfo.getInstitution())
                 .addValue("program", educationInfo.getProgram())
-                .addValue("start_date", educationInfo.getStartDate())
-                .addValue("end_date", educationInfo.getEndDate())
-                .addValue("degree", educationInfo.getDegree()));
+                .addValue("startDate", educationInfo.getStartDate())
+                .addValue("endDate", educationInfo.getEndDate())
+                .addValue("degree", educationInfo.getDegree())
+        );
     }
 
     public void changeEducationInfo(EducationInfo educationInfo) {

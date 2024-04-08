@@ -56,7 +56,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
             }
             throw new ResumeNotFoundException("Юзер " + resumeService.getResumeById(resumeId).getUserEmail() + " не найден среди соискателей");
         }
-        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
+        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе для выдачи списка откликов на него");
     }
 
     @Override
@@ -113,6 +113,6 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
             }
             throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
         }
-        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе");
+        throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе для отклика на вакансию");
     }
 }

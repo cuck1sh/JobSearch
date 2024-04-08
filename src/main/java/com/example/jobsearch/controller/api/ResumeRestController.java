@@ -1,6 +1,6 @@
 package com.example.jobsearch.controller.api;
 
-import com.example.jobsearch.dto.ResumeDto;
+import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.service.ResumeService;
 import lombok.RequiredArgsConstructor;

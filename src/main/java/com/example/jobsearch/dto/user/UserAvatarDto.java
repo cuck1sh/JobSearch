@@ -1,4 +1,4 @@
-package com.example.jobsearch.dto;
+package com.example.jobsearch.dto.user;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

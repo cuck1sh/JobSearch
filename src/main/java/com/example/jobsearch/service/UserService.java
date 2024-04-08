@@ -1,11 +1,10 @@
 package com.example.jobsearch.service;
 
-import com.example.jobsearch.dto.EmployeeFindDto;
-import com.example.jobsearch.dto.UserAvatarDto;
-import com.example.jobsearch.dto.UserDto;
+import com.example.jobsearch.dto.user.EmployeeFindDto;
+import com.example.jobsearch.dto.user.UserAvatarDto;
+import com.example.jobsearch.dto.user.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -27,5 +26,5 @@ public interface UserService {
     List<UserDto> getEmployee(EmployeeFindDto employeeFindDto);
     List<UserDto> getEmployer(String name);
 
-    void updateUser(Authentication auth, UserDto user, MultipartFile file);
+    void updateUser(String userEmail, UserDto user, MultipartFile file);
 }

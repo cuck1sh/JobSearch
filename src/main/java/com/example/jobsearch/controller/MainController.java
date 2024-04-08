@@ -1,6 +1,7 @@
 package com.example.jobsearch.controller;
 
-import com.example.jobsearch.dto.UserDto;
+import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class MainController {
     private final VacancyService vacancyService;
     private final UserService userService;
+    private final CategoryService categoryService;
 
     @GetMapping
-    public String getMainPage(Model model) {
-        model.addAttribute("vacancies", vacancyService.getActiveVacancies());
+    public String getMainPage(Model model,
+                              @RequestParam(name = "page", defaultValue = "0") Integer page,
+                              @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
+                              @RequestParam(name = "filter", defaultValue = "none") String category
+    ) {
+        model.addAttribute("vacancies", vacancyService.getVacanciesWithPaging(page, pageSize, category));
+        model.addAttribute("page", page);
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "main";
     }
 

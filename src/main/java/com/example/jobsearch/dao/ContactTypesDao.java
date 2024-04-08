@@ -34,4 +34,12 @@ public class ContactTypesDao {
 
         return template.queryForObject(sql, Boolean.class, id);
     }
+
+    public Integer getTypeByName(String type) {
+        String sql = """
+                select id from contact_types
+                where lcase(type) = ?;
+                """;
+        return template.queryForObject(sql, Integer.class, type.strip().toLowerCase());
+    }
 }

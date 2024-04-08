@@ -16,6 +16,8 @@ databaseChangeLog:
               - column:
                   name: name
                   type: text
+                  constraints:
+                    nullable: false
               - column:
                   name: surname
                   type: text
@@ -196,13 +198,9 @@ databaseChangeLog:
               - column:
                   name: start_date
                   type: date
-                  constraints:
-                    nullable: false
               - column:
                   name: end_date
                   type: date
-                  constraints:
-                    nullable: false
               - column:
                   name: degree
                   type: text

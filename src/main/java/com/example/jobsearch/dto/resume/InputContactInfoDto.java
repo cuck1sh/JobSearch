@@ -1,4 +1,4 @@
-package com.example.jobsearch.dto;
+package com.example.jobsearch.dto.resume;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileDto {
-    private Integer id;
-    private String name;
-    private Integer age;
+public class InputContactInfoDto {
     private String phoneNumber;
-    private String avatar;
-    private String accountType;
+    private String email;
+    private String facebook;
+    private String linkedIn;
+    private String telegram;
 }

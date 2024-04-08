@@ -1,16 +1,15 @@
-package com.example.jobsearch.dto;
+package com.example.jobsearch.dto.resume;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
@@ -20,23 +19,12 @@ public class InputResumeDto {
     private Integer id;
 
     @NotBlank
-    @Email
-    @JsonProperty("user_email")
-    private String userEmail;
-
-    @NotBlank
     private String name;
 
     private String category;
+
+    @Positive
     private Double salary;
-
-    @JsonProperty("work_experience_infos")
-    private List<WorkExperienceInfoDto> workExperienceInfos;
-
-    @JsonProperty("education_infos")
-    private List<EducationInfoDto> educationInfos;
-
-    private List<ContactsInfoDto> contacts;
 
     @JsonProperty("is_active")
     private Boolean isActive;

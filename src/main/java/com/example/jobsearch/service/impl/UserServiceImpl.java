@@ -1,9 +1,9 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.UserDao;
-import com.example.jobsearch.dto.EmployeeFindDto;
-import com.example.jobsearch.dto.UserAvatarDto;
-import com.example.jobsearch.dto.UserDto;
+import com.example.jobsearch.dto.user.EmployeeFindDto;
+import com.example.jobsearch.dto.user.UserAvatarDto;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.UserAvatar;
@@ -14,7 +14,6 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -149,7 +148,7 @@ public class UserServiceImpl implements UserService {
         User user = userDao.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + userId));
         String filename = user.getAvatar();
-        return fileUtil.getOutputFile(filename, "images", MediaType.IMAGE_PNG);
+        return fileUtil.getOutputFile(filename, "images", MediaType.IMAGE_JPEG);
     }
 
     @Override
@@ -225,23 +224,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(Authentication auth, UserDto userDto, MultipartFile file) {
-        org.springframework.security.core.userdetails.User userAuth = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-        UserDto userFromAuth = getUserByEmail(userAuth.getUsername());
+    public void updateUser(String userEmail, UserDto userDto, MultipartFile file) {
+        UserDto actualUser = getUserByEmail(userEmail);
+
+        if (userDto.getName().isBlank()) {
+            userDto.setName(actualUser.getName());
+        }
+
+        if (userDto.getSurname().isBlank()) {
+            userDto.setSurname(actualUser.getSurname());
+        }
+
+        if (userDto.getAge() == null) {
+            userDto.setAge(actualUser.getAge());
+        }
+
+        if (userDto.getPhoneNumber().isBlank()) {
+            userDto.setPhoneNumber(actualUser.getPhoneNumber());
+        }
         User user = User.builder()
-                .id(userFromAuth.getId())
+                .id(actualUser.getId())
                 .name(userDto.getName())
                 .surname(userDto.getSurname())
                 .age(userDto.getAge())
-                .password(passwordEncoder.encode(userDto.getPassword()))
                 .phoneNumber(userDto.getPhoneNumber())
                 .build();
+
+        if (!userDto.getPassword().isBlank()) {
+            user.setPassword(userDto.getPassword());
+        }
 
         userDao.changeUser(user);
         if (file.getOriginalFilename().length() != 0) {
             uploadUserAvatar(UserAvatarDto.builder()
                     .file(file)
-                    .userId(userFromAuth.getId())
+                    .userId(actualUser.getId())
                     .build());
         }
     }

@@ -1,18 +1,19 @@
-package com.example.jobsearch.dto;
+package com.example.jobsearch.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserMainItem {
+public class ProfileDto {
     private Integer id;
     private String name;
-    private LocalDateTime timestamp;
+    private Integer age;
+    private String phoneNumber;
+    private String avatar;
+    private String accountType;
 }

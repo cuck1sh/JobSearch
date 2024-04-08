@@ -1,10 +1,9 @@
 package com.example.jobsearch.controller.api;
 
-import com.example.jobsearch.dto.EmployeeFindDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
-import com.example.jobsearch.dto.ResumeDto;
-import com.example.jobsearch.dto.UserDto;
-import com.example.jobsearch.dto.VacancyDto;
+import com.example.jobsearch.dto.resume.ResumeDto;
+import com.example.jobsearch.dto.user.EmployeeFindDto;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
@@ -34,16 +33,6 @@ public class EmployerRestController {
     private final ResumeService resumeService;
     private final RespondedApplicantsService respondedApplicantsService;
     private final UserService userService;
-
-    @PostMapping("vacancies")
-    public HttpStatus createVacancy(Authentication auth, @RequestBody @Valid VacancyDto vacancy) {
-        return vacancyService.createVacancy(auth, vacancy);
-    }
-
-    @PostMapping("vacancies/change")
-    public HttpStatus changeVacancy(Authentication auth, @RequestBody @Valid VacancyDto vacancy) {
-        return vacancyService.changeVacancy(auth, vacancy);
-    }
 
     @DeleteMapping("vacancies/{id}")
     public HttpStatus delete(Authentication auth, @PathVariable int id) {

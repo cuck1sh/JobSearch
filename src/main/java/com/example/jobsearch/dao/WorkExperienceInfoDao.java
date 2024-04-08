@@ -49,7 +49,8 @@ public class WorkExperienceInfoDao {
                 .addValue("years", workExperienceInfo.getYears())
                 .addValue("company_name", workExperienceInfo.getCompanyName())
                 .addValue("position", workExperienceInfo.getPosition())
-                .addValue("responsibilities", workExperienceInfo.getResponsibilities()));
+                .addValue("responsibilities", workExperienceInfo.getResponsibilities())
+        );
     }
 
     public void changeWorkExperienceInfo(WorkExperienceInfo workExperienceInfo) {

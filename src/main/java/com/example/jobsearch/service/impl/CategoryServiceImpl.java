@@ -7,10 +7,12 @@ import com.example.jobsearch.model.Category;
 import com.example.jobsearch.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -18,15 +20,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     @SneakyThrows
     @Override
-    public CategoryDto getCategoryById(int id) {
-        Category category = categoryDao.getCategoryById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Can not find category with id:" + id));
+    public CategoryDto getCategoryById(Integer id) {
+        if (id != null) {
+            Category category = categoryDao.getCategoryById(id)
+                    .orElseThrow(() -> new CategoryNotFoundException("Can not find category with id:" + id));
 
-        return CategoryDto.builder()
-                .id(category.getId())
-                .parent(getParentCategory(category.getParentId()))
-                .name(category.getName())
-                .build();
+            return CategoryDto.builder()
+                    .id(category.getId())
+                    .parent(getParentCategory(category.getParentId()))
+                    .name(category.getName())
+                    .build();
+        } else {
+            log.error("Не передан айди для категории");
+            return null;
+        }
     }
 
     @Override
@@ -39,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<String> getAllCategories() {
+    public List<Category> getAllCategories() {
         return categoryDao.getAllCategories();
     }
 
@@ -59,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Integer getCategoryByName(String category) {
         if (categoryDao.isCategoryInSystem(category)) {
-            return categoryDao.getCategoryByName(category.toLowerCase().strip());
+            return categoryDao.getCategoryByName(category);
         }
         throw new CategoryNotFoundException("Не найдена категория: " + category);
     }

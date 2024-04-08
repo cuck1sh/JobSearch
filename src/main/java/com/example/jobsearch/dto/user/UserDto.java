@@ -1,4 +1,4 @@
-package com.example.jobsearch.dto;
+package com.example.jobsearch.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;

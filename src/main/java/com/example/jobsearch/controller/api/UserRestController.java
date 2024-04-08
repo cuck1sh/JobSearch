@@ -1,7 +1,8 @@
 package com.example.jobsearch.controller.api;
 
-import com.example.jobsearch.dto.UserAvatarDto;
-import com.example.jobsearch.dto.UserDto;
+import com.example.jobsearch.dto.user.UserAvatarDto;
+import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.model.Category;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import jakarta.validation.Valid;
@@ -35,7 +36,7 @@ public class UserRestController {
     }
 
     @GetMapping("categories")
-    public ResponseEntity<List<String>> getCategories() {
+    public ResponseEntity<List<Category>> getCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 

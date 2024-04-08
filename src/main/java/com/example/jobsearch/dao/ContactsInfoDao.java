@@ -41,13 +41,26 @@ public class ContactsInfoDao {
     public void changeContactInfo(ContactsInfo contactsInfo) {
         String sql = """
                 update contacts_info
-                set type_id = :type_id, info = :info
-                where resume_id = :resume_id;
+                set info = :info
+                where type_id = :type_id and resume_id = :resume_id;
                 """;
 
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("type_id", contactsInfo.getTypeId())
                 .addValue("resume_id", contactsInfo.getResumeId())
                 .addValue("info", contactsInfo.getInfo()));
+    }
+
+    public Boolean isContactsInSystem(int typeId, int resumeId) {
+        String sql = """
+                select case
+                when exists(select *
+                            from contacts_info
+                            where type_id = ? and resume_id = ?)
+                    then true
+                else false
+                end;
+                """;
+        return template.queryForObject(sql, Boolean.class, typeId, resumeId);
     }
 }

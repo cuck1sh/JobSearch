@@ -1,14 +1,16 @@
 package com.example.jobsearch.service;
 
 import com.example.jobsearch.dto.CategoryDto;
+import com.example.jobsearch.model.Category;
 
 import java.util.List;
 
 
 public interface CategoryService {
-    CategoryDto getCategoryById(int id);
+    CategoryDto getCategoryById(Integer id);
     String getParentCategory(Object id);
-    List<String> getAllCategories();
+
+    List<Category> getAllCategories();
     Integer checkInCategories(int categoryId);
 
     Integer checkInCategories(String category);

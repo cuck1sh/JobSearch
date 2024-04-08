@@ -1,5 +1,7 @@
 package com.example.jobsearch.dto;
 
+import com.example.jobsearch.dto.resume.ResumeDto;
+import com.example.jobsearch.dto.vacancy.VacancyDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -63,19 +63,18 @@ public class CategoryDao {
         return template.queryForObject(sql, String.class, id);
     }
 
-    public List<String> getAllCategories() {
+    public List<Category> getAllCategories() {
         String sql = """
-                select name from categories;
+                select * from categories;
                 """;
-
-        return template.queryForList(sql, String.class);
+        return template.query(sql, new BeanPropertyRowMapper<>(Category.class));
     }
 
     public Integer getCategoryByName(String category) {
         String sql = """
                 select id from categories
-                where name = ?;
+                where lcase(name) = ?;
                 """;
-        return template.queryForObject(sql, Integer.class, category);
+        return template.queryForObject(sql, Integer.class, category.toLowerCase().strip());
     }
 }

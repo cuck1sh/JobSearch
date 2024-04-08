@@ -1,15 +1,15 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dto.ProfileDto;
-import com.example.jobsearch.dto.UserDto;
-import com.example.jobsearch.dto.UserMainItem;
+import com.example.jobsearch.dto.resume.ResumeDto;
+import com.example.jobsearch.dto.user.ProfileDto;
+import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -25,12 +25,13 @@ public class ProfileServiceImpl implements ProfileService {
     private final RespondedApplicantsService respondedApplicantsService;
 
     @Override
-    public void getProfile(Authentication auth, Model model) {
-        org.springframework.security.core.userdetails.User userAuth = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-        UserDto user = userService.getUserByEmail(userAuth.getUsername());
+    public void getProfile(String userAuth, Model model) {
+        UserDto user = userService.getUserByEmail(userAuth);
+        String userName = userService.isEmployee(user.getId()) ? String.join(" ", user.getName(), user.getSurname()) : user.getName();
+
         ProfileDto profileDto = ProfileDto.builder()
                 .id(user.getId())
-                .name(user.getName() + " " + user.getSurname())
+                .name(userName)
                 .age(user.getAge())
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
@@ -39,28 +40,32 @@ public class ProfileServiceImpl implements ProfileService {
 
         model.addAttribute("user", profileDto);
 
-        if (userService.isEmployee(userAuth.getUsername())) {
-            var resumes = resumeService.getResumesByUserId(user.getId());
-            List<UserMainItem> resumeDtos = new ArrayList<>();
-            resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
-                    .id(e.getId())
-                    .name(e.getName())
-                    .timestamp(e.getUpdateTime())
-                    .build()));
-            model.addAttribute("userMainItems", resumeDtos);
-            model.addAttribute("responsesQuantity", respondedApplicantsService.getResponsesForEmployee(user.getId()).size());
+        if (userService.isEmployee(userAuth)) {
+            if (resumeService.isUsersResumesInSystem(user.getId())) {
+                List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
+                List<UserMainItem> resumeDtos = new ArrayList<>();
+                resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
+                        .id(e.getId())
+                        .name(e.getName())
+                        .timestamp(e.getUpdateTime())
+                        .build()));
+                model.addAttribute("userMainItems", resumeDtos.reversed());
+                model.addAttribute("responsesQuantity", respondedApplicantsService.getResponsesForEmployee(user.getId()).size());
+            } else {
+                model.addAttribute("responsesQuantity", 0);
+            }
         } else {
-            var vacancies = vacancyService.getAllVacanciesByCompany(user.getId());
-            List<UserMainItem> vacanciesDtos = new ArrayList<>();
-            vacancies.forEach(e -> vacanciesDtos.add(UserMainItem.builder()
-                    .id(e.getId())
-                    .name(e.getName())
-                    .timestamp(e.getUpdateTime())
-                    .build()));
-            model.addAttribute("userMainItems", vacanciesDtos);
+            if (vacancyService.isUsersVacanciesInSystem(user.getId())) {
+                var vacancies = vacancyService.getAllVacanciesByCompany(user.getId());
+                List<UserMainItem> vacanciesDtos = new ArrayList<>();
+                vacancies.forEach(e -> vacanciesDtos.add(UserMainItem.builder()
+                        .id(e.getId())
+                        .name(e.getName())
+                        .timestamp(e.getUpdateTime())
+                        .build()));
+                model.addAttribute("userMainItems", vacanciesDtos.reversed());
+            }
         }
-
-
     }
 
 }

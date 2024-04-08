@@ -1,9 +1,9 @@
 package com.example.jobsearch.controller.api;
 
-import com.example.jobsearch.dto.InputResumeDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
-import com.example.jobsearch.dto.UserDto;
-import com.example.jobsearch.dto.VacancyDto;
+import com.example.jobsearch.dto.resume.InputResumeDto;
+import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
@@ -35,13 +35,9 @@ public class EmployeeRestController {
     private final UserService userService;
 
     @PostMapping("resumes")
-    public HttpStatus createResume(Authentication auth, @RequestBody @Valid InputResumeDto resume) {
-        return resumeService.createResume(auth, resume);
-    }
-
-    @PostMapping("resumes/change")
-    public HttpStatus changeResume(Authentication auth, @RequestBody @Valid InputResumeDto resume) {
-        return resumeService.changeResume(auth, resume);
+    public HttpStatus createResume(String userEmail, @RequestBody @Valid InputResumeDto resume) {
+        resumeService.createResume(userEmail);
+        return HttpStatus.OK;
     }
 
     @DeleteMapping("resumes/{id}")
