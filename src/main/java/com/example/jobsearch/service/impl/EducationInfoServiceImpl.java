@@ -45,22 +45,20 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     @Override
-    public void createEducationInfo(EducationInfoDto educationInfoDto) {
-        EducationInfo educationInfo = EducationInfo.builder()
-                .resumeId(educationInfoDto.getResumeId())
-                .institution(educationInfoDto.getInstitution())
-                .program(educationInfoDto.getProgram())
-                .startDate(educationInfoDto.getStartDate())
-                .endDate(educationInfoDto.getEndDate())
-                .build();
+    public void createEducationInfo(List<EducationInfoDto> educationInfoDtos, Integer resumeId) {
+        if (!educationInfoDtos.isEmpty()) {
+            List<EducationInfo> educationInfos = new ArrayList<>();
+            educationInfoDtos.forEach(e -> educationInfos.add(EducationInfo.builder()
+                    .resumeId(resumeId)
+                    .institution(e.getInstitution())
+                    .program(e.getProgram())
+                    .startDate(e.getStartDate())
+                    .endDate(e.getEndDate())
+                    .degree(e.getDegree())
+                    .build()));
 
-        if (educationInfoDto.getDegree() == null) {
-            educationInfo.setDegree(" ");
-        } else {
-            educationInfo.setDegree(educationInfoDto.getDegree());
+            educationInfos.forEach(educationInfoDao::createEducationInfo);
         }
-
-        educationInfoDao.createEducationInfo(educationInfo);
     }
 
     @Override

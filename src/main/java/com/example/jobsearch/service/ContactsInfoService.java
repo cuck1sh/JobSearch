@@ -8,7 +8,6 @@ import java.util.List;
 public interface ContactsInfoService {
     List<ContactsInfoDto> getContactInfoByResumeId(int resumeId);
 
-    void updateContactInfo(Integer resumeId, InputContactInfoDto contacts);
-
+    void createOrUpdateContactInfo(InputContactInfoDto contacts, Integer resumeId);
     Boolean isContactsInSystem(int typeId, int resumeId);
 }

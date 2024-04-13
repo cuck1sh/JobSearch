@@ -45,15 +45,19 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     }
 
     @Override
-    public void createWorkExperienceInfo(WorkExperienceInfoDto workExperienceInfoDto) {
-        WorkExperienceInfo workExperienceInfo = WorkExperienceInfo.builder()
-                .resumeId(workExperienceInfoDto.getResumeId())
-                .years(workExperienceInfoDto.getYears())
-                .companyName(workExperienceInfoDto.getCompanyName())
-                .position(workExperienceInfoDto.getPosition())
-                .responsibilities(workExperienceInfoDto.getResponsibilities())
-                .build();
-        workExperienceInfoDao.createWorkExperienceInfo(workExperienceInfo);
+    public void createWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfoDtos, Integer resumeId) {
+        if (!workExperienceInfoDtos.isEmpty()) {
+            List<WorkExperienceInfo> workExperienceInfos = new ArrayList<>();
+            workExperienceInfoDtos.forEach(e -> workExperienceInfos.add(WorkExperienceInfo.builder()
+                    .resumeId(resumeId)
+                    .years(e.getYears())
+                    .companyName(e.getCompanyName())
+                    .position(e.getPosition())
+                    .responsibilities(e.getResponsibilities())
+                    .build()));
+
+            workExperienceInfos.forEach(workExperienceInfoDao::createWorkExperienceInfo);
+        }
     }
 
     @Override
@@ -61,7 +65,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
         if (!workExperienceInfoDtos.isEmpty()) {
             List<WorkExperienceInfo> workExperienceInfos = new ArrayList<>();
             workExperienceInfoDtos.forEach(e -> workExperienceInfos.add(WorkExperienceInfo.builder()
-                    .resumeId(resumeId)
+                    .id(e.getId())
                     .years(e.getYears())
                     .companyName(e.getCompanyName())
                     .position(e.getPosition())

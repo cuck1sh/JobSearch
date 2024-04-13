@@ -1,6 +1,8 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.ResumeDao;
+import com.example.jobsearch.dto.EducationInfoDto;
+import com.example.jobsearch.dto.WorkExperienceInfoDto;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
@@ -140,11 +142,29 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Integer createResume(String userEmail) {
+    public void createResume(String userEmail,
+                             InputResumeDto inputResume,
+                             List<WorkExperienceInfoDto> workExperienceInfoDtos,
+                             List<EducationInfoDto> educationInfos,
+                             InputContactInfoDto contacts) {
         if (userService.isEmployee(userEmail)) {
-            return resumeDao.createResume(userService.getUserByEmail(userEmail).getId());
+            Resume newResume = Resume.builder()
+                    .userId(userService.getUserByEmail(userEmail).getId())
+                    .name(inputResume.getName())
+                    .categoryId(categoryService.checkInCategories(inputResume.getCategory()))
+                    .salary(inputResume.getSalary())
+                    .isActive(inputResume.getIsActive())
+                    .createdDate(LocalDateTime.now())
+                    .build();
+
+            Integer newResumeKey = resumeDao.createResume(newResume);
+
+            workExperienceInfoService.createWorkExperienceInfo(workExperienceInfoDtos, newResumeKey);
+            educationInfoService.createEducationInfo(educationInfos, newResumeKey);
+            contactsInfoService.createOrUpdateContactInfo(contacts, newResumeKey);
+        } else {
+            log.error("Юзер " + userEmail + " не найден среди соискателей");
         }
-        throw new ResumeNotFoundException("Юзер " + userEmail + " не найден среди соискателей");
     }
 
     @Override
@@ -169,7 +189,7 @@ public class ResumeServiceImpl implements ResumeService {
 
             newResume.setIsActive(resume.getIsActive() != null);
             resumeDao.changeResume(newResume);
-            contactsInfoService.updateContactInfo(newResume.getId(), contacts);
+            contactsInfoService.createOrUpdateContactInfo(contacts, newResume.getId());
         } else {
             log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
         }

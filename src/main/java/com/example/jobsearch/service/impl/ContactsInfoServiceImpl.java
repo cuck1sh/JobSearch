@@ -31,7 +31,7 @@ public class ContactsInfoServiceImpl implements ContactsInfoService {
     }
 
     @Override
-    public void updateContactInfo(Integer resumeId, InputContactInfoDto contacts) {
+    public void createOrUpdateContactInfo(InputContactInfoDto contacts, Integer resumeId) {
         if (!contacts.getPhoneNumber().isBlank()) {
             if (Boolean.TRUE.equals(isContactsInSystem(contactTypesService.getTypeByName("Phone number"), resumeId))) {
                 contactsInfoDao.changeContactInfo(ContactsInfo.builder()

@@ -1,5 +1,7 @@
 package com.example.jobsearch.service;
 
+import com.example.jobsearch.dto.EducationInfoDto;
+import com.example.jobsearch.dto.WorkExperienceInfoDto;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
@@ -16,7 +18,12 @@ public interface ResumeService {
     ResumeDto getResumeById(int id) throws UserNotFoundException;
     List<ResumeDto> getResumesByCategory(String category);
     List<ResumeDto> getResumesByUserId(int id);
-    Integer createResume(String userEmail);
+
+    void createResume(String userEmail,
+                      InputResumeDto inputResume,
+                      List<WorkExperienceInfoDto> workExperienceInfoDtos,
+                      List<EducationInfoDto> educationInfos,
+                      InputContactInfoDto contacts);
     Boolean isResumeInSystem(int id);
     Boolean isUsersResumesInSystem(int userId);
     HttpStatus deleteResumeById(Authentication auth, int id);
