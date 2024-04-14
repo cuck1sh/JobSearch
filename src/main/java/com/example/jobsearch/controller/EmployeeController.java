@@ -1,27 +1,24 @@
 package com.example.jobsearch.controller;
 
-import com.example.jobsearch.dto.EducationInfoDto;
-import com.example.jobsearch.dto.WorkExperienceInfoDto;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.service.CategoryService;
-import com.example.jobsearch.service.EducationInfoService;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.ResumeService;
-import com.example.jobsearch.service.WorkExperienceInfoService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
-
+@Slf4j
 @Controller
 @RequestMapping("employee")
 @RequiredArgsConstructor
@@ -29,8 +26,6 @@ public class EmployeeController {
     private final ResumeService resumeService;
     private final CategoryService categoryService;
     private final ProfileService profileService;
-    private final WorkExperienceInfoService workExperienceInfoService;
-    private final EducationInfoService educationInfoService;
 
     @GetMapping("resumes/{id}")
     public String getResume(@PathVariable int id, Model model) {
@@ -46,12 +41,10 @@ public class EmployeeController {
 
     @PostMapping("resumes/add")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeResume(InputResumeDto inputResume,
-                             List<WorkExperienceInfoDto> workExperienceInfoDtos,
-                             List<EducationInfoDto> educationInfos,
-                             InputContactInfoDto contacts,
+    public String makeResume(@RequestBody InputResumeDto resumeDto,
                              Model model) {
-        resumeService.createResume(FileUtil.TEST_USER_AUTH, inputResume, workExperienceInfoDtos, educationInfos, contacts);
+        log.info(resumeDto.toString());
+        resumeService.createResume(FileUtil.TEST_USER_AUTH, resumeDto);
         profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
         return "user/profile";
     }
@@ -77,13 +70,6 @@ public class EmployeeController {
         return "employee/createWorkExpTemplate";
     }
 
-//    @PostMapping("resumes/add/workExp")
-//    @ResponseStatus(HttpStatus.SEE_OTHER)
-//    public String makeWorkExp(WorkExperienceInfoDto workExperienceInfoDto, Model model) {
-//        workExperienceInfoService.createWorkExperienceInfo(workExperienceInfoDto);
-//        profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
-//        return "user/profile";
-//    }
 
     @GetMapping("resume/add/education/{resumeId}")
     public String createEducation(Model model, @PathVariable int resumeId) {
@@ -91,12 +77,5 @@ public class EmployeeController {
         return "employee/createEducationTemplate";
     }
 
-//    @PostMapping("resumes/add/education")
-//    @ResponseStatus(HttpStatus.SEE_OTHER)
-//    public String makeEducation(EducationInfoDto educationInfoDto, Model model) {
-//        educationInfoService.createEducationInfo(educationInfoDto);
-//        profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
-//        return "user/profile";
-//    }
 
 }

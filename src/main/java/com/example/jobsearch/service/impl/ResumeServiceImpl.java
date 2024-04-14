@@ -1,8 +1,6 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.ResumeDao;
-import com.example.jobsearch.dto.EducationInfoDto;
-import com.example.jobsearch.dto.WorkExperienceInfoDto;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
@@ -59,8 +57,8 @@ public class ResumeServiceImpl implements ResumeService {
                 .name(resume.getName())
                 .category(categoryService.getCategoryById(resume.getCategoryId()))
                 .salary(resume.getSalary())
-                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
-                .workExperienceInfos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
+//                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
                 .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
                 .isActive(resume.getIsActive())
                 .createdDate(resume.getCreatedDate())
@@ -119,8 +117,8 @@ public class ResumeServiceImpl implements ResumeService {
                 .name(e.getName())
                 .category(categoryService.getCategoryById(e.getCategoryId()))
                 .salary(e.getSalary())
-                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
-                .workExperienceInfos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
+//                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
+                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
                 .educationInfos(educationInfoService.getEducationInfoById(e.getId()))
                 .isActive(e.getIsActive())
                 .createdDate(e.getCreatedDate())
@@ -142,26 +140,22 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void createResume(String userEmail,
-                             InputResumeDto inputResume,
-                             List<WorkExperienceInfoDto> workExperienceInfoDtos,
-                             List<EducationInfoDto> educationInfos,
-                             InputContactInfoDto contacts) {
+    public void createResume(String userEmail, InputResumeDto resumeDto) {
         if (userService.isEmployee(userEmail)) {
             Resume newResume = Resume.builder()
                     .userId(userService.getUserByEmail(userEmail).getId())
-                    .name(inputResume.getName())
-                    .categoryId(categoryService.checkInCategories(inputResume.getCategory()))
-                    .salary(inputResume.getSalary())
-                    .isActive(inputResume.getIsActive())
+                    .name(resumeDto.getName())
+                    .categoryId(categoryService.checkInCategories(resumeDto.getCategory()))
+                    .salary(resumeDto.getSalary())
+                    .isActive(resumeDto.getIsActive())
                     .createdDate(LocalDateTime.now())
                     .build();
 
             Integer newResumeKey = resumeDao.createResume(newResume);
 
-            workExperienceInfoService.createWorkExperienceInfo(workExperienceInfoDtos, newResumeKey);
-            educationInfoService.createEducationInfo(educationInfos, newResumeKey);
-            contactsInfoService.createOrUpdateContactInfo(contacts, newResumeKey);
+            workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
+            educationInfoService.createEducationInfo(resumeDto.getEducationInfos(), newResumeKey);
+            contactsInfoService.createOrUpdateContactInfo(resumeDto.getContacts(), newResumeKey);
         } else {
             log.error("Юзер " + userEmail + " не найден среди соискателей");
         }

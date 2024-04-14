@@ -46,7 +46,8 @@
     </div>
 
     </body>
-    </html>
+
+</html>
 
 </#macro>
 
