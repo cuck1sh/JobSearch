@@ -11,7 +11,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,19 +112,20 @@ public class ResumeDao {
         return template.queryForObject(sql, Boolean.class, userId);
     }
 
-    public Integer createResume(int userId) {
+    public Integer createResume(Resume resume) {
         String sql = """
-                insert into resumes(user_id, name, created_date, update_time)
-                values (:user_id, :name, :created_date, :update_time);
+                insert into resumes(user_id, name, category_id, salary, is_active, created_date, update_time)
+                values (:user_id, :name, :category_id, :salary, :is_active, :created_date, :update_time);
                 """;
 
-        LocalDateTime now = LocalDateTime.now();
-
         MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("user_id", userId)
-                .addValue("name", "undefined")
-                .addValue("created_date", now)
-                .addValue("update_time", now);
+                .addValue("user_id", resume.getUserId())
+                .addValue("name", resume.getName())
+                .addValue("category_id", resume.getCategoryId())
+                .addValue("salary", resume.getSalary())
+                .addValue("is_active", resume.getIsActive())
+                .addValue("created_date", resume.getCreatedDate())
+                .addValue("update_time", resume.getCreatedDate());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 

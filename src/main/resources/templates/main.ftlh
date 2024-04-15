@@ -11,7 +11,7 @@
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/">none</a></li>
             <#list categories as category>
-                <li><a class="dropdown-item" href="/?filter=${category.name}">${category.name}</a></li>
+                <li><a class="dropdown-item" href="?filter=${category.name}">${category.name}</a></li>
             </#list>
         </ul>
     </div>
@@ -56,9 +56,9 @@
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <li class="page-item"><a class="page-link" href="/?page=0&pageSize=5">1</a></li>
-            <li class="page-item"><a class="page-link" href="/?page=1&pageSize=5">2</a></li>
-            <li class="page-item"><a class="page-link" href="/?page=2&pageSize=5">3</a></li>
+            <li class="page-item"><a class="page-link" href="?page=0&pageSize=5">1</a></li>
+            <li class="page-item"><a class="page-link" href="?page=1&pageSize=5">2</a></li>
+            <li class="page-item"><a class="page-link" href="?page=2&pageSize=5">3</a></li>
             <li class="page-item">
                 <a class="page-link" href="#" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>

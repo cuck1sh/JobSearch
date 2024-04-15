@@ -10,7 +10,7 @@ public interface WorkExperienceInfoService {
 
     List<WorkExperienceInfoDto> WorkExperienceInfoById(int id);
 
-    void createWorkExperienceInfo(WorkExperienceInfoDto workExperienceInfoDto);
+    void createWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfoDto, Integer resumeId);
 
     void changeWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfos, Integer resumeId);
 }

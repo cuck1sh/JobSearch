@@ -54,8 +54,10 @@ public class CategoryServiceImpl implements CategoryService {
     public Integer checkInCategories(int categoryId) {
         if (categoryDao.isCategoryInSystem(categoryId)) {
             return categoryId;
+        } else {
+            log.error("Не найдена категория с айди: " + categoryId);
+            return null;
         }
-        throw new CategoryNotFoundException("Не найдена категория с айди: " + categoryId);
     }
 
     @Override
@@ -67,7 +69,9 @@ public class CategoryServiceImpl implements CategoryService {
     public Integer getCategoryByName(String category) {
         if (categoryDao.isCategoryInSystem(category)) {
             return categoryDao.getCategoryByName(category);
+        } else {
+            log.error("Не найдена категория: " + category);
+            return null;
         }
-        throw new CategoryNotFoundException("Не найдена категория: " + category);
     }
 }

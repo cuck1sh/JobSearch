@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.VacancyDao;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
@@ -51,6 +52,12 @@ public class VacancyServiceImpl implements VacancyService {
             log.error("Не найдена вакансия с айди: " + id + " для метода getVacancyById(id)");
             return null;
         }
+    }
+
+    @Override
+    public UserDto getUserByVacancy(int vacancyId) {
+        VacancyDto vacancyDto = getVacancyById(vacancyId);
+        return userService.getUserByEmail(vacancyDto.getUserEmail());
     }
 
     @Override

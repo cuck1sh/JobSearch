@@ -151,5 +151,39 @@ values ((select id
              from VACANCIES
              where NAME = 'Web разработчик'
                and description = 'middle на java')),
-        'Рады сообщить о прохождении собеседования',
-        '2024-03-11 23:06:13');
+        'Здравствйте прошу рассмотреть мое резюме',
+        '2024-03-11 23:06:13'),
+       ((select id
+         from RESPONDED_APPLICANTS
+         where RESUME_ID = (
+             select id
+             from RESUMES
+             where NAME = 'Для WEB-a'
+               and USER_ID = (
+                 select id
+                 from USERS
+                 where users.EMAIL = 'egor.kirin20@gmail.com'))
+           and VACANCY_ID = (
+             select id
+             from VACANCIES
+             where NAME = 'Web разработчик'
+               and description = 'middle на java')),
+        'Данная позиция предусматривает выполнение тестового задания. Вы согласны его сделать?',
+        '2024-03-12 20:06:13'),
+       ((select id
+         from RESPONDED_APPLICANTS
+         where RESUME_ID = (
+             select id
+             from RESUMES
+             where NAME = 'Для WEB-a'
+               and USER_ID = (
+                 select id
+                 from USERS
+                 where users.EMAIL = 'egor.kirin20@gmail.com'))
+           and VACANCY_ID = (
+             select id
+             from VACANCIES
+             where NAME = 'Web разработчик'
+               and description = 'middle на java')),
+        'Здравствуйте. Конечно согласен на выполнение тестового задания',
+        '2024-03-13 19:06:13');

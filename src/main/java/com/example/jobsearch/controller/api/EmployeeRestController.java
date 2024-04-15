@@ -1,14 +1,12 @@
 package com.example.jobsearch.controller.api;
 
 import com.example.jobsearch.dto.RespondedApplicantsDto;
-import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +31,6 @@ public class EmployeeRestController {
     private final VacancyService vacancyService;
     private final RespondedApplicantsService respondedApplicantsService;
     private final UserService userService;
-
-    @PostMapping("resumes")
-    public HttpStatus createResume(String userEmail, @RequestBody @Valid InputResumeDto resume) {
-        resumeService.createResume(userEmail);
-        return HttpStatus.OK;
-    }
 
     @DeleteMapping("resumes/{id}")
     public HttpStatus deleteResumeById(Authentication auth, @PathVariable int id) {

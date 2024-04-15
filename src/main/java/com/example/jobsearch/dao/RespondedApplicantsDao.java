@@ -91,4 +91,12 @@ public class RespondedApplicantsDao {
 
         template.update(sql, resumeId, vacancyId);
     }
+
+    public Integer getRespondId(int resumeId, int vacancyId) {
+        String sql = """
+                select id from responded_applicants
+                where resume_id = ? and vacancy_id = ?;
+                """;
+        return template.queryForObject(sql, Integer.class, resumeId, vacancyId);
+    }
 }

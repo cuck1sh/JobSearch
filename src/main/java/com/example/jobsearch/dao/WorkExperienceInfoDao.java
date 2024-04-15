@@ -57,11 +57,11 @@ public class WorkExperienceInfoDao {
         String sql = """
                 update work_experience_info
                 set years = :years, company_name = :company_name, position = :position, responsibilities = :responsibilities
-                where resume_id = :resume_id;
+                where id = :id;
                 """;
 
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource()
-                .addValue("resume_id", workExperienceInfo.getResumeId())
+                .addValue("id", workExperienceInfo.getId())
                 .addValue("years", workExperienceInfo.getYears())
                 .addValue("company_name", workExperienceInfo.getCompanyName())
                 .addValue("position", workExperienceInfo.getPosition())

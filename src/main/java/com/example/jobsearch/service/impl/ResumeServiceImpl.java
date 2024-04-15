@@ -57,8 +57,8 @@ public class ResumeServiceImpl implements ResumeService {
                 .name(resume.getName())
                 .category(categoryService.getCategoryById(resume.getCategoryId()))
                 .salary(resume.getSalary())
-                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
-                .workExperienceInfos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
+//                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
                 .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
                 .isActive(resume.getIsActive())
                 .createdDate(resume.getCreatedDate())
@@ -117,8 +117,8 @@ public class ResumeServiceImpl implements ResumeService {
                 .name(e.getName())
                 .category(categoryService.getCategoryById(e.getCategoryId()))
                 .salary(e.getSalary())
-                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
-                .workExperienceInfos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
+//                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
+                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
                 .educationInfos(educationInfoService.getEducationInfoById(e.getId()))
                 .isActive(e.getIsActive())
                 .createdDate(e.getCreatedDate())
@@ -140,15 +140,35 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Integer createResume(String userEmail) {
+    public void createResume(String userEmail, InputResumeDto resumeDto) {
         if (userService.isEmployee(userEmail)) {
-            return resumeDao.createResume(userService.getUserByEmail(userEmail).getId());
+            Resume newResume = Resume.builder()
+                    .userId(userService.getUserByEmail(userEmail).getId())
+                    .name(resumeDto.getName())
+                    .categoryId(categoryService.checkInCategories(resumeDto.getCategory()))
+                    .salary(resumeDto.getSalary())
+                    .isActive(resumeDto.getIsActive())
+                    .createdDate(LocalDateTime.now())
+                    .build();
+
+            Integer newResumeKey = resumeDao.createResume(newResume);
+
+            if (resumeDto.getWorkExperienceInfoDtos() != null) {
+                workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
+            }
+            if (resumeDto.getEducationInfos() != null) {
+                educationInfoService.createEducationInfo(resumeDto.getEducationInfos(), newResumeKey);
+            }
+            if (resumeDto.getContacts() != null) {
+                contactsInfoService.createContactInfo(resumeDto.getContacts(), newResumeKey);
+            }
+        } else {
+            log.error("Юзер " + userEmail + " не найден среди соискателей");
         }
-        throw new ResumeNotFoundException("Юзер " + userEmail + " не найден среди соискателей");
     }
 
     @Override
-    public void changeResume(String userEmail, InputResumeDto resume, InputContactInfoDto contacts) {
+    public void changeResume(String userEmail, InputResumeDto resume, List<InputContactInfoDto> contacts) {
         if (isResumeInSystem(resume.getId())) {
             Integer userId = userService.getUserByEmail(userEmail).getId();
 
@@ -169,7 +189,7 @@ public class ResumeServiceImpl implements ResumeService {
 
             newResume.setIsActive(resume.getIsActive() != null);
             resumeDao.changeResume(newResume);
-            contactsInfoService.updateContactInfo(newResume.getId(), contacts);
+            contactsInfoService.updateContactInfo(contacts, newResume.getId());
         } else {
             log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
         }
