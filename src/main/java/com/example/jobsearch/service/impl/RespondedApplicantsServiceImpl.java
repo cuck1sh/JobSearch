@@ -1,11 +1,16 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.RespondedApplicantsDao;
+import com.example.jobsearch.dto.MessageDto;
+import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
+import com.example.jobsearch.dto.user.ProfileDto;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.exception.VacancyNotFoundException;
 import com.example.jobsearch.model.RespondedApplicants;
+import com.example.jobsearch.service.MessageService;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
@@ -29,6 +34,35 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
     private final UserService userService;
+    private final MessageService messageService;
+
+    @Override
+    public Integer getRespondId(int resumeId, int vacancyId) {
+        return respondedApplicantsDao.getRespondId(resumeId, vacancyId);
+    }
+
+    @Override
+    public RespondMessengerDto getRespondMessenger(int resumeId, int vacancyId) {
+        Integer responded_applicants_id = getRespondId(resumeId, vacancyId);
+        UserDto user = vacancyService.getUserByVacancy(vacancyId);
+        ProfileDto profile = ProfileDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .age(user.getAge())
+                .phoneNumber(user.getPhoneNumber())
+                .avatar(user.getAvatar())
+                .accountType(user.getAccountType())
+                .build();
+
+        List<MessageDto> messageDtos = messageService.getMessages(responded_applicants_id);
+
+        return RespondMessengerDto.builder()
+                .employerProfile(profile)
+                .messages(messageDtos)
+                .build();
+
+    }
 
     @Override
     public List<RespondedApplicantsDto> getUserResponses(String email) {

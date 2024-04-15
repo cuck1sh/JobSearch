@@ -1,9 +1,12 @@
 package com.example.jobsearch.controller;
 
+import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.service.CategoryService;
+import com.example.jobsearch.service.MessageService;
 import com.example.jobsearch.service.ProfileService;
+import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,8 @@ public class EmployeeController {
     private final ResumeService resumeService;
     private final CategoryService categoryService;
     private final ProfileService profileService;
+    private final RespondedApplicantsService respondedApplicantsService;
+    private final MessageService messageService;
 
     @GetMapping("resumes/{id}")
     public String getResume(@PathVariable int id, Model model) {
@@ -78,5 +83,11 @@ public class EmployeeController {
         return "employee/createEducationTemplate";
     }
 
+    @GetMapping("resumes/{resumeId}/vacancy/{vacancyId}")
+    public String getMessenger(@PathVariable int resumeId, @PathVariable int vacancyId, Model model) {
+        RespondMessengerDto messengerDto = respondedApplicantsService.getRespondMessenger(FileUtil.TEST_RESUME_ID, FileUtil.TEST_VACANCY_ID);
+        model.addAttribute("messenger", messengerDto);
+        return "messenger";
+    }
 
 }

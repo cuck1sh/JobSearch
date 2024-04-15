@@ -96,40 +96,6 @@
                 </div>
             </div>
 
-            <#--            <div class="row mb-3 row-cols-1 row-cols-lg-2">-->
-            <#--                <div class="col">-->
-
-            <#--                    <div class="d-flex">-->
-            <#--                        <input name="telegram" type="text" class="form-control me-2 my-3" id="telegram">-->
-            <#--                        <i class="bi bi-telegram align-content-center fs-2"></i>-->
-            <#--                    </div>-->
-
-            <#--                    <div class="d-flex">-->
-            <#--                        <input name="email" type="email" class="form-control me-2 my-3" id="email"-->
-            <#--                               placeholder="example@mail.com">-->
-            <#--                        <i class="bi bi-envelope-at align-content-center fs-2"></i>-->
-            <#--                    </div>-->
-
-            <#--                    <div class="d-flex">-->
-            <#--                        <input name="phoneNumber" type="text" class="form-control me-2 my-3" id="phoneNumber"-->
-            <#--                               placeholder="996-779-11-22-33">-->
-            <#--                        <i class="bi bi-telephone-inbound align-content-center fs-2"></i>-->
-            <#--                    </div>-->
-            <#--                </div>-->
-
-            <#--                <div class="col">-->
-            <#--                    <div class="d-flex">-->
-            <#--                        <input name="facebook" type="text" class="form-control me-2 my-3" id="facebook">-->
-            <#--                        <i class="bi bi-facebook align-content-center fs-2"></i>-->
-            <#--                    </div>-->
-
-            <#--                    <div class="d-flex">-->
-            <#--                        <input name="linkedIn" type="text" class="form-control me-2 my-3" id="linkedIn">-->
-            <#--                        <i class="bi bi-linkedin align-content-center fs-2"></i>-->
-            <#--                    </div>-->
-            <#--                </div>-->
-            <#--            </div>-->
-
             <div class="form-check mb-3">
                 <input class="form-check-input" name="isActive" type="checkbox" value=true id="isActive">
                 <label class="form-check-label" for="isActive">

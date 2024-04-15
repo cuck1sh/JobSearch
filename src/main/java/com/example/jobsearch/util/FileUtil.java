@@ -27,6 +27,9 @@ public class FileUtil {
     // профиль соискателя:     egor.kirin20@gmail.com
     // профиль работодателя:   zhmych@gmail.com
     public static final String TEST_USER_AUTH = "egor.kirin20@gmail.com";
+    public static final Integer TEST_RESUME_ID = 1;
+    public static final Integer TEST_VACANCY_ID = 2;
+
     private static final String UPLOAD_DIR = "data/";
 
     @SneakyThrows

@@ -34,6 +34,9 @@
                         <a class="nav-link active" aria-current="page" href="/users/profile">Profile</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/employee/resumes/1/vacancy/2">Messages(Test)</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/users/register">Register</a>
                     </li>
                 </ul>
