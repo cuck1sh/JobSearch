@@ -22,7 +22,8 @@ public interface ResumeService {
     Boolean isUsersResumesInSystem(int userId);
     HttpStatus deleteResumeById(Authentication auth, int id);
     List<ResumeDto> getActiveResumes();
-    void changeResume(String userEmail, InputResumeDto resume, InputContactInfoDto contacts);
+
+    void changeResume(String userEmail, InputResumeDto resume, List<InputContactInfoDto> contacts);
     void getResume(String userEmail, int id, Model model);
 
     List<ResumeDto> getResumesWithPaging(Integer page, Integer pageSize);

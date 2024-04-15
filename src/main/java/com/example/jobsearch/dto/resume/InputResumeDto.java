@@ -38,7 +38,7 @@ public class InputResumeDto {
     @JsonProperty("education_infos")
     private List<EducationInfoDto> educationInfos;
 
-    private InputContactInfoDto contacts;
+    private List<InputContactInfoDto> contacts;
 
     @JsonProperty("is_active")
     private Boolean isActive;

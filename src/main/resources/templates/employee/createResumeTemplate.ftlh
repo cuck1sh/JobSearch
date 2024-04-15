@@ -3,7 +3,7 @@
 
     <div class="col-12 col-lg-6 p-4 mx-auto border rounded-2 mb-4">
         <h1 class="text-center mt-2 mb-3 text-danger">Создание резюме:</h1>
-        <form id="form">
+        <form id="form" action="/employee/resumes/add" method="POST">
 
             <div class="row">
                 <div class="col-7">
@@ -76,39 +76,59 @@
 
             <h4 class="">Ссылки на соц. сети:</h4>
 
-            <div class="row mb-3 row-cols-1 row-cols-lg-2">
-                <div class="col">
-
-                    <div class="d-flex">
-                        <input name="telegram" type="text" class="form-control me-2 my-3" id="telegram">
-                        <i class="bi bi-telegram align-content-center fs-2"></i>
+            <div id="contacts_info">
+                <div class="row mb-3 " id="contacts">
+                    <div class="col-7">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-text">Контакты:</h6>
+                                <h6 class="fw-normal">Telegram: ___________</h6>
+                                <h6 class="fw-normal">Email: ______________</h6>
+                                <h6 class="fw-normal">Phone number: _______</h6>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="d-flex">
-                        <input name="email" type="email" class="form-control me-2 my-3" id="email"
-                               placeholder="example@mail.com">
-                        <i class="bi bi-envelope-at align-content-center fs-2"></i>
-                    </div>
-
-                    <div class="d-flex">
-                        <input name="phoneNumber" type="text" class="form-control me-2 my-3" id="phoneNumber"
-                               placeholder="996-779-11-22-33">
-                        <i class="bi bi-telephone-inbound align-content-center fs-2"></i>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="d-flex">
-                        <input name="facebook" type="text" class="form-control me-2 my-3" id="facebook">
-                        <i class="bi bi-facebook align-content-center fs-2"></i>
-                    </div>
-
-                    <div class="d-flex">
-                        <input name="linkedIn" type="text" class="form-control me-2 my-3" id="linkedIn">
-                        <i class="bi bi-linkedin align-content-center fs-2"></i>
-                    </div>
+                    <button type="button" id="contactsButton"
+                            class="btn col-3 m-2 text-decoration-none bg-warning p-2 text-dark bg-opacity-10 rounded-3">
+                        <span class="fs-1">+</span>
+                    </button>
                 </div>
             </div>
+
+            <#--            <div class="row mb-3 row-cols-1 row-cols-lg-2">-->
+            <#--                <div class="col">-->
+
+            <#--                    <div class="d-flex">-->
+            <#--                        <input name="telegram" type="text" class="form-control me-2 my-3" id="telegram">-->
+            <#--                        <i class="bi bi-telegram align-content-center fs-2"></i>-->
+            <#--                    </div>-->
+
+            <#--                    <div class="d-flex">-->
+            <#--                        <input name="email" type="email" class="form-control me-2 my-3" id="email"-->
+            <#--                               placeholder="example@mail.com">-->
+            <#--                        <i class="bi bi-envelope-at align-content-center fs-2"></i>-->
+            <#--                    </div>-->
+
+            <#--                    <div class="d-flex">-->
+            <#--                        <input name="phoneNumber" type="text" class="form-control me-2 my-3" id="phoneNumber"-->
+            <#--                               placeholder="996-779-11-22-33">-->
+            <#--                        <i class="bi bi-telephone-inbound align-content-center fs-2"></i>-->
+            <#--                    </div>-->
+            <#--                </div>-->
+
+            <#--                <div class="col">-->
+            <#--                    <div class="d-flex">-->
+            <#--                        <input name="facebook" type="text" class="form-control me-2 my-3" id="facebook">-->
+            <#--                        <i class="bi bi-facebook align-content-center fs-2"></i>-->
+            <#--                    </div>-->
+
+            <#--                    <div class="d-flex">-->
+            <#--                        <input name="linkedIn" type="text" class="form-control me-2 my-3" id="linkedIn">-->
+            <#--                        <i class="bi bi-linkedin align-content-center fs-2"></i>-->
+            <#--                    </div>-->
+            <#--                </div>-->
+            <#--            </div>-->
 
             <div class="form-check mb-3">
                 <input class="form-check-input" name="isActive" type="checkbox" value=true id="isActive">
@@ -127,315 +147,198 @@
     <script>
         'use strict'
         window.addEventListener('load', () => {
-            const form = document.getElementById('form');
-            const workExp = document.getElementById('workExp');
-            const workExpButton = document.getElementById('workExpButton');
-            const education = document.getElementById('education');
-            const educationButton = document.getElementById('educationButton');
+            let workExperienceInfo = document.getElementById('workExperienceInfo');
+            let educationInfo = document.getElementById('educationInfo');
+            let contactsInfo = document.getElementById('contacts_info');
+
+            let workExpButton = document.getElementById('workExpButton');
+            let educationButton = document.getElementById('educationButton');
+            let contactsButton = document.getElementById('contactsButton');
+
+            let workExp = document.getElementById('workExp');
+            let education = document.getElementById('education');
+            let contacts = document.getElementById('contacts');
+
+
+            let expCounter = -1;
+            let eduCounter = -1;
+            let conCounter = -1;
 
             workExpButton.addEventListener('click', () => {
-                let rowForWorkExp = document.createElement('div');
-                rowForWorkExp.className = 'row py-2 mb-3 mx-0 ';
-                workExp.after(rowForWorkExp);
+                expCounter++;
+                console.log(expCounter);
+                let newWorkExpRow = document.createElement('div');
+                newWorkExpRow.className = 'row py-2 mb-3 mx-0 ';
+                workExp.after(newWorkExpRow);
 
-                let colForWorkExp = document.createElement('div');
-                colForWorkExp.className = 'col-7 workExpHuexp pt-2 bg-success text-dark bg-opacity-10 rounded-3';
-                rowForWorkExp.appendChild(colForWorkExp);
+                let newWorkExpCol = document.createElement('div');
+                newWorkExpCol.className = 'col-7 pt-2 bg-success text-dark bg-opacity-10 rounded-3';
+                newWorkExpCol.innerHTML =
+                    '<div class = "mb-3">' +
+                    '<label for="years" class="form-label">Годы работы:</label> ' +
+                    '<input class="form-control" name="workExperienceInfoDtos[' + expCounter + '].years" type="number" placeholder="стаж" id="years" required>' +
+                    '</div>' +
 
-                let marginForYears = document.createElement('div');
-                marginForYears.className = 'mb-3';
-                colForWorkExp.appendChild(marginForYears);
+                    '<div class = "mb-3">' +
+                    '<label for="companyName" class="form-label">Название компании:</label> ' +
+                    '<input class="form-control" name="workExperienceInfoDtos[' + expCounter + '].companyName" type="text" placeholder="Введите название" id="companyName" required>' +
+                    '</div>' +
 
-                let labelForYears = document.createElement('label');
-                labelForYears.className = 'form-label';
-                labelForYears.setAttribute('for', 'years')
-                marginForYears.appendChild(labelForYears);
+                    '<div class = "mb-3">' +
+                    '<label for="position" class="form-label">Должность:</label> ' +
+                    '<input class="form-control" name="workExperienceInfoDtos[' + expCounter + '].position" type="text" id="position" required>' +
+                    '</div>' +
 
-                let labelForYearsText = document.createTextNode('Годы работы:');
-                labelForYears.appendChild(labelForYearsText);
+                    '<div class = "mb-3">' +
+                    '<label for="responsibilities" class="form-label">Обязанности:</label> ' +
+                    '<input class="form-control" name="workExperienceInfoDtos[' + expCounter + '].responsibilities" type="text" id="responsibilities" required>' +
+                    '</div>';
+                newWorkExpRow.appendChild(newWorkExpCol);
 
-                let inputForYears = document.createElement('input');
-                inputForYears.className = 'form-control';
-                inputForYears.name = 'years';
-                inputForYears.id = 'years';
-                inputForYears.type = 'number';
-                inputForYears.placeholder = 'стаж';
-                inputForYears.required = true;
-                marginForYears.appendChild(inputForYears);
+                let newExpButton = document.createElement('div');
+                newExpButton.className = 'btn remove-button col-3 m-2 d-flex justify-content-center align-items-center bg-danger p-2 bg-opacity-10 rounded-3';
+                newExpButton.innerHTML = '<span class="fs-1">-</span>';
+                newWorkExpRow.appendChild(newExpButton);
 
-                let marginCompany = document.createElement('div');
-                marginCompany.className = 'mb-3';
-                colForWorkExp.appendChild(marginCompany);
+                newWorkExpRow.querySelector('.remove-button').addEventListener('click', () => {
+                    if (newWorkExpRow.previousElementSibling.id === 'workExp') {
+                        workExperienceInfo.removeChild(newWorkExpRow);
+                        expCounter--;
+                    } else {
+                        let warningBlock = document.createElement('div');
+                        warningBlock.innerText = 'Вы можете удалять только последний блок';
+                        warningBlock.className = 'text-danger';
+                        newWorkExpRow.appendChild(warningBlock);
 
-                let labelCompany = document.createElement('label');
-                labelCompany.className = 'form-label';
-                labelCompany.setAttribute('for', 'companyName')
-                marginCompany.appendChild(labelCompany);
-
-                let labelCompanyText = document.createTextNode('Название компании:');
-                labelCompany.appendChild(labelCompanyText);
-
-                let inputCompany = document.createElement('input');
-                inputCompany.className = 'form-control';
-                inputCompany.name = 'companyName';
-                inputCompany.id = 'companyName';
-                inputCompany.type = 'text';
-                inputCompany.placeholder = 'Введите название';
-                inputCompany.required = true;
-                marginCompany.appendChild(inputCompany);
-
-                let marginPosition = document.createElement('div');
-                marginPosition.className = 'mb-3';
-                colForWorkExp.appendChild(marginPosition);
-
-                let labelPosition = document.createElement('label');
-                labelPosition.className = 'form-label';
-                labelPosition.setAttribute('for', 'position')
-                marginPosition.appendChild(labelPosition);
-
-                let labelPositionText = document.createTextNode('Должность:');
-                labelPosition.appendChild(labelPositionText);
-
-                let inputPosition = document.createElement('input');
-                inputPosition.className = 'form-control';
-                inputPosition.name = 'position';
-                inputPosition.id = 'position';
-                inputPosition.type = 'text';
-                inputPosition.required = true;
-                marginPosition.appendChild(inputPosition);
-
-                let marginResponsibilities = document.createElement('div');
-                marginResponsibilities.className = 'mb-3';
-                colForWorkExp.appendChild(marginResponsibilities);
-
-                let labelResponsibilities = document.createElement('label');
-                labelResponsibilities.className = 'form-label';
-                labelResponsibilities.setAttribute('for', 'responsibilities')
-                marginResponsibilities.appendChild(labelResponsibilities);
-
-                let labelResponsibilitiesText = document.createTextNode('Обязанности:');
-                labelResponsibilities.appendChild(labelResponsibilitiesText);
-
-                let inputResponsibilities = document.createElement('input');
-                inputResponsibilities.className = 'form-control';
-                inputResponsibilities.name = 'responsibilities';
-                inputResponsibilities.id = 'responsibilities';
-                inputResponsibilities.type = 'text';
-                inputResponsibilities.required = true;
-                marginResponsibilities.appendChild(inputResponsibilities);
-
-                let i = 1;
-
-                let buttonCol = document.createElement('div');
-                buttonCol.className = 'btn col-3 m-2 d-flex justify-content-center align-items-center text-decoration-none bg-danger p-2 text-dark bg-opacity-10 rounded-3';
-                i += 1;
-                let buttonColI = 'buttonCol-' + i
-                buttonCol.id = buttonColI;
-                rowForWorkExp.appendChild(buttonCol);
-
-                let fsMinus = document.createElement('span');
-                fsMinus.className = 'fs-1';
-                buttonCol.appendChild(fsMinus);
-                let fsMinusText = document.createTextNode('-');
-                fsMinus.appendChild(fsMinusText);
-
-                let buttonColEvent = document.getElementById(buttonColI);
-
-                buttonColEvent.addEventListener('click', () => {
-                    rowForWorkExp.remove();
+                        setTimeout(() => {
+                            warningBlock.remove();
+                        }, 3000)
+                    }
                 });
             });
 
             educationButton.addEventListener('click', () => {
-                let rowForEducation = document.createElement('div');
-                rowForEducation.className = 'row py-2 mb-3 mx-0 ';
-                education.after(rowForEducation);
+                eduCounter++;
+                console.log(eduCounter);
+                let newEduRow = document.createElement('div');
+                newEduRow.className = 'row py-2 mb-3 mx-0 ';
+                education.after(newEduRow);
 
-                let colForEducation = document.createElement('div');
-                colForEducation.className = 'col-7 educationInfoHuyo pt-2 bg-info text-dark bg-opacity-10 rounded-3';
-                rowForEducation.appendChild(colForEducation);
+                let newEduCol = document.createElement('div');
+                newEduCol.className = 'col-7 pt-2 bg-info text-dark bg-opacity-10 rounded-3';
+                newEduCol.innerHTML =
+                    '<div class = "mb-3">' +
+                    '<label for="institution" class="form-label">Название образовательного учреждения:</label> ' +
+                    '<input class="form-control" name="educationInfos[' + eduCounter + '].institution" type="text" placeholder="Введите название" id="institution" required>' +
+                    '</div>' +
 
-                let marginForInstitution = document.createElement('div');
-                marginForInstitution.className = 'mb-3';
-                colForEducation.appendChild(marginForInstitution);
+                    '<div class = "mb-3">' +
+                    '<label for="program" class="form-label">Программа обучения:</label> ' +
+                    '<input class="form-control" name="educationInfos[' + eduCounter + '].program" type="text" id="program" required>' +
+                    '</div>' +
 
-                let labelInstitution = document.createElement('label');
-                labelInstitution.className = 'form-label';
-                labelInstitution.setAttribute('for', 'institution')
-                marginForInstitution.appendChild(labelInstitution);
+                    '<div class = "mb-3">' +
+                    '<label for="startDate" class="form-label">Дата поступления:</label> ' +
+                    '<input class="form-control" name="educationInfos[' + eduCounter + '].startDate" type="date" id="startDate" required>' +
+                    '</div>' +
 
-                let labelInstitutionText = document.createTextNode('Название образовательного учреждения:');
-                labelInstitution.appendChild(labelInstitutionText);
+                    '<div class = "mb-3">' +
+                    '<label for="endDate" class="form-label">Дата окончания:</label> ' +
+                    '<input class="form-control" name="educationInfos[' + eduCounter + '].endDate" type="date" id="endDate" required>' +
+                    '</div>' +
 
-                let inputInstitution = document.createElement('input');
-                inputInstitution.className = 'form-control';
-                inputInstitution.name = 'institution';
-                inputInstitution.id = 'institution';
-                inputInstitution.type = 'text';
-                inputInstitution.placeholder = 'Введите название';
-                inputInstitution.required = true;
-                marginForInstitution.appendChild(inputInstitution);
+                    '<div class = "mb-3">' +
+                    '<label for="degree" class="form-label">Полученная степень:</label> ' +
+                    '<input class="form-control" name="educationInfos[' + eduCounter + '].degree" type="text" id="degree" required>' +
+                    '</div>' +
+                    newEduRow.appendChild(newEduCol);
 
-                let marginForProgram = document.createElement('div');
-                marginForProgram.className = 'mb-3';
-                colForEducation.appendChild(marginForProgram);
+                let newEduButton = document.createElement('div');
+                newEduButton.className = 'btn remove-button col-3 m-2 d-flex justify-content-center align-items-center bg-danger p-2 bg-opacity-10 rounded-3';
+                newEduButton.innerHTML = '<span class="fs-1">-</span>';
+                newEduRow.appendChild(newEduButton);
 
-                let labelProgram = document.createElement('label');
-                labelProgram.className = 'form-label';
-                labelProgram.setAttribute('for', 'program')
-                marginForProgram.appendChild(labelProgram);
+                newEduRow.querySelector('.remove-button').addEventListener('click', () => {
+                    if (newEduRow.previousElementSibling.id === 'education') {
+                        educationInfo.removeChild(newEduRow);
+                        eduCounter--;
+                    } else {
+                        let warningBlock = document.createElement('div');
+                        warningBlock.innerText = 'Вы можете удалять только последний блок';
+                        warningBlock.className = 'text-danger';
+                        newEduRow.appendChild(warningBlock);
 
-                let labelProgramText = document.createTextNode('Программа обучения:');
-                labelProgram.appendChild(labelProgramText);
-
-                let inputProgram = document.createElement('input');
-                inputProgram.className = 'form-control';
-                inputProgram.name = 'program';
-                inputProgram.id = 'program';
-                inputProgram.type = 'text';
-                inputProgram.required = true;
-                marginForProgram.appendChild(inputProgram);
-
-                let marginForStartDate = document.createElement('div');
-                marginForStartDate.className = 'mb-3';
-                colForEducation.appendChild(marginForStartDate);
-
-                let labelStartDate = document.createElement('label');
-                labelStartDate.className = 'form-label';
-                labelStartDate.setAttribute('for', 'startDate')
-                marginForStartDate.appendChild(labelStartDate);
-
-                let labelStartDateText = document.createTextNode('Дата поступления:');
-                labelStartDate.appendChild(labelStartDateText);
-
-                let inputStartDate = document.createElement('input');
-                inputStartDate.className = 'form-control';
-                inputStartDate.name = 'startDate';
-                inputStartDate.id = 'startDate';
-                inputStartDate.type = 'date';
-                inputStartDate.required = true;
-                marginForStartDate.appendChild(inputStartDate);
-
-                let marginForEndDate = document.createElement('div');
-                marginForEndDate.className = 'mb-3';
-                colForEducation.appendChild(marginForEndDate);
-
-                let labelEndDate = document.createElement('label');
-                labelEndDate.className = 'form-label';
-                labelEndDate.setAttribute('for', 'endDate')
-                marginForEndDate.appendChild(labelEndDate);
-
-                let labelEndDateText = document.createTextNode('Дата окончания:');
-                labelEndDate.appendChild(labelEndDateText);
-
-                let inputEndDate = document.createElement('input');
-                inputEndDate.className = 'form-control';
-                inputEndDate.name = 'endDate';
-                inputEndDate.id = 'endDate';
-                inputEndDate.type = 'date';
-                inputEndDate.required = true;
-                marginForEndDate.appendChild(inputEndDate);
-
-                let marginForDegree = document.createElement('div');
-                marginForDegree.className = 'mb-3';
-                colForEducation.appendChild(marginForDegree);
-
-                let labelDegree = document.createElement('label');
-                labelDegree.className = 'form-label';
-                labelDegree.setAttribute('for', 'degree')
-                marginForDegree.appendChild(labelDegree);
-
-                let labelDegreeText = document.createTextNode('Полученная степень:');
-                labelDegree.appendChild(labelDegreeText);
-
-                let inputDegree = document.createElement('input');
-                inputDegree.className = 'form-control';
-                inputDegree.name = 'degree';
-                inputDegree.id = 'degree';
-                inputDegree.type = 'text';
-                marginForDegree.appendChild(inputDegree);
-
-                let j = 1;
-
-                let educationButtonCol = document.createElement('div');
-                educationButtonCol.className = 'btn col-3 m-2 d-flex justify-content-center align-items-center text-decoration-none bg-danger p-2 text-dark bg-opacity-10 rounded-3';
-                j += 1;
-                let educationButtonColI = 'educationButtonCol-' + j
-                educationButtonCol.id = educationButtonColI;
-                rowForEducation.appendChild(educationButtonCol);
-
-                let educationFsMinus = document.createElement('span');
-                educationFsMinus.className = 'fs-1';
-                educationButtonCol.appendChild(educationFsMinus);
-                let educationFsMinusText = document.createTextNode('-');
-                educationFsMinus.appendChild(educationFsMinusText);
-
-                let educationButtonColEvent = document.getElementById(educationButtonColI);
-
-                educationButtonColEvent.addEventListener('click', () => {
-                    rowForEducation.remove();
+                        setTimeout(() => {
+                            warningBlock.remove();
+                        }, 3000)
+                    }
                 });
             });
 
-            function creationHandler(event) {
-                event.preventDefault();
-                const form = event.target
-                let data = new FormData(form)
+            contactsButton.addEventListener('click', () => {
+                conCounter++;
+                console.log(conCounter);
+                let newConRow = document.createElement('div');
+                newConRow.className = 'row mb-3 row-cols-1 row-cols-lg-2';
+                contacts.after(newConRow);
 
-                const workExpHuexp = document.getElementsByClassName('workExpHuexp');
-                const educationInfoHuyo = document.getElementsByClassName('educationInfoHuyo');
+                let newConCol = document.createElement('div');
+                newConCol.className = 'col';
+                newConCol.innerHTML =
+                    '<div class="d-flex">' +
+                    '<input name="contacts[' + conCounter + '].telegram" type="text" class="form-control me-2 my-3" id="telegram">' +
+                    '<i class="bi bi-telegram align-content-center fs-2"></i>' +
+                    '</div>' +
 
-                let workExperienceInfoDtos = [];
-                let educationInfos = [];
+                    '<div class="d-flex">' +
+                    '<input name="contacts[' + conCounter + '].email" type="email" class="form-control me-2 my-3" id="email" placeholder="example@mail.com">' +
+                    '<i class="bi bi-envelope-at align-content-center fs-2"></i>' +
+                    '</div>' +
 
-                for (let work of workExpHuexp) {
-                    workExperienceInfoDtos.push({
-                        years: parseInt(work.querySelector('#years').value),
-                        company_name: work.querySelector('#companyName').value,
-                        position: work.querySelector('#position').value,
-                        responsibilities: work.querySelector('#responsibilities').value
-                    });
-                }
+                    '<div class="d-flex">' +
+                    '<input name="contacts[' + conCounter + '].phoneNumber" type="text" class="form-control me-2 my-3" id="phoneNumber" placeholder="996-779-11-22-33">' +
+                    '<i class="bi bi-telephone-inbound align-content-center fs-2"></i>' +
+                    '</div>';
+                newConRow.appendChild(newConCol);
 
-                for (let educ of educationInfoHuyo) {
-                    educationInfos.push({
-                        institution: educ.querySelector('#institution').value,
-                        program: educ.querySelector('#program').value,
-                        start_date: educ.querySelector('#startDate').value,
-                        end_date: educ.querySelector('#endDate').value,
-                        degree: educ.querySelector('#degree').value
-                    });
-                }
+                let newConCol2 = document.createElement('div');
+                newConCol2.className = 'col';
+                newConCol2.innerHTML =
+                    '<div class="d-flex">' +
+                    '<input name="contacts[' + conCounter + '].facebook" type="text" class="form-control me-2 my-3"  id="facebook">' +
+                    '<i class="bi bi-facebook align-content-center fs-2"></i>' +
+                    '</div>' +
 
-                let json = JSON.stringify({
-                    name: data.get('name'),
-                    category: data.get('category'),
-                    salary: parseFloat(data.get('salary')),
-                    work_experience_infos: workExperienceInfoDtos,
-                    education_infos: educationInfos,
-                    contacts: {
-                        telegram: data.get('telegram'),
-                        phoneNumber: data.get('phoneNumber'),
-                        email: data.get('email'),
-                        facebook: data.get('facebook'),
-                        linkedIn: data.get('linkedIn')
-                    },
-                    is_active: data.get('isActive')
+                    '<div class="d-flex">' +
+                    '<input name="contacts[' + conCounter + '].linkedIn" type="text" class="form-control me-2 my-3" id="linkedIn">' +
+                    '<i class="bi bi-linkedin align-content-center fs-2"></i>' +
+                    '</div>';
+                newConRow.appendChild(newConCol2);
+
+                let newConButton = document.createElement('div');
+                newConButton.className = 'btn remove-button d-flex me-4 justify-content-center align-items-center bg-danger p-2 bg-opacity-10 rounded-3';
+                newConButton.innerHTML = '<span class="fs-1">-</span>';
+                newConCol2.appendChild(newConButton);
+
+                newConRow.querySelector('.remove-button').addEventListener('click', () => {
+                    if (newConRow.previousElementSibling.id === 'contacts') {
+                        contactsInfo.removeChild(newConRow);
+                        conCounter--;
+                    } else {
+                        let warningBlock = document.createElement('div');
+                        warningBlock.innerText = 'Вы можете удалять только последний блок';
+                        warningBlock.className = 'text-danger';
+                        newConRow.appendChild(warningBlock);
+
+                        setTimeout(() => {
+                            warningBlock.remove();
+                        }, 3000)
+                    }
                 });
 
-                console.log(json);
+            });
 
-                fetch('/employee/resumes/add', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: json
-                });
-
-            }
-
-            form.addEventListener('submit', creationHandler);
         });
     </script>
-
 
 </@main.layout>

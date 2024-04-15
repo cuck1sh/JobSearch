@@ -153,16 +153,22 @@ public class ResumeServiceImpl implements ResumeService {
 
             Integer newResumeKey = resumeDao.createResume(newResume);
 
-            workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
-            educationInfoService.createEducationInfo(resumeDto.getEducationInfos(), newResumeKey);
-            contactsInfoService.createOrUpdateContactInfo(resumeDto.getContacts(), newResumeKey);
+            if (resumeDto.getWorkExperienceInfoDtos() != null) {
+                workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
+            }
+            if (resumeDto.getEducationInfos() != null) {
+                educationInfoService.createEducationInfo(resumeDto.getEducationInfos(), newResumeKey);
+            }
+            if (resumeDto.getContacts() != null) {
+                contactsInfoService.createContactInfo(resumeDto.getContacts(), newResumeKey);
+            }
         } else {
             log.error("Юзер " + userEmail + " не найден среди соискателей");
         }
     }
 
     @Override
-    public void changeResume(String userEmail, InputResumeDto resume, InputContactInfoDto contacts) {
+    public void changeResume(String userEmail, InputResumeDto resume, List<InputContactInfoDto> contacts) {
         if (isResumeInSystem(resume.getId())) {
             Integer userId = userService.getUserByEmail(userEmail).getId();
 
@@ -183,7 +189,7 @@ public class ResumeServiceImpl implements ResumeService {
 
             newResume.setIsActive(resume.getIsActive() != null);
             resumeDao.changeResume(newResume);
-            contactsInfoService.createOrUpdateContactInfo(contacts, newResume.getId());
+            contactsInfoService.updateContactInfo(contacts, newResume.getId());
         } else {
             log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
         }

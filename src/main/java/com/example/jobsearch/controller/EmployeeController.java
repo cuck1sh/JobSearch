@@ -14,9 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -41,7 +42,7 @@ public class EmployeeController {
 
     @PostMapping("resumes/add")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeResume(@RequestBody InputResumeDto resumeDto,
+    public String makeResume(InputResumeDto resumeDto,
                              Model model) {
         log.info(resumeDto.toString());
         resumeService.createResume(FileUtil.TEST_USER_AUTH, resumeDto);
@@ -58,7 +59,7 @@ public class EmployeeController {
 
     @PostMapping("resumes/update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String remakeResume(InputResumeDto resumeDto, InputContactInfoDto contacts, Model model) {
+    public String remakeResume(InputResumeDto resumeDto, List<InputContactInfoDto> contacts, Model model) {
         resumeService.changeResume(FileUtil.TEST_USER_AUTH, resumeDto, contacts);
         profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
         return "user/profile";
