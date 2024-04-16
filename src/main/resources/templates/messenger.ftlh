@@ -51,19 +51,11 @@
             let messages = document.getElementById('messages');
             let oldData = [];
 
+            intervalRequest();
 
-            let borderElement = document.createElement('div');
-            borderElement.className = 'border-bottom p-2';
-            borderElement.innerHTML =
-                '<p class="card-text mb-1">Загрузка сообщений</p>' +
-                '<p class="card-text"><small class="text-body-secondary">ожидайте...</small></p>';
-            messages.appendChild(borderElement);
-            setTimeout(() => {
-                borderElement.remove();
-            }, 4900);
+            setInterval(intervalRequest, 5000);
 
-
-            setInterval(() => {
+            function intervalRequest() {
                 try {
                     makeRequest(base_url)
                         .then(data => {
@@ -86,7 +78,7 @@
                 } catch (error) {
                     console.log(error);
                 }
-            }, 5000);
+            }
 
             async function makeRequest() {
                 let response = await fetch(base_url);
@@ -103,6 +95,8 @@
                 let borderElement = document.createElement('div');
                 borderElement.className = 'border-bottom p-2';
                 borderElement.innerHTML =
+                    //TODO Заменить хардкод UserName на подстановку
+                    '<p class="card-text mb-1">UserName</p>' +
                     '<p class="card-text mb-1">' + content + '</p>' +
                     '<p class="card-text"><small class="text-body-secondary">' + timestamp + '</small></p>';
                 messages.appendChild(borderElement);
