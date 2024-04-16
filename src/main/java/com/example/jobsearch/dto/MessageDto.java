@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageDto {
-    private Integer id;
-    private Integer respondedApplicantsId;
     private String content;
     private LocalDateTime timestamp;
 }

@@ -24,7 +24,6 @@ public class MessageServiceImpl implements MessageService {
         List<MessageDto> messageDtos = new ArrayList<>();
 
         messages.forEach(e -> messageDtos.add(MessageDto.builder()
-                .id(e.getId())
                 .content(e.getContent())
                 .timestamp(e.getTimestamp())
                 .build()));

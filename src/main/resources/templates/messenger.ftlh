@@ -20,16 +20,16 @@
 
 
                 <div class="col-md-8">
-                    <div class="card-body">
+                    <div class="card-body" id="messages">
 
                         <h5 class="card-title mb-4">Переписка</h5>
 
-                        <#list messenger.messages as message>
-                            <div class="border-bottom p-2">
-                                <p class="card-text mb-1">${message.content}</p>
-                                <p class="card-text"><small class="text-body-secondary">${message.timestamp}</small></p>
-                            </div>
-                        </#list>
+                        <#--                        <#list messenger.messages as message>-->
+                        <#--                            <div class="border-bottom p-2">-->
+                        <#--                                <p class="card-text mb-1">${message.content}</p>-->
+                        <#--                                <p class="card-text"><small class="text-body-secondary">${message.timestamp}</small></p>-->
+                        <#--                            </div>-->
+                        <#--                        </#list>-->
 
                     </div>
 
@@ -53,38 +53,42 @@
     <script>
         'use strict'
         window.addEventListener('load', () => {
-            const base_url = 'http://localhost:8089/api/messages/1'; //Тестовый ввод айди хардкодом, потом исправить
+            // Тестовый ввод ендпоинта хардкодом, потом исправить,
+            // Добавлял сообщения от работодателя через в базу
+            const base_url = 'http://localhost:8089/api/messages/1';
             let messages = document.getElementById('messages');
+            let oldData = [];
+
+
+            let borderElement = document.createElement('div');
+            borderElement.className = 'border-bottom p-2';
+            borderElement.innerHTML =
+                '<p class="card-text mb-1">Загрузка сообщений</p>' +
+                '<p class="card-text"><small class="text-body-secondary">ожидайте...</small></p>';
+            messages.appendChild(borderElement);
+            setTimeout(() => {
+                borderElement.remove();
+            }, 4900);
 
 
             setInterval(() => {
                 try {
                     makeRequest(base_url)
                         .then(data => {
+                            let newData = data;
                             console.log('пук кек', data);
 
-                            let lastMessage = data[data.length - 1];
-                            let lastTimestamp = new Date(lastMessage.timestamp);
+                            console.log('data: ' + newData.length);
+                            console.log('oldData: ' + oldData.length);
 
-                            console.log('lastTimestamp: ' + lastTimestamp)
-
-                            data.forEach(e => {
-                                console.log('здесь1');
-                                console.log('e.timestamp: ' + e.timestamp);
-                                if (e.timestamp > lastTimestamp) {
-                                    console.log('здесь2');
-                                    createMessage(e.content, e.timestamp);
+                            if (newData.length > oldData.length) {
+                                for (let i = oldData.length; i < newData.length; i++) {
+                                    createMessage(newData[i].content, newData[i].timestamp);
                                 }
-                            })
-
-                            function createMessage(content, timestamp) {
-                                let borderElement = document.createElement('div');
-                                borderElement.className = 'border-bottom p-2';
-                                borderElement.innerHTML =
-                                    '<p class="card-text mb-1">' + content + '</p>' +
-                                    '<p class="card-text"><small class="text-body-secondary">' + timestamp + '</small></p>';
-                                messages.appendChild(borderElement);
                             }
+
+
+                            oldData = newData;
                         })
                         .catch(error => console.log(error));
                 } catch (error) {
@@ -101,6 +105,15 @@
                     error.response = response;
                     throw error;
                 }
+            }
+
+            function createMessage(content, timestamp) {
+                let borderElement = document.createElement('div');
+                borderElement.className = 'border-bottom p-2';
+                borderElement.innerHTML =
+                    '<p class="card-text mb-1">' + content + '</p>' +
+                    '<p class="card-text"><small class="text-body-secondary">' + timestamp + '</small></p>';
+                messages.appendChild(borderElement);
             }
 
 
