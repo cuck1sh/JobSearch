@@ -4,7 +4,6 @@ import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.service.CategoryService;
-import com.example.jobsearch.service.MessageService;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
-
 @Slf4j
 @Controller
 @RequestMapping("employee")
@@ -31,7 +28,6 @@ public class EmployeeController {
     private final CategoryService categoryService;
     private final ProfileService profileService;
     private final RespondedApplicantsService respondedApplicantsService;
-    private final MessageService messageService;
 
     @GetMapping("resumes/{id}")
     public String getResume(@PathVariable int id, Model model) {
@@ -64,7 +60,7 @@ public class EmployeeController {
 
     @PostMapping("resumes/update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String remakeResume(InputResumeDto resumeDto, List<InputContactInfoDto> contacts, Model model) {
+    public String remakeResume(InputResumeDto resumeDto, InputContactInfoDto contacts, Model model) {
         resumeService.changeResume(FileUtil.TEST_USER_AUTH, resumeDto, contacts);
         profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
         return "user/profile";

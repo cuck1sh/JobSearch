@@ -17,9 +17,9 @@
                     <div class="mb-3">
                         <label for="category" class="form-label">Категория:</label>
                         <select name="category" id="category" class="form-select">
-                            <option selected>Выберите категорию</option>
+                            <option value="0">Выберите категорию</option>
                             <#list categories as category>
-                                <option value=${category.name}>${category.name}</option>
+                                <option value=${category.id}>${category.name}</option>
                             </#list>
                         </select>
                     </div>
@@ -76,23 +76,37 @@
 
             <h4 class="">Ссылки на соц. сети:</h4>
 
-            <div id="contacts_info">
-                <div class="row mb-3 " id="contacts">
-                    <div class="col-7">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-text">Контакты:</h6>
-                                <h6 class="fw-normal">Telegram: ___________</h6>
-                                <h6 class="fw-normal">Email: ______________</h6>
-                                <h6 class="fw-normal">Phone number: _______</h6>
-                            </div>
-                        </div>
+            <div class="row mb-3 row-cols-1 row-cols-lg-2">
+                <div class="col">
+
+                    <div class="d-flex">
+                        <input name="contacts.telegram" type="text" class="form-control me-2 my-3" id="telegram">
+                        <i class="bi bi-telegram align-content-center fs-2"></i>
                     </div>
 
-                    <button type="button" id="contactsButton"
-                            class="btn col-3 m-2 text-decoration-none bg-warning p-2 text-dark bg-opacity-10 rounded-3">
-                        <span class="fs-1">+</span>
-                    </button>
+                    <div class="d-flex">
+                        <input name="contacts.email" type="email" class="form-control me-2 my-3" id="email"
+                               placeholder="example@mail.com">
+                        <i class="bi bi-envelope-at align-content-center fs-2"></i>
+                    </div>
+
+                    <div class="d-flex">
+                        <input name="contacts.phoneNumber" type="text" class="form-control me-2 my-3" id="phoneNumber"
+                               placeholder="996-779-11-22-33">
+                        <i class="bi bi-telephone-inbound align-content-center fs-2"></i>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="d-flex">
+                        <input name="contacts.facebook" type="text" class="form-control me-2 my-3" id="facebook">
+                        <i class="bi bi-facebook align-content-center fs-2"></i>
+                    </div>
+
+                    <div class="d-flex">
+                        <input name="contacts.linkedIn" type="text" class="form-control me-2 my-3" id="linkedIn">
+                        <i class="bi bi-linkedin align-content-center fs-2"></i>
+                    </div>
                 </div>
             </div>
 
@@ -241,68 +255,68 @@
                 });
             });
 
-            contactsButton.addEventListener('click', () => {
-                conCounter++;
-                console.log(conCounter);
-                let newConRow = document.createElement('div');
-                newConRow.className = 'row mb-3 row-cols-1 row-cols-lg-2';
-                contacts.after(newConRow);
-
-                let newConCol = document.createElement('div');
-                newConCol.className = 'col';
-                newConCol.innerHTML =
-                    '<div class="d-flex">' +
-                    '<input name="contacts[' + conCounter + '].telegram" type="text" class="form-control me-2 my-3" id="telegram">' +
-                    '<i class="bi bi-telegram align-content-center fs-2"></i>' +
-                    '</div>' +
-
-                    '<div class="d-flex">' +
-                    '<input name="contacts[' + conCounter + '].email" type="email" class="form-control me-2 my-3" id="email" placeholder="example@mail.com">' +
-                    '<i class="bi bi-envelope-at align-content-center fs-2"></i>' +
-                    '</div>' +
-
-                    '<div class="d-flex">' +
-                    '<input name="contacts[' + conCounter + '].phoneNumber" type="text" class="form-control me-2 my-3" id="phoneNumber" placeholder="996-779-11-22-33">' +
-                    '<i class="bi bi-telephone-inbound align-content-center fs-2"></i>' +
-                    '</div>';
-                newConRow.appendChild(newConCol);
-
-                let newConCol2 = document.createElement('div');
-                newConCol2.className = 'col';
-                newConCol2.innerHTML =
-                    '<div class="d-flex">' +
-                    '<input name="contacts[' + conCounter + '].facebook" type="text" class="form-control me-2 my-3"  id="facebook">' +
-                    '<i class="bi bi-facebook align-content-center fs-2"></i>' +
-                    '</div>' +
-
-                    '<div class="d-flex">' +
-                    '<input name="contacts[' + conCounter + '].linkedIn" type="text" class="form-control me-2 my-3" id="linkedIn">' +
-                    '<i class="bi bi-linkedin align-content-center fs-2"></i>' +
-                    '</div>';
-                newConRow.appendChild(newConCol2);
-
-                let newConButton = document.createElement('div');
-                newConButton.className = 'btn remove-button d-flex me-4 justify-content-center align-items-center bg-danger p-2 bg-opacity-10 rounded-3';
-                newConButton.innerHTML = '<span class="fs-1">-</span>';
-                newConCol2.appendChild(newConButton);
-
-                newConRow.querySelector('.remove-button').addEventListener('click', () => {
-                    if (newConRow.previousElementSibling.id === 'contacts') {
-                        contactsInfo.removeChild(newConRow);
-                        conCounter--;
-                    } else {
-                        let warningBlock = document.createElement('div');
-                        warningBlock.innerText = 'Вы можете удалять только последний блок';
-                        warningBlock.className = 'text-danger';
-                        newConRow.appendChild(warningBlock);
-
-                        setTimeout(() => {
-                            warningBlock.remove();
-                        }, 3000)
-                    }
-                });
-
-            });
+            // contactsButton.addEventListener('click', () => {
+            //     conCounter++;
+            //     console.log(conCounter);
+            //     let newConRow = document.createElement('div');
+            //     newConRow.className = 'row mb-3 row-cols-1 row-cols-lg-2';
+            //     contacts.after(newConRow);
+            //
+            //     let newConCol = document.createElement('div');
+            //     newConCol.className = 'col';
+            //     newConCol.innerHTML =
+            //         '<div class="d-flex">' +
+            //         '<input name="contacts[' + conCounter + '].telegram" type="text" class="form-control me-2 my-3" id="telegram">' +
+            //         '<i class="bi bi-telegram align-content-center fs-2"></i>' +
+            //         '</div>' +
+            //
+            //         '<div class="d-flex">' +
+            //         '<input name="contacts[' + conCounter + '].email" type="email" class="form-control me-2 my-3" id="email" placeholder="example@mail.com">' +
+            //         '<i class="bi bi-envelope-at align-content-center fs-2"></i>' +
+            //         '</div>' +
+            //
+            //         '<div class="d-flex">' +
+            //         '<input name="contacts[' + conCounter + '].phoneNumber" type="text" class="form-control me-2 my-3" id="phoneNumber" placeholder="996-779-11-22-33">' +
+            //         '<i class="bi bi-telephone-inbound align-content-center fs-2"></i>' +
+            //         '</div>';
+            //     newConRow.appendChild(newConCol);
+            //
+            //     let newConCol2 = document.createElement('div');
+            //     newConCol2.className = 'col';
+            //     newConCol2.innerHTML =
+            //         '<div class="d-flex">' +
+            //         '<input name="contacts[' + conCounter + '].facebook" type="text" class="form-control me-2 my-3"  id="facebook">' +
+            //         '<i class="bi bi-facebook align-content-center fs-2"></i>' +
+            //         '</div>' +
+            //
+            //         '<div class="d-flex">' +
+            //         '<input name="contacts[' + conCounter + '].linkedIn" type="text" class="form-control me-2 my-3" id="linkedIn">' +
+            //         '<i class="bi bi-linkedin align-content-center fs-2"></i>' +
+            //         '</div>';
+            //     newConRow.appendChild(newConCol2);
+            //
+            //     let newConButton = document.createElement('div');
+            //     newConButton.className = 'btn remove-button d-flex me-4 justify-content-center align-items-center bg-danger p-2 bg-opacity-10 rounded-3';
+            //     newConButton.innerHTML = '<span class="fs-1">-</span>';
+            //     newConCol2.appendChild(newConButton);
+            //
+            //     newConRow.querySelector('.remove-button').addEventListener('click', () => {
+            //         if (newConRow.previousElementSibling.id === 'contacts') {
+            //             contactsInfo.removeChild(newConRow);
+            //             conCounter--;
+            //         } else {
+            //             let warningBlock = document.createElement('div');
+            //             warningBlock.innerText = 'Вы можете удалять только последний блок';
+            //             warningBlock.className = 'text-danger';
+            //             newConRow.appendChild(warningBlock);
+            //
+            //             setTimeout(() => {
+            //                 warningBlock.remove();
+            //             }, 3000)
+            //         }
+            //     });
+            //
+            // });
 
         });
     </script>
