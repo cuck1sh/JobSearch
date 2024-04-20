@@ -12,8 +12,6 @@ public interface CategoryService {
 
     List<Category> getAllCategories();
     Integer checkInCategories(int categoryId);
-
     Integer checkInCategories(String category);
-
     Integer getCategoryByName(String category);
 }

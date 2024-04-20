@@ -29,7 +29,7 @@ public class InputResumeDto {
     @NotBlank
     private String name;
 
-    private String category;
+    private Integer category;
     private Double salary;
 
     @JsonProperty("work_experience_infos")
@@ -38,7 +38,7 @@ public class InputResumeDto {
     @JsonProperty("education_infos")
     private List<EducationInfoDto> educationInfos;
 
-    private List<InputContactInfoDto> contacts;
+    private InputContactInfoDto contacts;
 
     @JsonProperty("is_active")
     private Boolean isActive;

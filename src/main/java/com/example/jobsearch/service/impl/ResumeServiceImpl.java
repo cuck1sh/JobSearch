@@ -57,7 +57,7 @@ public class ResumeServiceImpl implements ResumeService {
                 .name(resume.getName())
                 .category(categoryService.getCategoryById(resume.getCategoryId()))
                 .salary(resume.getSalary())
-//                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
                 .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
                 .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
                 .isActive(resume.getIsActive())
@@ -117,7 +117,7 @@ public class ResumeServiceImpl implements ResumeService {
                 .name(e.getName())
                 .category(categoryService.getCategoryById(e.getCategoryId()))
                 .salary(e.getSalary())
-//                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
+                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
                 .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
                 .educationInfos(educationInfoService.getEducationInfoById(e.getId()))
                 .isActive(e.getIsActive())
@@ -151,6 +151,7 @@ public class ResumeServiceImpl implements ResumeService {
                     .createdDate(LocalDateTime.now())
                     .build();
 
+
             Integer newResumeKey = resumeDao.createResume(newResume);
 
             if (resumeDto.getWorkExperienceInfoDtos() != null) {
@@ -168,7 +169,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void changeResume(String userEmail, InputResumeDto resume, List<InputContactInfoDto> contacts) {
+    public void changeResume(String userEmail, InputResumeDto resume, InputContactInfoDto contacts) {
         if (isResumeInSystem(resume.getId())) {
             Integer userId = userService.getUserByEmail(userEmail).getId();
 
@@ -180,7 +181,7 @@ public class ResumeServiceImpl implements ResumeService {
                     .build();
 
             if (!resume.getCategory().equals("Выберите категорию")) {
-                newResume.setCategoryId(Integer.parseInt(resume.getCategory()));
+//                newResume.setCategoryId(Integer.parseInt(resume.getCategory()));
             }
 
             if (resume.getSalary() != null) {

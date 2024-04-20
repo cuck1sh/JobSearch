@@ -68,18 +68,81 @@
                 </#if>
             </div>
 
-            <div class="row my-3">
-                <h2 class="my-2">Контакты:</h2>
-                <#list resume.contacts as contact>
-                    <div class="col-sm-6 mb-3 mb-sm-0 mx-auto">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">${contact.type.type}</h5>
-                                <p class="card-text">Контакт: ${contact.info}</p>
+            <div class="row d-flex justify-content-center my-3">
+                <h2 class="mt-2">Контакты:</h2>
+                <div class="row w-75 my-3 row-cols-1 row-cols-lg-2">
+                    <div class="col">
+
+                        <div class="d-flex mb-3">
+                            <div class="card me-2 w-100">
+                                <div class="card-body p-2">
+                                    <#if resume.contacts.phoneNumber??>
+                                        ${resume.contacts.phoneNumber}
+                                    <#else>
+                                        N/A
+                                    </#if>
+                                </div>
                             </div>
+                            <i class="bi bi-telephone-inbound align-content-center fs-2"></i>
+                        </div>
+
+                        <div class="d-flex mb-3">
+                            <div class="card me-2 w-100">
+                                <div class="card-body p-2">
+                                    <#if resume.contacts.email??>
+                                        ${resume.contacts.email}
+                                    <#else>
+                                        N/A
+                                    </#if>
+                                </div>
+                            </div>
+                            <i class="bi bi-envelope-at align-content-center fs-2"></i>
+                        </div>
+
+                        <div class="d-flex mb-3">
+                            <div class="card me-2 w-100">
+                                <div class="card-body p-2">
+                                    <#if resume.contacts.telegram??>
+                                        ${resume.contacts.telegram}
+                                    <#else>
+                                        N/A
+                                    </#if>
+                                </div>
+                            </div>
+                            <i class="bi bi-telegram align-content-center fs-2"></i>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col">
+                        <div class="d-flex mb-3">
+                            <div class="card me-2 w-100">
+                                <div class="card-body p-2">
+                                    <#if resume.contacts.facebook??>
+                                        ${resume.contacts.facebook}
+                                    <#else>
+                                        N/A
+                                    </#if>
+                                </div>
+                            </div>
+                            <i class="bi bi-facebook align-content-center fs-2"></i>
+                        </div>
+
+                        <div class="d-flex mb-3">
+                            <div class="card me-2 w-100">
+                                <div class="card-body p-2">
+                                    <#if resume.contacts.linkedIn??>
+                                        ${resume.contacts.linkedIn}
+                                    <#else>
+                                        N/A
+                                    </#if>
+                                </div>
+                            </div>
+                            <i class="bi bi-linkedin align-content-center fs-2"></i>
                         </div>
                     </div>
-                </#list>
+                </div>
             </div>
 
 
