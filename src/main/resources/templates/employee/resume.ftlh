@@ -7,66 +7,124 @@
             <h1>${resume.name}</h1>
         </div>
         <div class="card-body">
-            <h5 class="card-title">Email: ${resume.userEmail}</h5>
 
-            <#if resume.category??>
-                <#if resume.category.parent??>
-                    <h5 class="card-title">Родительская категория: ${resume.category.parent}</h5>
-                </#if>
+            <div class="col-sm-6 my-4 mb-sm-0 mx-auto">
+                <table class="table text-start table-striped">
+                    <tbody>
+                    <tr>
+                        <th scope="row">Профиль/ Email:</th>
+                        <td class="pt-2"><a href="/users/profile/${resume.userEmail}"
+                                            class="text-decoration-none border border-primary rounded-4 p-1">${resume.userEmail}</a>
+                        </td>
+                    </tr>
 
-                <#if resume.category.name??>
-                    <h5 class="card-title">Категория: ${resume.category.name}</h5>
-                </#if>
-            </#if>
+                    <tr>
+                        <th scope="row">Родительская категория:</th>
+                        <td>
+                            <#if resume.category??>
+                                <#if resume.category.parent??> ${resume.category.parent} <#else> - </#if>
+                            <#else>
+                                -
+                            </#if>
+                        </td>
+                    </tr>
 
-            <#if resume.salary??>
-                <h5 class="card-title">Заработная плата: ${resume.salary}</h5>
-            </#if>
+                    <tr>
+                        <th scope="row">Категория:</th>
+                        <td>
+                            <#if resume.category??>
+                                <#if resume.category.name??> ${resume.category.name} <#else> - </#if>
+                            <#else>
+                                -
+                            </#if>
+                        </td>
+                    </tr>
 
-            <#if resume.isActive??>
-                <h5 class="card-title">Активно: ${resume.isActive?string('Да', 'Нет')}</h5>
-            </#if>
+                    <tr>
+                        <th scope="row">Заработная плата:</th>
+                        <td><#if resume.salary??> ${resume.salary} <#else> - </#if> </td>
+                    </tr>
 
-            <h6 class="card-title">Дата создания ${resume.createdDate} </h6>
+                    <tr>
+                        <th scope="row">Активно:</th>
+                        <td><#if resume.isActive??> ${resume.isActive?string('Да', 'Нет')} <#else> - </#if> </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Дата создания:</th>
+                        <td>${resume.createdDate.toLocalDate()}</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
 
             <div class="row mt-3">
-                <h2 class="my-2">Опыт работы:</h2>
-                <#if resume.workExperienceInfos??>
-                    <#list resume.workExperienceInfos as exp>
-                        <div class="col-sm-6 mb-3 mb-sm-0 mx-auto">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Компания: ${exp.companyName}</h5>
-                                    <p class="card-text mb-1">Стаж (годы): ${exp.years}</p>
-                                    <p class="card-text mb-1">Позиция: ${exp.position}</p>
-                                    <p class="card-text mb-1">Обязанности: ${exp.responsibilities}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </#list>
+                <h2 class="mb-3">Опыт работы:</h2>
+                <#if resume.workExperienceInfoDtos??>
+                    <div class="col-sm-8 mb-3 mb-sm-0 mx-auto">
+                        <table class="table">
+                            <thead>
+                            <tr class="table-success">
+                                <th scope="col">#</th>
+                                <th scope="col">Компания</th>
+                                <th scope="col">Стаж(лет)</th>
+                                <th scope="col">Позиция</th>
+                                <th scope="col">Обязанности</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <#list resume.workExperienceInfoDtos as exp>
+                            <tbody>
+                            <tr>
+                                <th scope="row">${exp?counter}</th>
+                                <td>${exp.companyName}</td>
+                                <td>${exp.years}</td>
+                                <td>${exp.position}</td>
+                                <td>${exp.responsibilities}</td>
+                            </tr>
+                            </#list>
+                            </tbody>
+                        </table>
+                    </div>
                 </#if>
             </div>
 
+
             <div class="row mt-3">
-                <h2 class="my-2">Образование:</h2>
+                <h2 class="mb-3">Образование:</h2>
                 <#if resume.educationInfos??>
-                    <#list resume.educationInfos as education>
-                        <div class="col-sm-6 mb-3 mb-sm-0 mx-auto">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Учреждение: ${education.institution}</h5>
-                                    <p class="card-text mb-1">Программа обучения: ${education.program}</p>
-                                    <p class="card-text mb-1">Дата начала: ${education.startDate}</p>
-                                    <p class="card-text mb-1">Дата завершения: ${education.endDate}</p>
-                                    <#if education.degree??>
-                                        <p class="card-text">Степень: ${education.degree}</p>
-                                    </#if>
-                                </div>
-                            </div>
-                        </div>
-                    </#list>
+                    <div class="col-sm-8 mb-3 mb-sm-0 mx-auto">
+                        <table class="table">
+                            <thead>
+                            <tr class="table-info">
+                                <th scope="col">#</th>
+                                <th scope="col">Учреждение</th>
+                                <th scope="col">Программа обучения</th>
+                                <th scope="col">Дата начала</th>
+                                <th scope="col">Дата завершения</th>
+                                <th scope="col">Степень</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <#list resume.educationInfos as education>
+                                <tr>
+                                    <th scope="row">${education?counter}</th>
+                                    <td>${education.institution}</td>
+                                    <td>${education.program}</td>
+                                    <td>${education.startDate}</td>
+                                    <td>${education.endDate}</td>
+                                    <td><#if education.degree??>${education.degree}<#else>-</#if></td>
+                                </tr>
+                            </#list>
+                            </tbody>
+                        </table>
+                    </div>
                 </#if>
             </div>
+
 
             <div class="row d-flex justify-content-center my-3">
                 <h2 class="mt-2">Контакты:</h2>
@@ -79,7 +137,7 @@
                                     <#if resume.contacts.phoneNumber??>
                                         ${resume.contacts.phoneNumber}
                                     <#else>
-                                        N/A
+                                        -
                                     </#if>
                                 </div>
                             </div>
@@ -92,7 +150,7 @@
                                     <#if resume.contacts.email??>
                                         ${resume.contacts.email}
                                     <#else>
-                                        N/A
+                                        -
                                     </#if>
                                 </div>
                             </div>
@@ -105,7 +163,7 @@
                                     <#if resume.contacts.telegram??>
                                         ${resume.contacts.telegram}
                                     <#else>
-                                        N/A
+                                        -
                                     </#if>
                                 </div>
                             </div>
@@ -122,7 +180,7 @@
                                     <#if resume.contacts.facebook??>
                                         ${resume.contacts.facebook}
                                     <#else>
-                                        N/A
+                                        -
                                     </#if>
                                 </div>
                             </div>
@@ -135,7 +193,7 @@
                                     <#if resume.contacts.linkedIn??>
                                         ${resume.contacts.linkedIn}
                                     <#else>
-                                        N/A
+                                        -
                                     </#if>
                                 </div>
                             </div>
@@ -148,7 +206,7 @@
 
         </div>
         <div class="card-footer text-body-secondary">
-            Дата обновления ${resume.updateTime}
+            Дата обновления: ${resume.updateTime.toLocalDate()}
         </div>
 
     </div>

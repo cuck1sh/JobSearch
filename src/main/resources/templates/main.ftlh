@@ -42,7 +42,7 @@
                         </#if>
                     </div>
                     <div class="card-footer">
-                        <small class="text-body-secondary">Дата обновления ${vacancy.updateTime}</small>
+                        <small class="text-body-secondary">Дата обновления ${vacancy.updateTime.toLocalDate()}</small>
                     </div>
                 </div>
             </div>

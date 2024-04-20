@@ -33,6 +33,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .id(user.getId())
                 .name(userName)
                 .age(user.getAge())
+                .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
                 .accountType(user.getAccountType())
@@ -67,5 +68,4 @@ public class ProfileServiceImpl implements ProfileService {
             }
         }
     }
-
 }
