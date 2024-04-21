@@ -37,31 +37,36 @@
             let data = new FormData(target)
             let user = Object.fromEntries(data)
 
+            fetchAuthorized(user)
+        }
+
+
+        async function fetchAuthorized(user) {
+
             let headers = new Headers()
+            headers.set('Content-Type', 'application/json')
             headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
 
-            fetchAuthorized(headers)
-
-        }
-
-
-        function restoreUser() {
-            return JSON.parse(localStorage.getItem('user'));
-        }
-
-        async function fetchAuthorized(auth) {
             try {
                 await makeRequest('http://localhost:8089/api/auth/login', updateOptions({
                     method: 'post',
-                    headers: auth
-                }))
+                    headers: headers,
+                    body: JSON.stringify(user)
+                }));
+
                 let userJson = JSON.stringify(user)
                 localStorage.setItem('user', userJson)
                 window.location.href = 'http://localhost:8089/'
             } catch (e) {
-                // localStorage.removeItem('user')
+                localStorage.removeItem('user')
                 alert(e)
             }
+        }
+
+        function saveUser(user) {
+            let userJson = JSON.stringify(user)
+            localStorage.setItem('user', userJson)
+            window.location.href = 'http://localhost:8089/'
         }
 
         function makeHeaders() {
@@ -72,7 +77,7 @@
             if (user) {
                 headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
             }
-            return headers
+            return headers;
         }
 
         const requestSettings = {
@@ -87,8 +92,8 @@
             if (response.ok) {
                 return await response.json()
             } else {
-                let error = new Error(response.statusText);
-                error.response = response.status;
+                let error = new Error(response.status.toString());
+                error.response = response;
                 throw error;
             }
         }
@@ -98,6 +103,10 @@
             update.mode = 'cors'
             update.headers = makeHeaders()
             return update
+        }
+
+        function restoreUser() {
+            return JSON.parse(localStorage.getItem('user'));
         }
 
     </script>

@@ -5,7 +5,6 @@ import com.example.jobsearch.dto.user.UserAvatarDto;
 import com.example.jobsearch.dto.user.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -28,5 +27,5 @@ public interface UserService {
     List<UserDto> getEmployer(String name);
     void updateUser(String userEmail, UserDto user, MultipartFile file);
 
-    void login(Authentication auth);
+    HttpStatus login(UserDto userDto);
 }

@@ -1,66 +1,86 @@
 'use strict'
 
-document.getElementById('form').addEventListener('submit', onLoginHandler)
-let user = {}
+let form = document.getElementById('form')
 
-function onLoginHandler(e) {
-    e.preventDefault()
+form.addEventListener('submit', onLoginHandler)
 
-    const form = e.target
-    const userFormData = new FormData(form)
-    user = Object.fromEntries(userFormData)
+function onLoginHandler(event) {
+    event.preventDefault()
 
-    saveUser(user)
-    fetchAuthorized()
+    let target = event.target
+    let data = new FormData(target)
+    let user = Object.fromEntries(data)
+
+    let headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
+
+    console.log(user);
+    console.log(headers);
+
+    fetchAuthorized(headers, user)
+        .then(r => saveUser(user))
+}
+
+
+async function fetchAuthorized(headers, user) {
+    try {
+        await makeRequest('http://localhost:8089/api/auth/login', updateOptions({
+            method: 'post',
+            headers: headers,
+            body: JSON.stringify(user)
+        }));
+
+    } catch (e) {
+        alert(e)
+    }
 }
 
 function saveUser(user) {
-    let userAsJSON = JSON.stringify(user)
-    localStorage.setItem('user', userAsJSON)
+    let userJson = JSON.stringify(user)
+    localStorage.setItem('user', userJson)
+    window.location.href = 'http://localhost:8089/'
 }
 
 function restoreUser() {
-    let userAsJSON = localStorage.getItem('user')
-    user = JSON.parse(userAsJSON);
-    return user;
+    return JSON.parse(localStorage.getItem('user'));
 }
 
-function fetchAuthorized() {
-    makeHeaders('http://localhost:8089/users/login', updateOptions({method: 'POST'}))
-}
-
-function makeHeaders() {
-    let user = restoreUser()
-    let headers = new Headers()
-
-    headers.set('Content-Type', 'application/json')
-    if (user) {
-        headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
-    }
-    return headers
-}
-
-const requestSettings = {
-    method: 'GET',
-    headers: makeHeaders()
-}
+// function makeHeaders() {
+//     let user = restoreUser()
+//     let headers = new Headers()
+//
+//     headers.set('Content-Type', 'application/json')
+//     if (user) {
+//         headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
+//     }
+//     return headers
+// }
+//
+// const requestSettings = {
+//     method: 'get',
+//     headers: makeHeaders()
+// }
 
 async function makeRequest(url, options) {
     let settings = options || requestSettings;
     let response = await fetch(url, settings)
 
+    // console.log(response);
+
     if (response.ok) {
         return await response.json()
     } else {
-        let error = new Error(response.statusText);
+        let error = new Error(response.status.toString());
         error.response = response;
         throw error;
     }
 }
 
 function updateOptions(options) {
+    // console.log(options);
     let update = {...options}
     update.mode = 'cors'
-    update.headers = makeHeaders()
+    // update.headers = makeHeaders()
     return update
 }
