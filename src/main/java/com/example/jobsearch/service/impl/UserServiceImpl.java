@@ -11,9 +11,11 @@ import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -261,5 +264,42 @@ public class UserServiceImpl implements UserService {
                     .userId(actualUser.getId())
                     .build());
         }
+    }
+
+    @Override
+    public void login(Authentication auth) {
+        if (auth != null) {
+            log.info("шаг 1 authPrincipal: " + auth.getPrincipal().toString());
+        } else {
+            throw new UserNotFoundException("Юзер не найден");
+        }
+
+//        log.error("dto: " + userDto.toString());
+//        log.error("email: " + userDto.getEmail());
+//        log.error("password: " + userDto.getPassword());
+//        if (userDto != null && userDto.getEmail() != null && userDto.getPassword() != null) {
+//            log.error("шаг 2");
+//            String email = userDto.getEmail();
+//            String password = passwordEncoder.encode(userDto.getPassword());
+//            if (isUserInSystem(email)) {
+//                log.error("шаг 3");
+//                UserDto user = getUserByEmail(email);
+//
+//                if (password.equals(user.getPassword())) {
+//                    log.error("шаг 4");
+//                    log.info("Аутентификация юзера " + email + " успешно пройдена");
+//
+//                } else {
+//                    log.error("Не верно указан пароль");
+//                    throw new UserNotFoundException("Не верно указан пароль");
+//                }
+//            } else {
+//                log.error("Не найден юзер с таким email");
+//                throw new UserNotFoundException("Не найден юзер с таким email");
+//            }
+//        } else {
+//            log.error("Отсутствуют данные в форме");
+//            throw new UserNotFoundException("Отсутствуют данные в форме");
+//        }
     }
 }

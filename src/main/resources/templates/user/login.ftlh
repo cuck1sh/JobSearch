@@ -1,0 +1,105 @@
+<#import  "../layout.ftlh" as main>
+<@main.layout>
+
+    <form class="mx-auto w-25 mt-5" id="form">
+
+        <div class="form-outline mb-4">
+            <input type="email" name="email" id="form2Example1" class="form-control"/>
+            <label class="form-label" for="form2Example1">Email address</label>
+        </div>
+
+        <div class="form-outline mb-4">
+            <input type="password" name="password" id="form2Example2" class="form-control"/>
+            <label class="form-label" for="form2Example2">Password</label>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn bg-success border p-2 text-dark bg-opacity-10 rounded-3 mb-4">Логин
+            </button>
+        </div>
+
+        <div class="text-center">
+            <p>Нет аккаунта? <a href="/users/register">Зарегистрироваться</a></p>
+        </div>
+
+    </form>
+    <script>
+        'use strict'
+
+        let form = document.getElementById('form')
+
+        form.addEventListener('submit', onLoginHandler)
+
+        function onLoginHandler(event) {
+            event.preventDefault()
+
+            let target = event.target
+            let data = new FormData(target)
+            let user = Object.fromEntries(data)
+
+            let headers = new Headers()
+            headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
+
+            fetchAuthorized(headers)
+
+        }
+
+
+        function restoreUser() {
+            return JSON.parse(localStorage.getItem('user'));
+        }
+
+        async function fetchAuthorized(auth) {
+            try {
+                await makeRequest('http://localhost:8089/api/auth/login', updateOptions({
+                    method: 'post',
+                    headers: auth
+                }))
+                let userJson = JSON.stringify(user)
+                localStorage.setItem('user', userJson)
+                window.location.href = 'http://localhost:8089/'
+            } catch (e) {
+                // localStorage.removeItem('user')
+                alert(e)
+            }
+        }
+
+        function makeHeaders() {
+            let user = restoreUser()
+            let headers = new Headers()
+
+            headers.set('Content-Type', 'application/json')
+            if (user) {
+                headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
+            }
+            return headers
+        }
+
+        const requestSettings = {
+            method: 'get',
+            headers: makeHeaders()
+        }
+
+        async function makeRequest(url, options) {
+            let settings = options || requestSettings;
+            let response = await fetch(url, settings)
+
+            if (response.ok) {
+                return await response.json()
+            } else {
+                let error = new Error(response.statusText);
+                error.response = response.status;
+                throw error;
+            }
+        }
+
+        function updateOptions(options) {
+            let update = {...options}
+            update.mode = 'cors'
+            update.headers = makeHeaders()
+            return update
+        }
+
+    </script>
+
+</@main.layout>

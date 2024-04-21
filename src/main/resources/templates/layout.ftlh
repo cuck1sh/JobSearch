@@ -29,12 +29,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav d-flex flex-fill">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/users/profile">Profile</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/employee/resumes/1/vacancy/2">Messages(Test)</a>
+                    </li>
+                    <li class="nav-item ms-lg-auto">
+                        <a class="nav-link" href="/users/login">Login</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/users/register">Register</a>

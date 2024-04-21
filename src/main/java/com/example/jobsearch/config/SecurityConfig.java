@@ -44,17 +44,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
 //                                .requestMatchers("/").permitAll()
-//                                .requestMatchers("/vacancies").permitAll()
+//                                .requestMatchers("/users/login").permitAll()
+//                                .requestMatchers("/users/register").permitAll()
+//                                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+//                                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+//                                .requestMatchers("/vacancies/*/").permitAll()
 //                                .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
 //                                .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
 //                                .requestMatchers(HttpMethod.POST, "/employee/**").hasAuthority("EMPLOYEE")
 //                                .requestMatchers(HttpMethod.POST, "/employer/**").hasAuthority("EMPLOYER")
-//                                .requestMatchers("/users/register").permitAll()
-//                                .requestMatchers("/login/").permitAll()
-//                                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
-//                                .requestMatchers(HttpMethod.POST, "/login").permitAll()
-//                                .requestMatchers("/vacancies/*").permitAll()
-//                                .anyRequest().fullyAuthenticated()
                                 .anyRequest().permitAll()
                 );
         return http.build();
