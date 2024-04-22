@@ -1,14 +1,10 @@
-<#import  "../layout.ftlh" as main>
+<#import  "layout.ftlh" as main>
 <@main.layout>
 
-    <h1 class="text-center mt-5 text-danger">Сохранение в локальное хранилище</h1>
-    <h2 class="text-center mb-5 text-danger">Сначала требуется пройти <a href="/login">основную аутентификацию</a></h2>
-
-    <form class="mx-auto w-25 mt-5" id="form">
-
+    <form action="/login" method="POST" class="mx-auto w-25 mt-5" id="form">
 
         <div class="form-outline mb-4">
-            <input type="email" name="email" id="form2Example1" class="form-control"/>
+            <input type="email" name="username" id="form2Example1" class="form-control"/>
             <label class="form-label" for="form2Example1">Email address</label>
         </div>
 
@@ -27,6 +23,5 @@
         </div>
 
     </form>
-    <script src="/js/login.js"></script>
 
 </@main.layout>

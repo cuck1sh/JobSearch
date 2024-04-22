@@ -11,19 +11,16 @@ function onLoginHandler(event) {
     let data = new FormData(target)
     let user = Object.fromEntries(data)
 
+    fetchAuthorized(user)
+}
+
+
+async function fetchAuthorized(user) {
+
     let headers = new Headers()
     headers.set('Content-Type', 'application/json')
     headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
 
-    console.log(user);
-    console.log(headers);
-
-    fetchAuthorized(headers, user)
-        .then(r => saveUser(user))
-}
-
-
-async function fetchAuthorized(headers, user) {
     try {
         await makeRequest('http://localhost:8089/api/auth/login', updateOptions({
             method: 'post',
@@ -31,42 +28,34 @@ async function fetchAuthorized(headers, user) {
             body: JSON.stringify(user)
         }));
 
+        let userJson = JSON.stringify(user)
+        localStorage.setItem('user', userJson)
+        window.location.href = 'http://localhost:8089/'
     } catch (e) {
+        localStorage.removeItem('user')
         alert(e)
     }
 }
 
-function saveUser(user) {
-    let userJson = JSON.stringify(user)
-    localStorage.setItem('user', userJson)
-    window.location.href = 'http://localhost:8089/'
+function makeHeaders() {
+    let user = restoreUser()
+    let headers = new Headers()
+
+    headers.set('Content-Type', 'application/json')
+    if (user) {
+        headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
+    }
+    return headers;
 }
 
-function restoreUser() {
-    return JSON.parse(localStorage.getItem('user'));
+const requestSettings = {
+    method: 'get',
+    headers: makeHeaders()
 }
-
-// function makeHeaders() {
-//     let user = restoreUser()
-//     let headers = new Headers()
-//
-//     headers.set('Content-Type', 'application/json')
-//     if (user) {
-//         headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
-//     }
-//     return headers
-// }
-//
-// const requestSettings = {
-//     method: 'get',
-//     headers: makeHeaders()
-// }
 
 async function makeRequest(url, options) {
     let settings = options || requestSettings;
     let response = await fetch(url, settings)
-
-    // console.log(response);
 
     if (response.ok) {
         return await response.json()
@@ -78,9 +67,12 @@ async function makeRequest(url, options) {
 }
 
 function updateOptions(options) {
-    // console.log(options);
     let update = {...options}
     update.mode = 'cors'
-    // update.headers = makeHeaders()
+    update.headers = makeHeaders()
     return update
+}
+
+function restoreUser() {
+    return JSON.parse(localStorage.getItem('user'));
 }

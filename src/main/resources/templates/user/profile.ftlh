@@ -11,7 +11,7 @@
             <div class="row row-cols-1 row-cols-lg-2 g-3">
                 <div class="col">
                     <div class="row">
-                        <div class="col border border-black border-2 rounded-4">
+                        <div class="col border border-black border-2 rounded-4 d-flex align-items-center">
                             <img src="/api/users/avatar/${user.id}" alt="avatar" class="card-img">
                         </div>
                         <div class="col ms-3">

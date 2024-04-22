@@ -19,7 +19,6 @@ public class AuthorizationController {
 
     @PostMapping("login")
     public HttpStatus getLogin(@RequestBody UserDto userDto) {
-        log.info("Конртоллер userDto: " + userDto);
         return userService.login(userDto);
     }
 }
