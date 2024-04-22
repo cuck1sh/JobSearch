@@ -26,7 +26,7 @@
                             <option selected
                                     <#if resume.category??>
                                     value="${resume.category.id}">${resume.category.name}
-                                <#else>Выберите категорию
+                                <#else> value="0">Выберите категорию
                                 </#if></option>
                             <#list categories as category>
                                 <option value=${category.id}>${category.name}</option>

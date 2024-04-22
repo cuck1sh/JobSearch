@@ -11,6 +11,7 @@ import com.example.jobsearch.model.Vacancy;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final VacancyDao vacancyDao;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
     public VacancyDto getVacancyById(int id) throws UserNotFoundException {
@@ -168,7 +170,9 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public void createVacancy(String userEmail, InputVacancyDto vacancyDto) {
+    public void createVacancy(InputVacancyDto vacancyDto) {
+        String userEmail = authenticatedUserProvider.getAuthUser().getEmail();
+
         if (!userService.isEmployee(userEmail)) {
             LocalDateTime now = LocalDateTime.now();
 
@@ -207,7 +211,9 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public void changeVacancy(String userEmail, InputVacancyDto vacancyDto) {
+    public void changeVacancy(InputVacancyDto vacancyDto) {
+        String userEmail = authenticatedUserProvider.getAuthUser().getEmail();
+
         if (vacancyDto.getId() != null) {
             if (isVacancyInSystem(vacancyDto.getId())) {
                 if (!userService.isEmployee(userEmail)) {

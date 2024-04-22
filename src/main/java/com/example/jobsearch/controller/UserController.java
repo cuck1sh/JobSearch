@@ -3,11 +3,9 @@ package com.example.jobsearch.controller;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.UserService;
-import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +37,8 @@ public class UserController {
     }
 
     @GetMapping("profile")
-    public String getProfile(Authentication auth, Model model) {
-        profileService.getProfile(auth, model);
+    public String getProfile(Model model) {
+        profileService.getProfile(model);
         return "user/profile";
     }
 
@@ -58,7 +56,7 @@ public class UserController {
     @PostMapping("update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateUser(UserDto user, @RequestParam(name = "file") MultipartFile file) {
-        userService.updateUser(FileUtil.TEST_USER_AUTH, user, file);
+        userService.updateUser(user, file);
         return "redirect:/users/profile";
     }
 

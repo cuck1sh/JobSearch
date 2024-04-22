@@ -36,9 +36,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void getProfile(Authentication auth, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("auth: " + authentication.getPrincipal());
+    public void getProfile(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             UserDto user = userService.getUserByEmail(auth.getName());
             putProfileInModel(user, model);

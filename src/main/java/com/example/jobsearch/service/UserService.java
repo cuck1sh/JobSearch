@@ -20,12 +20,11 @@ public interface UserService {
     Boolean isEmployee(String userEmail);
     Boolean isEmployee(int userId);
     HttpStatus createUser(UserDto user, MultipartFile file);
-    HttpStatus changeUser(int userId, UserDto user);
     void uploadUserAvatar(UserAvatarDto avatarDto);
     ResponseEntity<?> downloadAvatar(int userId);
     List<UserDto> getEmployee(EmployeeFindDto employeeFindDto);
     List<UserDto> getEmployer(String name);
-    void updateUser(String userEmail, UserDto user, MultipartFile file);
 
+    void updateUser(UserDto user, MultipartFile file);
     HttpStatus login(UserDto userDto);
 }

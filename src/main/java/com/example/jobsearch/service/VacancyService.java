@@ -17,8 +17,10 @@ public interface VacancyService {
     Boolean isVacancyInSystem(int id);
     Boolean isUsersVacanciesInSystem(int userId);
     Boolean isVacancyActive(int vacancyId);
-    void createVacancy(String userEmail, InputVacancyDto vacancy);
-    void changeVacancy(String userEmail, InputVacancyDto vacancy);
+
+    void createVacancy(InputVacancyDto vacancy);
+
+    void changeVacancy(InputVacancyDto vacancy);
     HttpStatus delete(Authentication auth, int id);
     List<VacancyDto> getAllVacanciesByCompany(int userId);
     List<VacancyDto> getVacanciesByCategory(String category);

@@ -5,7 +5,6 @@ import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
-import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -35,8 +34,8 @@ public class EmployerController {
     @PostMapping("vacancies/add")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String makeVacancy(InputVacancyDto vacancyDto, Model model) {
-        vacancyService.createVacancy(FileUtil.TEST_USER_AUTH, vacancyDto);
-        profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
+        vacancyService.createVacancy(vacancyDto);
+        profileService.getProfile(model);
         return "user/profile";
     }
 
@@ -50,8 +49,8 @@ public class EmployerController {
     @PostMapping("vacancies/update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String makeUpdate(InputVacancyDto inputVacancyDto, Model model) {
-        vacancyService.changeVacancy(FileUtil.TEST_USER_AUTH, inputVacancyDto);
-        profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
+        vacancyService.changeVacancy(inputVacancyDto);
+        profileService.getProfile(model);
         return "user/profile";
     }
 

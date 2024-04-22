@@ -8,6 +8,7 @@ import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.UserAvatar;
 import com.example.jobsearch.service.UserService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final FileUtil fileUtil;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
     public List<UserDto> getUsers() {
@@ -205,29 +207,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HttpStatus changeUser(int userId, UserDto userDto) {
-        if (isUserInSystem(userId)) {
-            if (userId == userDto.getId()) {
-                User user = User.builder()
-                        .id(userDto.getId())
-                        .name(userDto.getName())
-                        .surname(userDto.getSurname())
-                        .age(userDto.getAge())
-                        .password(passwordEncoder.encode(userDto.getPassword()))
-                        .phoneNumber(userDto.getPhoneNumber())
-                        .build();
-
-                userDao.changeUser(user);
-                return HttpStatus.OK;
-            }
-            throw new UserNotFoundException("Не найдено соответствие айди юзера и айди изменяемого профиля");
-        }
-        throw new UserNotFoundException("Не найден юзер с айди: " + userId);
-    }
-
-    @Override
-    public void updateUser(String userEmail, UserDto userDto, MultipartFile file) {
-        UserDto actualUser = getUserByEmail(userEmail);
+    public void updateUser(UserDto userDto, MultipartFile file) {
+        UserDto actualUser = authenticatedUserProvider.getAuthUser();
 
         if (userDto.getName().isBlank()) {
             userDto.setName(actualUser.getName());

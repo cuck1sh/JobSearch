@@ -31,7 +31,7 @@ public class EmployeeController {
 
     @GetMapping("resumes/{id}")
     public String getResume(@PathVariable int id, Model model) {
-        resumeService.getResume(FileUtil.TEST_USER_AUTH, id, model);
+        resumeService.getResume(id, model);
         return "employee/resume";
     }
 
@@ -45,9 +45,8 @@ public class EmployeeController {
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String makeResume(InputResumeDto resumeDto,
                              Model model) {
-        log.info(resumeDto.toString());
-        resumeService.createResume(FileUtil.TEST_USER_AUTH, resumeDto);
-        profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
+        resumeService.createResume(resumeDto);
+        profileService.getProfile(model);
         return "user/profile";
     }
 
@@ -61,8 +60,8 @@ public class EmployeeController {
     @PostMapping("resumes/update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String remakeResume(InputResumeDto resumeDto, InputContactInfoDto contacts, Model model) {
-        resumeService.changeResume(FileUtil.TEST_USER_AUTH, resumeDto, contacts);
-        profileService.getProfile(FileUtil.TEST_USER_AUTH, model);
+        resumeService.changeResume(resumeDto, contacts);
+        profileService.getProfile(model);
         return "user/profile";
     }
 
