@@ -6,13 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class RespondMessengerDto {
+    private Integer respondedApplicantsId;
     private ProfileDto employerProfile;
-    private List<MessageDto> messages;
 }

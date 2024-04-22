@@ -4,33 +4,37 @@ let form = document.getElementById('form')
 
 form.addEventListener('submit', onLoginHandler)
 
+
 function onLoginHandler(event) {
     event.preventDefault()
+
+    const url = 'http://localhost:8089/api/auth/login'
 
     let target = event.target
     let data = new FormData(target)
     let user = Object.fromEntries(data)
 
-    fetchAuthorized(user)
+    fetchAuthorized(url, user).then(r => {
+        let userJson = JSON.stringify(user)
+        localStorage.setItem('user', userJson)
+        window.location.href = 'http://localhost:8089/'
+    })
 }
 
 
-async function fetchAuthorized(user) {
+async function fetchAuthorized(url, user) {
 
     let headers = new Headers()
     headers.set('Content-Type', 'application/json')
     headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
 
     try {
-        await makeRequest('http://localhost:8089/api/auth/login', updateOptions({
+        await makeRequest(url, updateOptions({
             method: 'post',
             headers: headers,
             body: JSON.stringify(user)
         }));
 
-        let userJson = JSON.stringify(user)
-        localStorage.setItem('user', userJson)
-        window.location.href = 'http://localhost:8089/'
     } catch (e) {
         localStorage.removeItem('user')
         alert(e)

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RespondedApplicantsDto {
-
+    private Integer id;
     @NotNull
     private ResumeDto resume;
     @NotNull
