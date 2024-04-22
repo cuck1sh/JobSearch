@@ -47,3 +47,11 @@ databaseChangeLog:
             baseTableSchemaName: public
             baseTableName: messages
             constraintName: fk_responded_applicants_to_messages
+  - changeSet:
+      id: delete-users-constraint-in-messages
+      author: Egor Kirin
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableSchemaName: public
+            baseTableName: messages
+            constraintName: fk_users_to_messages

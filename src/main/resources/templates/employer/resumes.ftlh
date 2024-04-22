@@ -29,7 +29,7 @@
 
                     </div>
                     <div class="card-footer">
-                        <small class="text-body-secondary">Дата обновления ${resume.updateTime}</small>
+                        <small class="text-body-secondary">Дата обновления ${resume.updateTime.toLocalDate()}</small>
                     </div>
                 </div>
             </div>

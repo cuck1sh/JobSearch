@@ -135,7 +135,7 @@ values ((select id
         (select id from VACANCIES where NAME = 'Web разработчик' and description = 'middle на java'),
         true);
 
-insert into messages (responded_applicants_id, content, timestamp)
+insert into messages (responded_applicants_id, user_id, content, timestamp)
 values ((select id
          from RESPONDED_APPLICANTS
          where RESUME_ID = (
@@ -151,6 +151,7 @@ values ((select id
              from VACANCIES
              where NAME = 'Web разработчик'
                and description = 'middle на java')),
+        (select id from USERS where EMAIL like 'egor.kirin20@gmail.com'),
         'Здравствйте прошу рассмотреть мое резюме',
         '2024-03-11 23:06:13'),
        ((select id
@@ -168,6 +169,7 @@ values ((select id
              from VACANCIES
              where NAME = 'Web разработчик'
                and description = 'middle на java')),
+        (select id from USERS where EMAIL like 'zhmych@gmail.com'),
         'Данная позиция предусматривает выполнение тестового задания. Вы согласны его сделать?',
         '2024-03-12 20:06:13'),
        ((select id
@@ -185,5 +187,6 @@ values ((select id
              from VACANCIES
              where NAME = 'Web разработчик'
                and description = 'middle на java')),
+        (select id from USERS where EMAIL like 'egor.kirin20@gmail.com'),
         'Здравствуйте. Конечно согласен на выполнение тестового задания',
         '2024-03-13 19:06:13');

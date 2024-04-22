@@ -99,4 +99,26 @@ public class RespondedApplicantsDao {
                 """;
         return template.queryForObject(sql, Integer.class, resumeId, vacancyId);
     }
+
+    public Boolean isRespondInSystem(int respond) {
+        String sql = """
+                select case
+                when exists(select *
+                            from RESPONDED_APPLICANTS
+                            where ID = ?)
+                    then true
+                else false
+                end;
+                """;
+
+        return template.queryForObject(sql, Boolean.class, respond);
+    }
+
+    public RespondedApplicants getRespondedApplicants(int respond) {
+        String sql = """
+                select * from responded_applicants
+                where id = ?;
+                """;
+        return template.queryForObject(sql, new BeanPropertyRowMapper<>(RespondedApplicants.class), respond);
+    }
 }

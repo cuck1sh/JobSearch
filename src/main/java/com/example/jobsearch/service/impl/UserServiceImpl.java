@@ -11,9 +11,12 @@ import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -203,29 +207,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HttpStatus changeUser(int userId, UserDto userDto) {
-        if (isUserInSystem(userId)) {
-            if (userId == userDto.getId()) {
-                User user = User.builder()
-                        .id(userDto.getId())
-                        .name(userDto.getName())
-                        .surname(userDto.getSurname())
-                        .age(userDto.getAge())
-                        .password(passwordEncoder.encode(userDto.getPassword()))
-                        .phoneNumber(userDto.getPhoneNumber())
-                        .build();
-
-                userDao.changeUser(user);
-                return HttpStatus.OK;
-            }
-            throw new UserNotFoundException("Не найдено соответствие айди юзера и айди изменяемого профиля");
-        }
-        throw new UserNotFoundException("Не найден юзер с айди: " + userId);
-    }
-
-    @Override
-    public void updateUser(String userEmail, UserDto userDto, MultipartFile file) {
-        UserDto actualUser = getUserByEmail(userEmail);
+    public void updateUser(UserDto userDto, MultipartFile file) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDto actualUser = getUserByEmail(authentication.getName());
 
         if (userDto.getName().isBlank()) {
             userDto.setName(actualUser.getName());
@@ -260,6 +244,33 @@ public class UserServiceImpl implements UserService {
                     .file(file)
                     .userId(actualUser.getId())
                     .build());
+        }
+    }
+
+    @Override
+    public HttpStatus login(UserDto userDto) {
+        if (userDto != null && userDto.getEmail() != null && userDto.getPassword() != null) {
+            String email = userDto.getEmail();
+            String password = userDto.getPassword();
+
+            if (isUserInSystem(email)) {
+                UserDto user = getUserByEmail(email);
+
+                if (passwordEncoder.matches(password, user.getPassword())) {
+                    log.info("Аутентификация юзера " + email + " успешно пройдена");
+                    return HttpStatus.OK;
+
+                } else {
+                    log.error("Не верно указан пароль юзером: " + email);
+                    throw new UserNotFoundException("Не верно указан пароль юзером: " + email);
+                }
+            } else {
+                log.error("Не найден юзер с email: " + email);
+                throw new UserNotFoundException("Не найден юзер с email: " + email);
+            }
+        } else {
+            log.error("Отсутствуют данные в форме");
+            throw new UserNotFoundException("Отсутствуют данные в форме");
         }
     }
 }

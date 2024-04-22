@@ -71,3 +71,15 @@ databaseChangeLog:
             referencedTableName: responded_applicants
             onUpdate: CASCADE
             onDelete: CASCADE
+  - changeSet:
+      id: add-users_constraint-in-messages
+      author: Egor Kirin
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: messages
+            constraintName: fk_users_to_messages
+            referencedColumnNames: id
+            referencedTableName: users
+            onUpdate: CASCADE
+            onDelete: CASCADE

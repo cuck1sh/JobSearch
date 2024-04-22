@@ -10,6 +10,9 @@ import java.util.List;
 public interface RespondedApplicantsService {
     Integer getRespondId(int resumeId, int vacancyId);
 
+    RespondedApplicantsDto getRespondedApplicants(int respond);
+
+    Boolean isRespondInSystem(int respond);
     RespondMessengerDto getRespondMessenger(int resumeId, int vacancyId);
     List<RespondedApplicantsDto> getUserResponses(String email);
     List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId);

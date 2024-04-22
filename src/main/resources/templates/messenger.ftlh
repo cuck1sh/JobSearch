@@ -42,84 +42,8 @@
         </div>
     </form>
 
-    <script>
-        'use strict'
-        window.addEventListener('load', () => {
-            // Тестовый ввод ендпоинта хардкодом, потом исправить,
-            // Добавлял сообщения от работодателя через в базу
-            const base_url = 'http://localhost:8089/api/messages/1';
-            let messages = document.getElementById('messages');
-            let oldData = [];
+    <script src="/js/messenger.js"></script>
 
-            intervalRequest();
-
-            setInterval(intervalRequest, 5000);
-
-            function intervalRequest() {
-                try {
-                    makeRequest(base_url)
-                        .then(data => {
-                            let newData = data;
-                            console.log('пук кек', data);
-
-                            console.log('data: ' + newData.length);
-                            console.log('oldData: ' + oldData.length);
-
-                            if (newData.length > oldData.length) {
-                                for (let i = oldData.length; i < newData.length; i++) {
-                                    createMessage(newData[i].content, newData[i].timestamp);
-                                }
-                            }
-
-
-                            oldData = newData;
-                        })
-                        .catch(error => console.log(error));
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-
-            async function makeRequest() {
-                let response = await fetch(base_url);
-                if (response.ok) {
-                    return await response.json();
-                } else {
-                    let error = new Error(response.statusText);
-                    error.response = response;
-                    throw error;
-                }
-            }
-
-            function createMessage(content, timestamp) {
-                let borderElement = document.createElement('div');
-                borderElement.className = 'border-bottom p-2';
-                borderElement.innerHTML =
-                    //TODO Заменить хардкод UserName на подстановку
-                    '<p class="card-text mb-1">UserName</p>' +
-                    '<p class="card-text mb-1">' + content + '</p>' +
-                    '<p class="card-text"><small class="text-body-secondary">' + timestamp + '</small></p>';
-                messages.appendChild(borderElement);
-            }
-
-            let form = document.getElementById('form');
-
-            form.addEventListener('submit', loginHandler);
-
-            function loginHandler(e) {
-                e.preventDefault();
-                const form = e.target;
-                const data = new FormData(form);
-                fetch('/messages/1', {
-                    method: 'POST',
-                    body: data
-                });
-                document.getElementById("messageValue").value = "";
-            }
-
-
-        });
-    </script>
 
 
 </@main.layout>

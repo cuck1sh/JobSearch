@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class Message {
     private Integer id;
     private Integer respondedApplicantsId;
+    private Integer userId;
     private String content;
     private LocalDateTime timestamp;
 }

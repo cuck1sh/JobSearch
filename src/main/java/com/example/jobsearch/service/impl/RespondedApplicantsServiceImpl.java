@@ -1,7 +1,6 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.RespondedApplicantsDao;
-import com.example.jobsearch.dto.MessageDto;
 import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
 import com.example.jobsearch.dto.user.ProfileDto;
@@ -10,7 +9,6 @@ import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.exception.VacancyNotFoundException;
 import com.example.jobsearch.model.RespondedApplicants;
-import com.example.jobsearch.service.MessageService;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
@@ -34,7 +32,6 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
     private final UserService userService;
-    private final MessageService messageService;
 
     @Override
     public Integer getRespondId(int resumeId, int vacancyId) {
@@ -42,8 +39,31 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     }
 
     @Override
+    public Boolean isRespondInSystem(int respond) {
+        return respondedApplicantsDao.isRespondInSystem(respond);
+    }
+
+    @Override
+    public RespondedApplicantsDto getRespondedApplicants(int respond) {
+        if (isRespondInSystem(respond)) {
+            RespondedApplicants respondedApplicants = respondedApplicantsDao.getRespondedApplicants(respond);
+
+            return RespondedApplicantsDto.builder()
+                    .id(respondedApplicants.getId())
+                    .vacancy(vacancyService.getVacancyById(respondedApplicants.getVacancyId()))
+                    .resume(resumeService.getResumeById(respondedApplicants.getResumeId()))
+                    .confirmation(respondedApplicants.getConfirmation())
+                    .build();
+        } else {
+            log.error("Не найден отклик для getRespondedApplicants()");
+            return null;
+        }
+
+    }
+
+    @Override
     public RespondMessengerDto getRespondMessenger(int resumeId, int vacancyId) {
-        Integer responded_applicants_id = getRespondId(resumeId, vacancyId);
+        Integer respondedApplicantsId = getRespondId(resumeId, vacancyId);
         UserDto user = vacancyService.getUserByVacancy(vacancyId);
         ProfileDto profile = ProfileDto.builder()
                 .id(user.getId())
@@ -55,11 +75,10 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
                 .accountType(user.getAccountType())
                 .build();
 
-        List<MessageDto> messageDtos = messageService.getMessages(responded_applicants_id);
 
         return RespondMessengerDto.builder()
+                .respondedApplicantsId(respondedApplicantsId)
                 .employerProfile(profile)
-                .messages(messageDtos)
                 .build();
 
     }

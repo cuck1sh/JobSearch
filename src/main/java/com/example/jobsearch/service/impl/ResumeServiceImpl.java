@@ -4,6 +4,7 @@ import com.example.jobsearch.dao.ResumeDao;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Resume;
@@ -13,6 +14,7 @@ import com.example.jobsearch.service.EducationInfoService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.WorkExperienceInfoService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final EducationInfoService educationInfoService;
     private final WorkExperienceInfoService workExperienceInfoService;
     private final ContactsInfoService contactsInfoService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
     public List<ResumeDto> getResumes() {
@@ -140,7 +143,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void createResume(String userEmail, InputResumeDto resumeDto) {
+    public void createResume(InputResumeDto resumeDto) {
+        String userEmail = authenticatedUserProvider.getAuthUser().getEmail();
+
         if (userService.isEmployee(userEmail)) {
             Resume newResume = Resume.builder()
                     .userId(userService.getUserByEmail(userEmail).getId())
@@ -169,30 +174,33 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void changeResume(String userEmail, InputResumeDto resume, InputContactInfoDto contacts) {
-        if (isResumeInSystem(resume.getId())) {
-            Integer userId = userService.getUserByEmail(userEmail).getId();
+    public void changeResume(InputResumeDto resume, InputContactInfoDto contacts) {
+        String userEmail = authenticatedUserProvider.getAuthUser().getEmail();
 
-            Resume newResume = Resume.builder()
-                    .id(resume.getId())
-                    .userId(userId)
-                    .name(resume.getName())
-                    .updateTime(LocalDateTime.now())
-                    .build();
+        if (userEmail.equals(resume.getUserEmail())) {
+            if (isResumeInSystem(resume.getId())) {
+                Integer userId = userService.getUserByEmail(userEmail).getId();
 
-            if (!resume.getCategory().equals("Выберите категорию")) {
-//                newResume.setCategoryId(Integer.parseInt(resume.getCategory()));
+                Resume newResume = Resume.builder()
+                        .id(resume.getId())
+                        .userId(userId)
+                        .name(resume.getName())
+                        .categoryId(categoryService.checkInCategories(resume.getCategory()))
+                        .updateTime(LocalDateTime.now())
+                        .build();
+
+                if (resume.getSalary() != null) {
+                    newResume.setSalary(resume.getSalary());
+                }
+
+                newResume.setIsActive(resume.getIsActive() != null);
+                resumeDao.changeResume(newResume);
+                contactsInfoService.updateContactInfo(contacts, newResume.getId());
+            } else {
+                log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
             }
-
-            if (resume.getSalary() != null) {
-                newResume.setSalary(resume.getSalary());
-            }
-
-            newResume.setIsActive(resume.getIsActive() != null);
-            resumeDao.changeResume(newResume);
-            contactsInfoService.updateContactInfo(contacts, newResume.getId());
         } else {
-            log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
+            log.error("Попытка юзера " + userEmail + " исправления чужого резюме с айди: " + resume.getId());
         }
     }
 
@@ -213,10 +221,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void getResume(String userEmail, int id, Model model) {
+    public void getResume(int id, Model model) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+
         ResumeDto resumeDto = getResumeById(id);
 
-        if (userEmail.equals(resumeDto.getUserEmail())) {
+        if (authUser.getEmail().equals(resumeDto.getUserEmail())) {
             model.addAttribute("resume", resumeDto);
         } else {
             throw new ResumeNotFoundException("Несоответствие юзера и юзера в резюме");

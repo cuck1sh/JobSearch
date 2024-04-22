@@ -17,56 +17,37 @@
                         <div class="col ms-3">
                             <h2>${user.name}</h2>
                             <p>Возраст: ${user.age}</p>
-                            <button type="button"
-                                    class="btn border-black border-2 bg-success p-2 text-dark bg-opacity-10"><a
-                                        href="/users/update" class="text-dark text-decoration-none">Редактировать</a>
-                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="col d-flex justify-content-end">
+                <div class="col d-flex justify-content-center">
                     <div class="row">
-                        <#if user.accountType == "EMPLOYEE">
-                            <div class="col">
-                                <button type="button"
-                                        class="btn border-black border-2 w-75 h-100 rounded-4 bg-danger p-2 text-dark bg-opacity-10">
-                                    <a href="/employee/resumes/add" class="text-dark text-decoration-none">+ <p>Создать
-                                            резюме</p></a>
-                                </button>
-                            </div>
-
-                            <div class="col">
-                                <button type="button"
-                                        class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
-                                    <a href="/api/employee/responses/users/${user.id}"
-                                       class="text-dark text-decoration-none">Отклики </a>
-                                    <#if responsesQuantity gt 0>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        ${responsesQuantity}
-                                        <span class="visually-hidden">unread messages</span>
-                                        </span>
+                        <div class="d-flex mb-3">
+                            <div class="card me-2 w-100 border-black border-2 rounded-5">
+                                <div class="card-body align-content-center text-center fw-semibold p-2 fs-4">
+                                    <#if user.phoneNumber??>
+                                        ${user.phoneNumber}
+                                    <#else>
+                                        -
                                     </#if>
-                                </button>
+                                </div>
                             </div>
-                        <#else>
-                            <div class="col">
-                                <button type="button"
-                                        class="btn border-black border-2 w-75 h-100 rounded-4 bg-danger p-2 text-dark bg-opacity-10">
-                                    <a href="/employer/vacancies/add" class="text-dark text-decoration-none">+ <p>
-                                            Создать
-                                            вакансию</p></a>
-                                </button>
-                            </div>
+                            <i class="bi bi-telephone-inbound align-content-center fs-1"></i>
+                        </div>
 
-                            <div class="col">
-                                <button type="button"
-                                        class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
-                                    <a href="/employer/resumes"
-                                       class="text-dark text-decoration-none">Резюме </a>
-                                </button>
+                        <div class="d-flex mb-3">
+                            <div class="card me-2 w-100 border-black border-2 rounded-5">
+                                <div class="card-body align-content-center text-center fw-semibold p-2 fs-4">
+                                    <#if user.email??>
+                                        ${user.email}
+                                    <#else>
+                                        -
+                                    </#if>
+                                </div>
                             </div>
-                        </#if>
+                            <i class="bi bi-envelope-at align-content-center fs-1"></i>
+                        </div>
 
                     </div>
                 </div>
@@ -103,14 +84,14 @@
                                         <button type="button"
                                                 class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
                                             <a
-                                                    href="/employee/resumes/update/${item.id}"
-                                                    class="text-dark text-decoration-none">Редактировать</a></button>
+                                                    href="/employee/resumes/${item.id}"
+                                                    class="text-dark text-decoration-none">Посмотреть</a></button>
                                     <#else>
                                         <button type="button"
                                                 class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
                                             <a
-                                                    href="/employer/vacancies/update/${item.id}"
-                                                    class="text-dark text-decoration-none">Редактировать</a></button>
+                                                    href="/vacancies/${item.id}"
+                                                    class="text-dark text-decoration-none">Посмотреть</a></button>
                                     </#if>
                                 </div>
                             </div>
@@ -118,7 +99,6 @@
                     </#list>
                 </div>
             </#if>
-
         </div>
     </div>
 
