@@ -8,7 +8,6 @@ import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.UserAvatar;
 import com.example.jobsearch.service.UserService;
-import com.example.jobsearch.util.AuthenticatedUserProvider;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -16,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,6 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final FileUtil fileUtil;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
     public List<UserDto> getUsers() {
@@ -208,7 +208,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(UserDto userDto, MultipartFile file) {
-        UserDto actualUser = authenticatedUserProvider.getAuthUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDto actualUser = getUserByEmail(authentication.getName());
 
         if (userDto.getName().isBlank()) {
             userDto.setName(actualUser.getName());
