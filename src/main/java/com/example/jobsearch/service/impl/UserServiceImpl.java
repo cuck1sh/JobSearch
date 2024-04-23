@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dao.UserDao;
+import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.dto.user.EmployeeFindDto;
 import com.example.jobsearch.dto.user.UserAvatarDto;
 import com.example.jobsearch.dto.user.UserDto;
@@ -248,10 +249,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HttpStatus login(UserDto userDto) {
-        if (userDto != null && userDto.getEmail() != null && userDto.getPassword() != null) {
-            String email = userDto.getEmail();
-            String password = userDto.getPassword();
+    public HttpStatus login(AuthUserDto authUserDto) {
+        if (authUserDto != null && authUserDto.getUsername() != null && authUserDto.getPassword() != null) {
+            String email = authUserDto.getUsername();
+            String password = authUserDto.getPassword();
 
             if (isUserInSystem(email)) {
                 UserDto user = getUserByEmail(email);

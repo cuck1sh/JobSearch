@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/login")
+                        .loginProcessingUrl("/api/auth/login")
                         .defaultSuccessUrl("/")
                         .failureUrl("/login?error=true")
                         .permitAll())
@@ -51,10 +51,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers("/").permitAll()
-                                .requestMatchers("/users/login").permitAll()
+//                                .requestMatchers("/users/login").permitAll()
                                 .requestMatchers("/users/register").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+//                                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                                 .requestMatchers("/vacancies/*/").permitAll()
                                 .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
                                 .requestMatchers("/employer/**").hasAuthority("EMPLOYER")

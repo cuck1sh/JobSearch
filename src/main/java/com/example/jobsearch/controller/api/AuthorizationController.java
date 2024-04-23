@@ -1,6 +1,6 @@
 package com.example.jobsearch.controller.api;
 
-import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,8 @@ public class AuthorizationController {
     private final UserService userService;
 
     @PostMapping("login")
-    public HttpStatus getLogin(@RequestBody UserDto userDto) {
-        return userService.login(userDto);
+    public HttpStatus getLogin(@RequestBody AuthUserDto authUserDto) {
+        log.info("authUser: " + authUserDto);
+        return userService.login(authUserDto);
     }
 }

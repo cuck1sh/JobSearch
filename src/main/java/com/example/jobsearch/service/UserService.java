@@ -1,5 +1,6 @@
 package com.example.jobsearch.service;
 
+import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.dto.user.EmployeeFindDto;
 import com.example.jobsearch.dto.user.UserAvatarDto;
 import com.example.jobsearch.dto.user.UserDto;
@@ -26,5 +27,6 @@ public interface UserService {
     List<UserDto> getEmployer(String name);
 
     void updateUser(UserDto user, MultipartFile file);
-    HttpStatus login(UserDto userDto);
+
+    HttpStatus login(AuthUserDto authUserDto);
 }

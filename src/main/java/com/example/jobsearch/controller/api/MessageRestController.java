@@ -1,6 +1,6 @@
 package com.example.jobsearch.controller.api;
 
-import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class MessageRestController {
 
     @PostMapping("{respondedApplicantsId}")
     public ResponseEntity<?> getMessages(@PathVariable int respondedApplicantsId,
-                                         @RequestBody UserDto userDto) {
-        return messageService.getMessages(userDto, respondedApplicantsId);
+                                         @RequestBody AuthUserDto authUserDto) {
+        return messageService.getMessages(authUserDto, respondedApplicantsId);
     }
 }

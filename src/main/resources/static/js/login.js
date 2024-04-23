@@ -6,7 +6,7 @@ form.addEventListener('submit', onLoginHandler)
 
 
 function onLoginHandler(event) {
-    event.preventDefault()
+    // event.preventDefault()
 
     const url = 'http://localhost:8089/api/auth/login'
 
@@ -37,6 +37,7 @@ async function fetchAuthorized(url, user) {
 
     } catch (e) {
         localStorage.removeItem('user')
+        window.location.href = 'http://localhost:8089/login'
         alert(e)
     }
 }

@@ -3,7 +3,7 @@ package com.example.jobsearch.service.impl;
 import com.example.jobsearch.dao.MessageDao;
 import com.example.jobsearch.dto.MessageDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
-import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.model.Message;
 import com.example.jobsearch.service.MessageService;
 import com.example.jobsearch.service.RespondedApplicantsService;
@@ -29,11 +29,11 @@ public class MessageServiceImpl implements MessageService {
     private final ResumeService resumeService;
 
     @Override
-    public ResponseEntity<?> getMessages(UserDto userDto, int respond) {
+    public ResponseEntity<?> getMessages(AuthUserDto authUserDto, int respond) {
         List<Message> messages = messageDao.getMessages(respond);
         RespondedApplicantsDto respondedApplicantsDto = respondedApplicantsService.getRespondedApplicants(respond);
 
-        if (respondedApplicantsDto.getResume().getUserEmail().equals(userDto.getEmail())) {
+        if (respondedApplicantsDto.getResume().getUserEmail().equals(authUserDto.getUsername())) {
             List<MessageDto> messageDtos = new ArrayList<>();
 
             messages.forEach(e -> messageDtos.add(MessageDto.builder()

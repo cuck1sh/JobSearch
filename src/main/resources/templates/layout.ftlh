@@ -37,9 +37,6 @@
                         <a class="nav-link active" aria-current="page" href="/employee/resumes/1/vacancy/2">Messages(Test)</a>
                     </li>
                     <li class="nav-item ms-lg-auto">
-                        <a class="nav-link" href="/users/login">Login(toLocalStorage)</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link active" href="/login">Login</a>
                     </li>
                     <li class="nav-item">
