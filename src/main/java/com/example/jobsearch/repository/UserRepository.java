@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             " where LCASE(NAME) = :name and ACCOUNT_TYPE not like 'EMPLOYEE';", nativeQuery = true)
     List<User> findEmployer(String name);
 
-    @Query("select u from User u where u.phoneNumber = :phoneNubmer")
+    @Query("select u from User u where u.phoneNumber = :phoneNumber")
     Optional<User> findUserByPhoneNumber(String phoneNumber);
 
     @Query("select u from User u where u.email = :email")
@@ -35,7 +35,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Boolean existsByEmail(String email);
 
     @Query(value = "update users" +
-            " set name = :name, surname = :surname, age = :age, phone_number = :phone_number" +
+            " set name = :name, surname = :surname, age = :age, phone_number = :phoneNumber" +
             " where id = :id;", nativeQuery = true)
     void updateBy(String name, String surname, Integer age, String phoneNumber, Integer id);
 }

@@ -28,15 +28,13 @@ public class ContactsInfoServiceImpl implements ContactsInfoService {
 
         info.forEach(e -> contactsMap.put(contactTypesService.getContactTypeById(e.getType().getId()).getType(), e.getInfo()));
 
-        InputContactInfoDto inputContacts = InputContactInfoDto.builder()
+        return InputContactInfoDto.builder()
                 .phoneNumber(contactsMap.get("Phone number"))
                 .email(contactsMap.get("email"))
                 .facebook(contactsMap.get("facebook"))
                 .linkedIn(contactsMap.get("linkedIn"))
                 .telegram(contactsMap.get("telegram"))
                 .build();
-
-        return inputContacts;
     }
 
     @Override

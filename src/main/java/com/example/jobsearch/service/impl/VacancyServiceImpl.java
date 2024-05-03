@@ -1,13 +1,15 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dao.VacancyDao;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.exception.VacancyNotFoundException;
+import com.example.jobsearch.model.Category;
+import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.Vacancy;
+import com.example.jobsearch.repository.VacancyRepository;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
@@ -16,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -28,7 +29,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
-    private final VacancyDao vacancyDao;
+    private final VacancyRepository vacancyRepository;
     private final UserService userService;
     private final CategoryService categoryService;
     private final AuthenticatedUserProvider authenticatedUserProvider;
@@ -36,17 +37,18 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public VacancyDto getVacancyById(int id) throws UserNotFoundException {
         if (isVacancyInSystem(id)) {
-            Vacancy vacancy = vacancyDao.getVacancyById(id);
+            Vacancy vacancy = vacancyRepository.findById(id)
+                    .orElseThrow(() -> new VacancyNotFoundException("Не найдена вакансия с айди: " + id));
             return VacancyDto.builder()
                     .id(vacancy.getId())
                     .name(vacancy.getName())
                     .description(vacancy.getDescription())
-                    .category(categoryService.getCategoryById(vacancy.getCategoryId()))
+                    .category(categoryService.getCategoryById(vacancy.getCategory().getId()))
                     .salary(vacancy.getSalary())
                     .expFrom(vacancy.getExpFrom())
                     .expTo(vacancy.getExpTo())
                     .isActive(vacancy.getIsActive())
-                    .userEmail(userService.getUserById(vacancy.getUserId()).getEmail())
+                    .userEmail(vacancy.getUser().getEmail())
                     .createdDate(vacancy.getCreatedDate())
                     .updateTime(vacancy.getUpdateTime())
                     .build();
@@ -64,24 +66,24 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public List<VacancyDto> getVacancies() {
-        List<Vacancy> vacancies = vacancyDao.getVacancies();
+        List<Vacancy> vacancies = vacancyRepository.findAll();
         return getVacancyDtos(vacancies);
     }
 
     @Override
     public List<VacancyDto> getActiveVacancies() {
-        List<Vacancy> vacancies = vacancyDao.getActiveVacancies();
+        List<Vacancy> vacancies = vacancyRepository.findAllByIsActiveTrue();
         return getVacancyDtos(vacancies);
     }
 
     @Override
     public Integer getVacanciesCount() {
-        return vacancyDao.getCount();
+        return Math.toIntExact(vacancyRepository.countAllByIsActiveTrue());
     }
 
     @Override
     public Integer getVacanciesWithCategoryCount(int categoryId) {
-        return vacancyDao.getVacanciesWithCategoryCount(categoryId);
+        return vacancyRepository.countAllByIsActiveTrueAndCategoryId(categoryId);
     }
 
     @Override
@@ -103,7 +105,7 @@ public class VacancyServiceImpl implements VacancyService {
 
             offset = page * pageSize;
 
-            vacancies = vacancyDao.getPagedVacancies(pageSize, offset);
+            vacancies = vacancyRepository.findPagedVacancies(pageSize, offset);
         } else {
             int categoryId = categoryService.checkInCategories(category);
 
@@ -118,7 +120,7 @@ public class VacancyServiceImpl implements VacancyService {
 
             offset = page * pageSize;
 
-            vacancies = vacancyDao.getPagedVacanciesWithCategory(pageSize, offset, categoryId);
+            vacancies = vacancyRepository.findPagedVacanciesWithCategory(pageSize, offset, categoryId);
         }
 
         return getVacancyDtos(vacancies);
@@ -126,7 +128,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public List<VacancyDto> getVacanciesByCategory(String category) {
-        List<Vacancy> vacancies = vacancyDao.getVacanciesByCategory(category);
+        List<Vacancy> vacancies = vacancyRepository.findAllByIsActiveTrueAndCategoryName(category);
         if (!vacancies.isEmpty()) {
             return getVacancyDtos(vacancies);
         }
@@ -140,12 +142,12 @@ public class VacancyServiceImpl implements VacancyService {
                 .id(e.getId())
                 .name(e.getName())
                 .description(e.getDescription())
-                .category(categoryService.getCategoryById(e.getCategoryId()))
+                .category(categoryService.getCategoryById(e.getCategory().getId()))
                 .salary(e.getSalary())
                 .expFrom(e.getExpFrom())
                 .expTo(e.getExpTo())
                 .isActive(e.getIsActive())
-                .userEmail(userService.getUserById(e.getUserId()).getEmail())
+                .userEmail(e.getUser().getEmail())
                 .createdDate(e.getCreatedDate())
                 .updateTime(e.getUpdateTime())
                 .build()));
@@ -155,36 +157,36 @@ public class VacancyServiceImpl implements VacancyService {
     // Служебный метод
     @Override
     public Boolean isVacancyInSystem(int id) {
-        return vacancyDao.isVacancyInSystem(id);
+        return vacancyRepository.existsById(id);
     }
 
     @Override
     public Boolean isUsersVacanciesInSystem(int userId) {
-        return vacancyDao.isUsersVacanciesInSystem(userId);
+        return vacancyRepository.existsByUserId(userId);
     }
 
     // Служебный метод
     @Override
     public Boolean isVacancyActive(int vacancyId) {
-        return vacancyDao.isVacancyActive(vacancyId);
+        return vacancyRepository.existsByIsActiveTrueAndId(vacancyId);
     }
 
     @Override
     public void createVacancy(InputVacancyDto vacancyDto) {
-        String userEmail = authenticatedUserProvider.getAuthUser().getEmail();
+        UserDto user = authenticatedUserProvider.getAuthUser();
 
-        if (!userService.isEmployee(userEmail)) {
+        if (!userService.isEmployee(user.getEmail())) {
             LocalDateTime now = LocalDateTime.now();
 
             Vacancy vacancy = Vacancy.builder()
                     .name(vacancyDto.getName())
-                    .userId(userService.getUserByEmail(userEmail).getId())
+                    .user(User.builder().id(user.getId()).build())
                     .createdDate(now)
                     .updateTime(now)
                     .build();
 
             if (!vacancyDto.getCategory().equals("Выберите категорию")) {
-                vacancy.setCategoryId(Integer.parseInt(vacancyDto.getCategory()));
+                vacancy.setCategory(Category.builder().id(Integer.parseInt(vacancyDto.getCategory())).build());
             }
 
             if (vacancyDto.getSalary() != null) {
@@ -204,9 +206,9 @@ public class VacancyServiceImpl implements VacancyService {
             }
 
             vacancy.setIsActive(vacancyDto.getIsActive() != null);
-            vacancyDao.createVacancy(vacancy);
+            vacancyRepository.save(vacancy);
         } else {
-            log.info("Юзер " + userEmail + " не найден среди работодателей для добавления вакансии");
+            log.info("Юзер " + user.getEmail() + " не найден среди работодателей для добавления вакансии");
         }
     }
 
@@ -228,9 +230,9 @@ public class VacancyServiceImpl implements VacancyService {
                             .build();
 
                     if (!vacancyDto.getCategory().equals("Выберите категорию")) {
-                        vacancy.setCategoryId(Integer.parseInt(vacancyDto.getCategory()));
+                        vacancy.setCategory(Category.builder().id(Integer.parseInt(vacancyDto.getCategory())).build());
                     } else {
-                        vacancy.setCategoryId(null);
+                        vacancy.setCategory(null);
                     }
 
                     if (vacancyDto.getIsActive() == null) {
@@ -239,7 +241,15 @@ public class VacancyServiceImpl implements VacancyService {
                         vacancy.setIsActive(vacancyDto.getIsActive());
                     }
 
-                    vacancyDao.changeVacancy(vacancy);
+                    vacancyRepository.updateBy(vacancy.getName(),
+                            vacancy.getDescription(),
+                            vacancy.getCategory().getId(),
+                            vacancy.getSalary(),
+                            vacancy.getExpFrom(),
+                            vacancy.getExpTo(),
+                            vacancy.getIsActive(),
+                            vacancy.getUpdateTime(),
+                            vacancy.getId());
                 } else {
                     log.error("Юзер " + userEmail + " не найден среди работодателей");
                 }
@@ -253,16 +263,16 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public HttpStatus delete(Authentication auth, int id) {
-        User user = (User) auth.getPrincipal();
+        UserDto user = authenticatedUserProvider.getAuthUser();
         if (isVacancyInSystem(id)) {
-            if (!userService.isEmployee(user.getUsername())) {
-                if (user.getUsername().equals(getVacancyById(id).getUserEmail())) {
-                    vacancyDao.delete(id);
+            if (!userService.isEmployee(user.getEmail())) {
+                if (user.getEmail().equals(getVacancyById(id).getUserEmail())) {
+                    vacancyRepository.deleteById(id);
                     return HttpStatus.OK;
                 }
-                throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в вакансии");
+                throw new VacancyNotFoundException("Не найдено совпдаение Юзера " + user.getEmail() + " с юзером указанным в вакансии");
             }
-            throw new VacancyNotFoundException("Юзер " + user.getUsername() + " не найден среди работодателей");
+            throw new VacancyNotFoundException("Юзер " + user.getEmail() + " не найден среди работодателей");
         }
         throw new ResumeNotFoundException("Вакансия с айди " + id + " не найдена в системе");
     }
@@ -270,7 +280,7 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public List<VacancyDto> getAllVacanciesByCompany(int userId) {
         if (userService.isUserInSystem(userId)) {
-            List<Vacancy> vacancies = vacancyDao.getAllVacancyByCompany(userId);
+            List<Vacancy> vacancies = vacancyRepository.findAllByUserId(userId);
             if (!vacancies.isEmpty()) {
                 return getVacancyDtos(vacancies);
             }
@@ -282,7 +292,7 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category) {
         if (userService.isUserInSystem(userId)) {
-            List<Vacancy> vacancies = vacancyDao.getVacanciesByCategoryAndUser(userId, category);
+            List<Vacancy> vacancies = vacancyRepository.findAllByUserIdAndCategoryNameAndIsActiveTrue(userId, category);
             if (!vacancies.isEmpty()) {
                 return getVacancyDtos(vacancies);
             }

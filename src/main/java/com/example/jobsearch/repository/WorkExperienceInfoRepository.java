@@ -15,7 +15,7 @@ public interface WorkExperienceInfoRepository extends JpaRepository<WorkExperien
 
 
     @Query(value = "update work_experience_info" +
-            " set years = :years, company_name = :company_name, position = :position, responsibilities = :responsibilities" +
+            " set years = :years, company_name = :companyName, position = :position, responsibilities = :responsibilities" +
             " where id = :id;", nativeQuery = true)
     void updateBy(Integer years, String companyName, String position, String responsibilities, Integer id);
 }
