@@ -16,5 +16,5 @@ public interface ContactsInfoRepository extends JpaRepository<ContactsInfo, Inte
             " where type_id = :typeId and resume_id = :resumeId;", nativeQuery = true)
     void updateBy(String info, Integer typeId, Integer resumeId);
 
-    Boolean existsByTypeIdAndResumeId(Integer typeId, Integer ResumeId);
+    Boolean existsByTypeIdAndResumeId(Integer typeId, Integer resumeId);
 }
