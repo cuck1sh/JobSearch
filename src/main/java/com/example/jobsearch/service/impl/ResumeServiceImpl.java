@@ -1,13 +1,15 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dao.ResumeDao;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
+import com.example.jobsearch.model.Category;
 import com.example.jobsearch.model.Resume;
+import com.example.jobsearch.model.User;
+import com.example.jobsearch.repository.ResumeRepository;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ContactsInfoService;
 import com.example.jobsearch.service.EducationInfoService;
@@ -19,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -31,7 +32,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
-    private final ResumeDao resumeDao;
+    private final ResumeRepository repository;
     private final UserService userService;
     private final CategoryService categoryService;
     private final EducationInfoService educationInfoService;
@@ -41,24 +42,24 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> getResumes() {
-        List<Resume> resumes = resumeDao.getResumes();
+        List<Resume> resumes = repository.findAll();
         return getResumeDtos(resumes);
     }
 
     @Override
     public List<ResumeDto> getActiveResumes() {
-        List<Resume> resumes = resumeDao.getActiveResumes();
+        List<Resume> resumes = repository.findAllByIsActiveTrue();
         return getResumeDtos(resumes);
     }
 
     @Override
     public ResumeDto getResumeById(int id) throws UserNotFoundException {
-        Resume resume = resumeDao.getResumeById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
+        Resume resume = repository.findById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
         return ResumeDto.builder()
                 .id(resume.getId())
-                .userEmail(userService.getUserById(resume.getUserId()).getEmail())
+                .userEmail(resume.getUser().getEmail())
                 .name(resume.getName())
-                .category(categoryService.getCategoryById(resume.getCategoryId()))
+                .category(categoryService.getCategoryById(resume.getCategory().getId()))
                 .salary(resume.getSalary())
                 .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
                 .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
@@ -71,7 +72,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> getResumesByCategory(String category) {
-        List<Resume> resumes = resumeDao.getResumesByCategory(category);
+        List<Resume> resumes = repository.findAllByCategoryNameAndIsActiveTrue(category);
         if (!resumes.isEmpty()) {
             return getResumeDtos(resumes);
         }
@@ -80,7 +81,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public List<ResumeDto> getResumesByUserId(int id) {
-        List<Resume> resumes = resumeDao.getResumesByUserEmail(id);
+        List<Resume> resumes = repository.findAllByUserIdAndIsActiveTrue(id);
         if (!resumes.isEmpty()) {
             return getResumeDtos(resumes);
         }
@@ -89,7 +90,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public Integer getResumesCount() {
-        return resumeDao.getCount();
+        return Math.toIntExact(repository.countAllByIsActiveTrue());
     }
 
     @Override
@@ -105,7 +106,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         int offset = page * pageSize;
 
-        List<Resume> resumes = resumeDao.getPagedResumes(pageSize, offset);
+        List<Resume> resumes = repository.findPagedResumes(pageSize, offset);
 
         return getResumeDtos(resumes);
     }
@@ -116,9 +117,9 @@ public class ResumeServiceImpl implements ResumeService {
         List<ResumeDto> dtos = new ArrayList<>();
         resumes.forEach(e -> dtos.add(ResumeDto.builder()
                 .id(e.getId())
-                .userEmail(userService.getUserById(e.getUserId()).getEmail())
+                .userEmail(e.getUser().getEmail())
                 .name(e.getName())
-                .category(categoryService.getCategoryById(e.getCategoryId()))
+                .category(categoryService.getCategoryById(e.getCategory().getId()))
                 .salary(e.getSalary())
                 .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
                 .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
@@ -134,30 +135,31 @@ public class ResumeServiceImpl implements ResumeService {
     // Служебный метод
     @Override
     public Boolean isResumeInSystem(int id) {
-        return resumeDao.isResumeInSystem(id);
+        return repository.existsById(id);
     }
 
     @Override
     public Boolean isUsersResumesInSystem(int userId) {
-        return resumeDao.isUsersResumesInSystem(userId);
+        return repository.existsByUserId(userId);
     }
 
     @Override
     public void createResume(InputResumeDto resumeDto) {
-        String userEmail = authenticatedUserProvider.getAuthUser().getEmail();
+        UserDto user = authenticatedUserProvider.getAuthUser();
 
-        if (userService.isEmployee(userEmail)) {
+        if (userService.isEmployee(user.getEmail())) {
             Resume newResume = Resume.builder()
-                    .userId(userService.getUserByEmail(userEmail).getId())
+                    .user(User.builder().id(user.getId()).build())
                     .name(resumeDto.getName())
-                    .categoryId(categoryService.checkInCategories(resumeDto.getCategory()))
+                    .category(Category.builder().id(categoryService.checkInCategories(resumeDto.getCategory())).build())
                     .salary(resumeDto.getSalary())
                     .isActive(resumeDto.getIsActive())
                     .createdDate(LocalDateTime.now())
+                    .updateTime(LocalDateTime.now())
                     .build();
 
 
-            Integer newResumeKey = resumeDao.createResume(newResume);
+            Integer newResumeKey = repository.saveAndFlush(newResume).getId();
 
             if (resumeDto.getWorkExperienceInfoDtos() != null) {
                 workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
@@ -169,7 +171,7 @@ public class ResumeServiceImpl implements ResumeService {
                 contactsInfoService.createContactInfo(resumeDto.getContacts(), newResumeKey);
             }
         } else {
-            log.error("Юзер " + userEmail + " не найден среди соискателей");
+            log.error("Юзер " + user.getEmail() + " не найден среди соискателей");
         }
     }
 
@@ -183,9 +185,9 @@ public class ResumeServiceImpl implements ResumeService {
 
                 Resume newResume = Resume.builder()
                         .id(resume.getId())
-                        .userId(userId)
+                        .user(User.builder().id(userId).build())
                         .name(resume.getName())
-                        .categoryId(categoryService.checkInCategories(resume.getCategory()))
+                        .category(Category.builder().id(categoryService.checkInCategories(resume.getCategory())).build())
                         .updateTime(LocalDateTime.now())
                         .build();
 
@@ -194,7 +196,13 @@ public class ResumeServiceImpl implements ResumeService {
                 }
 
                 newResume.setIsActive(resume.getIsActive() != null);
-                resumeDao.changeResume(newResume);
+                repository.updateBy(newResume.getName(),
+                        newResume.getCategory().getId(),
+                        newResume.getSalary(),
+                        newResume.getIsActive(),
+                        newResume.getUpdateTime(),
+                        newResume.getId());
+
                 contactsInfoService.updateContactInfo(contacts, newResume.getId());
             } else {
                 log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
@@ -206,16 +214,16 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public HttpStatus deleteResumeById(Authentication auth, int id) {
-        User user = (User) auth.getPrincipal();
+        UserDto user = authenticatedUserProvider.getAuthUser();
         if (isResumeInSystem(id)) {
-            if (userService.isEmployee(user.getUsername())) {
-                if (user.getUsername().equals(userService.getUserByEmail(getResumeById(id).getUserEmail()).getEmail())) {
-                    resumeDao.deleteResumeById(id);
+            if (userService.isEmployee(user.getEmail())) {
+                if (user.getEmail().equals(userService.getUserByEmail(getResumeById(id).getUserEmail()).getEmail())) {
+                    repository.deleteById(id);
                     return HttpStatus.OK;
                 }
-                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getEmail() + " с юзером указанным в резюме");
             }
-            throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
+            throw new ResumeNotFoundException("Юзер " + user.getEmail() + " не найден среди соискателей");
         }
         throw new ResumeNotFoundException("Резюме с айди " + id + " не найдено в системе для его удаления");
     }

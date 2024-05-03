@@ -2,6 +2,9 @@ server:
   port: 8089
 
 spring:
+  mvc:
+    static-path-pattern: /static/**
+    log-request-details: false
   datasource:
     url: jdbc:h2:./db/job_search;AUTO_SERVER=TRUE
     username: root
@@ -12,6 +15,16 @@ spring:
   h2:
     console:
       enabled: false
+  freemarker:
+    expose-session-attributes: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+    show-sql: false
 
 logging:
   level:
@@ -19,6 +32,11 @@ logging:
     org:
       springframework:
         security: debug
+      hibernate:
+        stat: debug
+        type: trace
+    web: debug
+    sql: info
 
   file:
     name: logs/spring.log

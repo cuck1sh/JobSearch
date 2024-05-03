@@ -1,13 +1,13 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dao.UserDao;
 import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.dto.user.EmployeeFindDto;
 import com.example.jobsearch.dto.user.UserAvatarDto;
+import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
-import com.example.jobsearch.model.UserAvatar;
+import com.example.jobsearch.repository.UserRepository;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,26 +32,26 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
     private final FileUtil fileUtil;
     private final PasswordEncoder passwordEncoder;
 
+
     @Override
     public List<UserDto> getUsers() {
-        List<User> users = userDao.getUsers();
+        List<User> users = userRepository.findAll();
         return getUserDtos(users);
     }
 
     @Override
     public UserDto getUserById(int id) {
-        User user = userDao.getUserById(id).orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + id));
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .age(user.getAge())
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
                 .accountType(user.getAccountType())
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getUserByName(String name) {
-        List<User> users = userDao.getUsersByName(name);
+        List<User> users = userRepository.findUserByName(name);
         if (!users.isEmpty()) {
             return getUserDtos(users);
         }
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         String surname = Objects.requireNonNullElse(employeeFindDto.getSurname(), "null");
         String email = Objects.requireNonNullElse(employeeFindDto.getEmail(), "null");
 
-        List<User> users = userDao.getEmployee(name, surname, email);
+        List<User> users = userRepository.findEmployeesByTags(name, surname, email);
         if (!users.isEmpty()) {
             return getUserDtos(users);
         }
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getEmployer(String name) {
-        List<User> users = userDao.getEmployer(name);
+        List<User> users = userRepository.findEmployer(name);
         if (!users.isEmpty()) {
             return getUserDtos(users);
         }
@@ -97,7 +97,6 @@ public class UserServiceImpl implements UserService {
                 .surname(e.getSurname())
                 .age(e.getAge())
                 .email(e.getEmail())
-                .password(e.getPassword())
                 .phoneNumber(e.getPhoneNumber())
                 .avatar(e.getAvatar())
                 .accountType(e.getAccountType())
@@ -107,14 +106,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserByPhone(String phone) {
-        User user = userDao.getUserByPhone(phone).orElseThrow(() -> new UserNotFoundException("Can not find user with phone: " + phone));
+        User user = userRepository.findUserByPhoneNumber(phone)
+                .orElseThrow(() -> new UserNotFoundException("Can not find user with phone: " + phone));
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .age(user.getAge())
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
                 .accountType(user.getAccountType())
@@ -123,14 +122,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserByEmail(String email) {
-        User user = userDao.getUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Can not find user with email: " + email));
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Can not find user with email: " + email));
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .age(user.getAge())
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
                 .accountType(user.getAccountType())
@@ -138,19 +137,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void uploadUserAvatar(UserAvatarDto avatarDto) {
+    public void uploadUserAvatar(UserAvatarFileDto avatarDto) {
         String filename = fileUtil.saveUploadedFile(avatarDto.getFile(), "images");
-        UserAvatar userAvatar = new UserAvatar();
-        userAvatar.setUserId(avatarDto.getUserId());
-        userAvatar.setFileName(filename);
+        UserAvatarDto userAvatarDto = new UserAvatarDto();
+        userAvatarDto.setUserId(avatarDto.getUserId());
+        userAvatarDto.setFileName(filename);
 
-        userDao.saveAvatar(userAvatar);
+        userRepository.saveAvatar(userAvatarDto.getFileName(), userAvatarDto.getUserId());
     }
 
     @SneakyThrows
     @Override
     public ResponseEntity<?> downloadAvatar(int userId) {
-        User user = userDao.getUserById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + userId));
         String filename = user.getAvatar();
         return fileUtil.getOutputFile(filename, "images", MediaType.IMAGE_JPEG);
@@ -158,15 +157,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean isUserInSystem(String email) {
-        if (email != null) {
-            return userDao.isUserInSystem(email);
-        }
-        throw new NoSuchElementException("Значение не найдено");
+        return userRepository.existsByEmail(email);
     }
 
     @Override
     public Boolean isUserInSystem(int id) {
-        return userDao.isUserInSystem(id);
+        return userRepository.existsById(id);
     }
 
     @Override
@@ -192,19 +188,22 @@ public class UserServiceImpl implements UserService {
                         .phoneNumber(userDto.getPhoneNumber())
                         .accountType(userDto.getAccountType())
                         .build();
-                int newKey = userDao.createUser(user);
+
+                User newUser = userRepository.saveAndFlush(user);
 
                 if (file.getOriginalFilename().length() != 0) {
-                    uploadUserAvatar(UserAvatarDto.builder()
+                    uploadUserAvatar(UserAvatarFileDto.builder()
                             .file(file)
-                            .userId(newKey)
+                            .userId(newUser.getId())
                             .build());
+                } else {
+                    userRepository.updateAvatar("default.png", newUser.getId());
                 }
                 return HttpStatus.OK;
             }
             throw new UserNotFoundException("Категория '" + userDto.getAccountType() + "' не найдена в списке доступных");
         }
-        throw new RuntimeException("Пользователь с таким Email уже существует");
+        throw new UserNotFoundException("Пользователь с таким Email уже существует");
     }
 
     @Override
@@ -239,9 +238,14 @@ public class UserServiceImpl implements UserService {
             user.setPassword(userDto.getPassword());
         }
 
-        userDao.changeUser(user);
+        userRepository.updateBy(user.getName(),
+                user.getSurname(),
+                user.getAge(),
+                user.getPhoneNumber(),
+                user.getId());
+
         if (file.getOriginalFilename().length() != 0) {
-            uploadUserAvatar(UserAvatarDto.builder()
+            uploadUserAvatar(UserAvatarFileDto.builder()
                     .file(file)
                     .userId(actualUser.getId())
                     .build());

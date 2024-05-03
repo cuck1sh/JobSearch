@@ -1,8 +1,9 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dao.EducationInfoDao;
 import com.example.jobsearch.dto.EducationInfoDto;
 import com.example.jobsearch.model.EducationInfo;
+import com.example.jobsearch.model.Resume;
+import com.example.jobsearch.repository.EducationInfoRepository;
 import com.example.jobsearch.service.EducationInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,17 +17,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EducationInfoServiceImpl implements EducationInfoService {
 
-    private final EducationInfoDao educationInfoDao;
+    private final EducationInfoRepository educationInfoRepository;
 
     @Override
     public Boolean isResumeExist(int resumeId) {
-        return educationInfoDao.isResumeExist(resumeId);
+        return educationInfoRepository.existsByResumeId(resumeId);
     }
 
     @Override
     public List<EducationInfoDto> getEducationInfoById(int resumeId) {
         if (isResumeExist(resumeId)) {
-            List<EducationInfo> educationInfo = educationInfoDao.getEducationInfoById(resumeId);
+            List<EducationInfo> educationInfo = educationInfoRepository.findAllByResumeId(resumeId);
             List<EducationInfoDto> educationInfoDtos = new ArrayList<>();
             educationInfo.forEach(e -> educationInfoDtos.add(EducationInfoDto.builder()
                     .id(e.getId())
@@ -49,7 +50,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
         if (!educationInfoDtos.isEmpty()) {
             List<EducationInfo> educationInfos = new ArrayList<>();
             educationInfoDtos.forEach(e -> educationInfos.add(EducationInfo.builder()
-                    .resumeId(resumeId)
+                    .resume(Resume.builder().id(resumeId).build())
                     .institution(e.getInstitution())
                     .program(e.getProgram())
                     .startDate(e.getStartDate())
@@ -57,24 +58,19 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                     .degree(e.getDegree())
                     .build()));
 
-            educationInfos.forEach(educationInfoDao::createEducationInfo);
+            educationInfoRepository.saveAll(educationInfos);
         }
     }
 
     @Override
     public void changeEducationInfo(List<EducationInfoDto> educationInfoDtos, Integer resumeId) {
         if (!educationInfoDtos.isEmpty()) {
-            List<EducationInfo> educationInfos = new ArrayList<>();
-            educationInfoDtos.forEach(e -> educationInfos.add(EducationInfo.builder()
-                    .resumeId(resumeId)
-                    .institution(e.getInstitution())
-                    .program(e.getProgram())
-                    .startDate(e.getStartDate())
-                    .endDate(e.getEndDate())
-                    .degree(e.getDegree())
-                    .build()));
-
-            educationInfos.forEach(educationInfoDao::changeEducationInfo);
+            educationInfoDtos.forEach(e -> educationInfoRepository.updateBy(e.getInstitution(),
+                    e.getProgram(),
+                    e.getStartDate(),
+                    e.getEndDate(),
+                    e.getDegree(),
+                    e.getId()));
         }
     }
 }

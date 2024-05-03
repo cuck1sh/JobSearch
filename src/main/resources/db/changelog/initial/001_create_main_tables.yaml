@@ -15,12 +15,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
                   name: surname
-                  type: text
+                  type: varchar(255)
               - column:
                   name: age
                   type: int
@@ -32,7 +32,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: password
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
@@ -42,7 +42,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: avatar
-                  type: text
+                  type: varchar(255)
                   defaultValue: 'default.png'
               - column:
                   name: account_type
@@ -65,7 +65,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
@@ -96,7 +96,7 @@ databaseChangeLog:
                     references: users(id)
               - column:
                   name: name
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
@@ -133,7 +133,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: type
-                  type: text
+                  type: varchar(255)
   - changeSet:
       id: create-contacts_info-table
       author: Egor Kirin
@@ -162,7 +162,7 @@ databaseChangeLog:
                     references: resumes(id)
               - column:
                   name: info
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
   - changeSet:
@@ -187,12 +187,12 @@ databaseChangeLog:
                     references: resumes(id)
               - column:
                   name: institution
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
                   name: program
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
@@ -203,7 +203,7 @@ databaseChangeLog:
                   type: date
               - column:
                   name: degree
-                  type: text
+                  type: varchar(255)
   - changeSet:
       id: create-work_experience_info-table
       author: Egor Kirin
@@ -231,17 +231,17 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: company_name
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
                   name: position
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
                   name: responsibilities
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
   - changeSet:
@@ -260,12 +260,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
                   name: description
-                  type: text
+                  type: varchar(255)
               - column:
                   name: category_id
                   type: int
@@ -353,7 +353,7 @@ databaseChangeLog:
                     references: users(id)
               - column:
                   name: content
-                  type: text
+                  type: varchar(255)
               - column:
                   name: timestamp
                   type: timestamp

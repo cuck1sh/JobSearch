@@ -22,9 +22,7 @@ public interface ResumeService {
     Boolean isUsersResumesInSystem(int userId);
     HttpStatus deleteResumeById(Authentication auth, int id);
     List<ResumeDto> getActiveResumes();
-
     void changeResume(InputResumeDto resume, InputContactInfoDto contacts);
-
     void getResume(int id, Model model);
     List<ResumeDto> getResumesWithPaging(Integer page, Integer pageSize);
     Integer getResumesCount();

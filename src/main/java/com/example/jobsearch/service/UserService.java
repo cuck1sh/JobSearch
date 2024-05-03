@@ -2,7 +2,7 @@ package com.example.jobsearch.service;
 
 import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.dto.user.EmployeeFindDto;
-import com.example.jobsearch.dto.user.UserAvatarDto;
+import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,8 @@ public interface UserService {
     Boolean isEmployee(String userEmail);
     Boolean isEmployee(int userId);
     HttpStatus createUser(UserDto user, MultipartFile file);
-    void uploadUserAvatar(UserAvatarDto avatarDto);
+
+    void uploadUserAvatar(UserAvatarFileDto avatarDto);
     ResponseEntity<?> downloadAvatar(int userId);
     List<UserDto> getEmployee(EmployeeFindDto employeeFindDto);
     List<UserDto> getEmployer(String name);
