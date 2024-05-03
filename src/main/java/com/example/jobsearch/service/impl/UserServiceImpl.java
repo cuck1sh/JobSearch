@@ -4,10 +4,10 @@ import com.example.jobsearch.dao.UserDao;
 import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.dto.user.EmployeeFindDto;
 import com.example.jobsearch.dto.user.UserAvatarDto;
+import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
-import com.example.jobsearch.model.UserAvatar;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -138,13 +138,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void uploadUserAvatar(UserAvatarDto avatarDto) {
+    public void uploadUserAvatar(UserAvatarFileDto avatarDto) {
         String filename = fileUtil.saveUploadedFile(avatarDto.getFile(), "images");
-        UserAvatar userAvatar = new UserAvatar();
-        userAvatar.setUserId(avatarDto.getUserId());
-        userAvatar.setFileName(filename);
+        UserAvatarDto userAvatarDto = new UserAvatarDto();
+        userAvatarDto.setUserId(avatarDto.getUserId());
+        userAvatarDto.setFileName(filename);
 
-        userDao.saveAvatar(userAvatar);
+        userDao.saveAvatar(userAvatarDto);
     }
 
     @SneakyThrows
@@ -195,7 +195,7 @@ public class UserServiceImpl implements UserService {
                 int newKey = userDao.createUser(user);
 
                 if (file.getOriginalFilename().length() != 0) {
-                    uploadUserAvatar(UserAvatarDto.builder()
+                    uploadUserAvatar(UserAvatarFileDto.builder()
                             .file(file)
                             .userId(newKey)
                             .build());
@@ -241,7 +241,7 @@ public class UserServiceImpl implements UserService {
 
         userDao.changeUser(user);
         if (file.getOriginalFilename().length() != 0) {
-            uploadUserAvatar(UserAvatarDto.builder()
+            uploadUserAvatar(UserAvatarFileDto.builder()
                     .file(file)
                     .userId(actualUser.getId())
                     .build());

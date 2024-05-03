@@ -1,7 +1,7 @@
 package com.example.jobsearch.dao;
 
+import com.example.jobsearch.dto.user.UserAvatarDto;
 import com.example.jobsearch.model.User;
-import com.example.jobsearch.model.UserAvatar;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -170,12 +170,12 @@ public class UserDao {
         );
     }
 
-    public void saveAvatar(UserAvatar userAvatar) {
+    public void saveAvatar(UserAvatarDto userAvatarDto) {
         String sql = """
                 update users
                 set avatar = ?
                 where id = ?;
                 """;
-        template.update(sql, userAvatar.getFileName(), userAvatar.getUserId());
+        template.update(sql, userAvatarDto.getFileName(), userAvatarDto.getUserId());
     }
 }

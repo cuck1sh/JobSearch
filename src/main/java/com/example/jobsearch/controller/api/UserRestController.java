@@ -1,6 +1,6 @@
 package com.example.jobsearch.controller.api;
 
-import com.example.jobsearch.dto.user.UserAvatarDto;
+import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.model.Category;
 import com.example.jobsearch.service.CategoryService;
@@ -61,7 +61,7 @@ public class UserRestController {
     }
 
     @PostMapping("avatar")
-    public HttpStatus uploadAvatar(@Valid UserAvatarDto avatarDto) {
+    public HttpStatus uploadAvatar(@Valid UserAvatarFileDto avatarDto) {
         userService.uploadUserAvatar(avatarDto);
         return HttpStatus.OK;
     }
