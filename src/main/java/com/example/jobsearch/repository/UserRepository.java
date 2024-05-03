@@ -2,8 +2,10 @@ package com.example.jobsearch.repository;
 
 import com.example.jobsearch.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,13 +31,26 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("select u from User u where u.email = :email")
     Optional<User> findUserByEmail(String email);
 
+    @Transactional
+    @Modifying
     @Query(value = "update users set avatar = :avatar where id = :id;", nativeQuery = true)
     void saveAvatar(String avatar, Integer id);
 
     Boolean existsByEmail(String email);
 
+    @Transactional
+    @Modifying
     @Query(value = "update users" +
             " set name = :name, surname = :surname, age = :age, phone_number = :phoneNumber" +
             " where id = :id;", nativeQuery = true)
     void updateBy(String name, String surname, Integer age, String phoneNumber, Integer id);
+
+    @Transactional
+    @Modifying
+    @Query(value = """
+            update users
+            set avatar = :avatar
+            where id = :id;
+            """, nativeQuery = true)
+    void updateAvatar(String avatar, Integer id);
 }

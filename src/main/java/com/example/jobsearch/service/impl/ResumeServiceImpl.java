@@ -155,6 +155,7 @@ public class ResumeServiceImpl implements ResumeService {
                     .salary(resumeDto.getSalary())
                     .isActive(resumeDto.getIsActive())
                     .createdDate(LocalDateTime.now())
+                    .updateTime(LocalDateTime.now())
                     .build();
 
 

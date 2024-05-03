@@ -2,8 +2,10 @@ package com.example.jobsearch.repository;
 
 import com.example.jobsearch.model.Vacancy;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +39,8 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
 
     Boolean existsByIsActiveTrueAndId(Integer id);
 
+    @Transactional
+    @Modifying
     @Query(value = """
             update vacancies
                 set name = :name, description = :description, category_id = :categoryId, salary = :salary,

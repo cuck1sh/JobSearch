@@ -24,7 +24,7 @@ spring:
       hibernate:
         generate_statistics: true
         format_sql: true
-    show-sql: true
+    show-sql: false
 
 logging:
   level:
@@ -35,8 +35,8 @@ logging:
       hibernate:
         stat: debug
         type: trace
-    sql: trace
     web: debug
+    sql: info
 
   file:
     name: logs/spring.log

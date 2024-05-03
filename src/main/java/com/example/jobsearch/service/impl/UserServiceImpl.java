@@ -196,6 +196,8 @@ public class UserServiceImpl implements UserService {
                             .file(file)
                             .userId(newUser.getId())
                             .build());
+                } else {
+                    userRepository.updateAvatar("default.png", newUser.getId());
                 }
                 return HttpStatus.OK;
             }

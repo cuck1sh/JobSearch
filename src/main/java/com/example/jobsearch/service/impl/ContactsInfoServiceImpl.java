@@ -7,12 +7,14 @@ import com.example.jobsearch.repository.ContactsInfoRepository;
 import com.example.jobsearch.service.ContactTypesService;
 import com.example.jobsearch.service.ContactsInfoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ContactsInfoServiceImpl implements ContactsInfoService {
@@ -22,18 +24,20 @@ public class ContactsInfoServiceImpl implements ContactsInfoService {
 
     @Override
     public InputContactInfoDto getContactInfoByResumeId(int resumeId) {
-        List<ContactsInfo> info = contactsInfoRepository.findContactsInfoByResumeId(resumeId);
+        List<ContactsInfo> info = contactsInfoRepository.findAllByResumeId(resumeId);
+
+        log.error("КОНТАКТ ИНФО: " + info.toString());
 
         Map<String, String> contactsMap = new HashMap<>();
 
-        info.forEach(e -> contactsMap.put(contactTypesService.getContactTypeById(e.getType().getId()).getType(), e.getInfo()));
+        info.forEach(e -> contactsMap.put(e.getType().getType(), e.getInfo()));
 
         return InputContactInfoDto.builder()
                 .phoneNumber(contactsMap.get("Phone number"))
-                .email(contactsMap.get("email"))
-                .facebook(contactsMap.get("facebook"))
-                .linkedIn(contactsMap.get("linkedIn"))
-                .telegram(contactsMap.get("telegram"))
+                .email(contactsMap.get("Email"))
+                .facebook(contactsMap.get("Facebook"))
+                .linkedIn(contactsMap.get("LinkedIn"))
+                .telegram(contactsMap.get("Telegram"))
                 .build();
     }
 

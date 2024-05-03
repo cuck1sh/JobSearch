@@ -99,7 +99,7 @@ window.addEventListener('load', () => {
             '<div class = "mb-3">' +
             '<label for="degree" class="form-label">Полученная степень:</label> ' +
             '<input class="form-control" name="educationInfos[' + eduCounter + '].degree" type="text" id="degree" required>' +
-            '</div>' +
+            '</div>'
             newEduRow.appendChild(newEduCol);
 
         let newEduButton = document.createElement('div');

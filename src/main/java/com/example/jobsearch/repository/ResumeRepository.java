@@ -2,8 +2,10 @@ package com.example.jobsearch.repository;
 
 import com.example.jobsearch.model.Resume;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +22,8 @@ public interface ResumeRepository extends JpaRepository<Resume, Integer> {
 
     Integer countAllByIsActiveTrue();
 
+    @Transactional
+    @Modifying
     @Query(value = "update resumes" +
             " set name = :name, category_id = :categoryId, salary = :salary, is_active = :isActive, update_time = :updateTime" +
             " where id = :id;", nativeQuery = true)
