@@ -1,9 +1,9 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dao.CategoryDao;
 import com.example.jobsearch.dto.CategoryDto;
 import com.example.jobsearch.exception.CategoryNotFoundException;
 import com.example.jobsearch.model.Category;
+import com.example.jobsearch.repository.CategoryRepository;
 import com.example.jobsearch.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -16,18 +16,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private final CategoryDao categoryDao;
+
+    private final CategoryRepository categoryRepository;
 
     @SneakyThrows
     @Override
     public CategoryDto getCategoryById(Integer id) {
         if (id != null) {
-            Category category = categoryDao.getCategoryById(id)
+            Category category = categoryRepository.findById(id)
                     .orElseThrow(() -> new CategoryNotFoundException("Can not find category with id:" + id));
 
             return CategoryDto.builder()
                     .id(category.getId())
-                    .parent(getParentCategory(category.getParentId()))
+                    .parent(getParentCategory(category.getParent()))
                     .name(category.getName())
                     .build();
         } else {
@@ -39,20 +40,22 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public String getParentCategory(Object entry) {
         if (entry != null) {
-            int id = (int) entry;
-            return categoryDao.getParentCategory(id);
+            Category category = (Category) entry;
+            return categoryRepository.findById(category.getId())
+                    .orElseThrow(() -> new CategoryNotFoundException("Can not find parent category with id:" + category.getId()))
+                    .getName();
         }
         return null;
     }
 
     @Override
     public List<Category> getAllCategories() {
-        return categoryDao.getAllCategories();
+        return categoryRepository.findAll();
     }
 
     @Override
     public Integer checkInCategories(int categoryId) {
-        if (categoryDao.isCategoryInSystem(categoryId)) {
+        if (categoryRepository.existsById(categoryId)) {
             return categoryId;
         } else {
             log.error("Не найдена категория с айди: " + categoryId);
@@ -67,8 +70,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Integer getCategoryByName(String category) {
-        if (categoryDao.isCategoryInSystem(category)) {
-            return categoryDao.getCategoryByName(category);
+        if (categoryRepository.existsCategoryByName(category)) {
+            return categoryRepository.findCategoryByName(category)
+                    .orElseThrow(() -> new CategoryNotFoundException("Can not find category:" + category))
+                    .getId();
         } else {
             log.error("Не найдена категория: " + category);
             return null;

@@ -42,7 +42,7 @@
         </div>
     </form>
 
-    <script src="/js/messenger.js"></script>
+    <script src="/static/js/messenger.js"></script>
 
 
 
