@@ -17,8 +17,6 @@
         </ul>
     </div>
 
-    <@p.pager url page />
-
     <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
         <#list page.content as vacancy>
             <div class="col">

@@ -24,7 +24,7 @@ public class MainController {
 
     @GetMapping
     public String getMainPage(Model model,
-                              @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                              @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                               @RequestParam(name = "filter", required = false, defaultValue = "none") String category
     ) {
 
