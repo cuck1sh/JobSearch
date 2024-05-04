@@ -18,11 +18,23 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
 
     Integer countAllByIsActiveTrue();
 
+    Integer countAllByIsActiveTrueAndCategory_Id(Integer categoryId);
     Integer countAllByIsActiveTrueAndCategoryId(Integer categoryId);
 
-    Page<Vacancy> findAll(Pageable pageable);
+    Integer countAllByIdAndRespondedApplicants_VacancyId(Integer id, Integer vacancyId);
 
-    Page<Vacancy> findAllByCategory_Id(Integer categoryId, Pageable pageable);
+    Page<Vacancy> findAllByIsActiveTrue(Pageable pageable);
+
+    Page<Vacancy> findAllByIsActiveTrueAndCategory_Id(Integer categoryId, Pageable pageable);
+
+    @Query("""
+            select v from Vacancy v
+                inner join RespondedApplicants ra on v.id = ra.vacancy.id
+            where v.category.id = :categoryId
+            order by count(ra.vacancy.id) desc
+            """)
+    Page<Vacancy> getPagedFilteredAndSorted(Integer categoryId, Pageable pageable);
+
 
     @Query(value = """
             select * from VACANCIES

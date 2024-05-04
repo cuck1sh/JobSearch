@@ -4,15 +4,43 @@
 
     <h1 class="text-center text-danger mb-1">Вакансии:</h1>
 
-    <div class="dropdown d-flex justify-content-center mb-2">
-        <button class="btn btn-offset-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+    <div class="dropdown d-flex justify-content-center m-3">
+        <button class="btn border me-2 dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+            SORT: Кол-во откликов
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">none</a></li>
+            <li><a class="dropdown-item"
+                   href="?page=0&size=#{page.getSize()}&sort=RespondedApplicantsVacancyId,desc&filter=${filter}">По
+                    убыванию</a></li>
+            <li><a class="dropdown-item"
+                   href="?page=0&size=#{page.getSize()}&sort=RespondedApplicantsVacancyId,asc&filter=${filter}">По
+                    возрастанию</a></li>
+        </ul>
+
+        <button class="btn border me-2 dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+            SORT: Дата создания
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">none</a></li>
+            <li><a class="dropdown-item" href="?page=0&size=#{page.getSize()}&sort=CreatedDate,desc&filter=${filter}">Новые</a>
+            </li>
+            <li><a class="dropdown-item" href="?page=0&size=#{page.getSize()}&sort=CreatedDate,asc&filter=${filter}">Старые</a>
+            </li>
+        </ul>
+
+        <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
             Выберите категорию
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/">none</a></li>
             <#list categories as category>
-                <li><a class="dropdown-item" href="?filter=${category.name}">${category.name}</a></li>
+                <li><a class="dropdown-item"
+                       href="?page=0&size=#{page.getSize()}&sort=${sort}&filter=${category.name}">${category.name}</a>
+                </li>
             </#list>
         </ul>
     </div>
@@ -50,24 +78,6 @@
         </#list>
     </div>
 
-    <@p.pager url page />
-
-<#--    <nav aria-label="Page navigation example" class="d-flex my-4 justify-content-center">-->
-<#--        <ul class="pagination">-->
-<#--            <li class="page-item">-->
-<#--                <a class="page-link" href="#" aria-label="Previous">-->
-<#--                    <span aria-hidden="true">&laquo;</span>-->
-<#--                </a>-->
-<#--            </li>-->
-<#--            <li class="page-item"><a class="page-link" href="?page=0&pageSize=5">1</a></li>-->
-<#--            <li class="page-item"><a class="page-link" href="?page=1&pageSize=5">2</a></li>-->
-<#--            <li class="page-item"><a class="page-link" href="?page=2&pageSize=5">3</a></li>-->
-<#--            <li class="page-item">-->
-<#--                <a class="page-link" href="#" aria-label="Next">-->
-<#--                    <span aria-hidden="true">&raquo;</span>-->
-<#--                </a>-->
-<#--            </li>-->
-<#--        </ul>-->
-<#--    </nav>-->
+    <@p.pager url page filter sort/>
 
 </@main.layout>

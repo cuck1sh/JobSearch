@@ -91,24 +91,21 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public Page<VacancyDto> getVacanciesWithPaging(Pageable pageable, String category) {
-
-        Page<Vacancy> vacancies = category.equals("none")
-                ? vacancyRepository.findAll(pageable)
-                : vacancyRepository.findAllByCategory_Id(categoryService.checkInCategories(category), pageable);
-
-        log.error("SERVICE VACANCIES TOTAL PAGES: {}", vacancies.getTotalPages());
-        log.error("SERVICE VACANCIES pageable: {}", pageable);
+        Page<Vacancy> vacancies;
 
 
-        List<VacancyDto> vacancyDtos = getVacancyDtos(vacancies.getContent());
+        if (category.equals("none")) {
+            vacancies = vacancyRepository.findAllByIsActiveTrue(pageable);
 
+            List<VacancyDto> vacancyDtos = getVacancyDtos(vacancies.getContent());
+            return new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByIsActiveTrue());
+        } else {
+            Integer categoryId = categoryService.checkInCategories(category);
+            vacancies = vacancyRepository.findAllByIsActiveTrueAndCategory_Id(categoryId, pageable);
 
-        var page = new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByIsActiveTrue());
-
-        log.error("SERVICE PAGE TOTAL PAGES: {}", page.getTotalPages());
-        log.error("SERVICE PAGE pageable: {}", pageable);
-
-        return page;
+            List<VacancyDto> vacancyDtos = getVacancyDtos(vacancies.getContent());
+            return new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByIsActiveTrueAndCategory_Id(categoryId));
+        }
     }
 
     @Override
@@ -135,7 +132,9 @@ public class VacancyServiceImpl implements VacancyService {
                 .userEmail(e.getUser().getEmail())
                 .createdDate(e.getCreatedDate())
                 .updateTime(e.getUpdateTime())
+                .responseQty(vacancyRepository.countAllByIdAndRespondedApplicants_VacancyId(e.getId(), e.getId()))
                 .build()));
+
         return dtos;
     }
 

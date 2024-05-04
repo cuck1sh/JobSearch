@@ -1,4 +1,4 @@
-<#macro pager url page>
+<#macro pager url page filter sort>
     <#if page.getTotalPages() gt 7>
         <#assign
         totalPages = page.getTotalPages()
@@ -14,10 +14,12 @@
     <#else>
         <#assign body = 1..page.getTotalPages()>
     </#if>
+
     <div class="mt-3">
         <ul class="pagination justify-content-center">
             <li class="page-item">
-                <a class="page-link" href="${url}?page=${page.getNumber() - 1}&size=#{page.getSize()}"
+                <a class="page-link"
+                   href="${url}?page=${page.getNumber() - 1}&size=#{page.getSize()}&sort=${sort}&filter=${filter}"
                    aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
@@ -33,12 +35,14 @@
                     </li>
                 <#else>
                     <li class="page-item">
-                        <a class="page-link" href="${url}?page=${p - 1}&size=#{page.getSize()}">${p}</a>
+                        <a class="page-link"
+                           href="${url}?page=${p - 1}&size=${page.getSize()}&sort=${sort}&filter=${filter}">${p}</a>
                     </li>
                 </#if>
             </#list>
             <li class="page-item">
-                <a class="page-link" href="${url}?page=${page.getNumber() + 1}&size=#{page.getSize()}"
+                <a class="page-link"
+                   href="${url}?page=${page.getNumber() + 1}&size=#{page.getSize()}&sort=${sort}&filter=${filter}"
                    aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>

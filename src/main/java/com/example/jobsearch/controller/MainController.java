@@ -29,8 +29,17 @@ public class MainController {
     ) {
 
         model.addAttribute("page", vacancyService.getVacanciesWithPaging(pageable, category));
+        model.addAttribute("filter", category);
         model.addAttribute("url", "/");
         model.addAttribute("categories", categoryService.getAllCategories());
+
+        String sort;
+        StringBuilder sb = new StringBuilder();
+        pageable.getSort().forEach(e -> sb.append(e.getProperty()).append(",").append(e.getDirection()));
+        sort = sb.toString();
+
+        model.addAttribute("sort", sort);
+
         return "main/index";
     }
 
