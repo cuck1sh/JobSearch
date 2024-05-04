@@ -4,6 +4,8 @@ import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.UserNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -29,7 +31,7 @@ public interface VacancyService {
 
     UserDto getUserByVacancy(int vacancyId);
 
-    List<VacancyDto> getVacanciesWithPaging(Integer page, Integer pageSize, String category);
+    Page<VacancyDto> getVacanciesWithPaging(Pageable pageable, String category);
 
     Integer getVacanciesCount();
 

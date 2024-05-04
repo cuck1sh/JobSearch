@@ -1,4 +1,4 @@
-<#import  "layout.ftlh" as main>
+<#import  "../layout.ftlh" as main>
 <@main.layout>
 
     <form action="/api/auth/login" method="post" class="mx-auto w-25 mt-5" id="form">

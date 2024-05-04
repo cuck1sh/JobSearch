@@ -1,4 +1,5 @@
-<#import  "layout.ftlh" as main>
+<#import  "../layout.ftlh" as main>
+<#import "../pager.ftlh" as p>
 <@main.layout>
 
     <h1 class="text-center text-danger mb-1">Вакансии:</h1>
@@ -16,8 +17,10 @@
         </ul>
     </div>
 
+    <@p.pager url page />
+
     <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-        <#list vacancies as vacancy>
+        <#list page.content as vacancy>
             <div class="col">
                 <div class="card h-100">
                     <div class="card-body">
@@ -49,22 +52,24 @@
         </#list>
     </div>
 
-    <nav aria-label="Page navigation example" class="d-flex my-4 justify-content-center">
-        <ul class="pagination">
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item"><a class="page-link" href="?page=0&pageSize=5">1</a></li>
-            <li class="page-item"><a class="page-link" href="?page=1&pageSize=5">2</a></li>
-            <li class="page-item"><a class="page-link" href="?page=2&pageSize=5">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <@p.pager url page />
+
+<#--    <nav aria-label="Page navigation example" class="d-flex my-4 justify-content-center">-->
+<#--        <ul class="pagination">-->
+<#--            <li class="page-item">-->
+<#--                <a class="page-link" href="#" aria-label="Previous">-->
+<#--                    <span aria-hidden="true">&laquo;</span>-->
+<#--                </a>-->
+<#--            </li>-->
+<#--            <li class="page-item"><a class="page-link" href="?page=0&pageSize=5">1</a></li>-->
+<#--            <li class="page-item"><a class="page-link" href="?page=1&pageSize=5">2</a></li>-->
+<#--            <li class="page-item"><a class="page-link" href="?page=2&pageSize=5">3</a></li>-->
+<#--            <li class="page-item">-->
+<#--                <a class="page-link" href="#" aria-label="Next">-->
+<#--                    <span aria-hidden="true">&raquo;</span>-->
+<#--                </a>-->
+<#--            </li>-->
+<#--        </ul>-->
+<#--    </nav>-->
 
 </@main.layout>

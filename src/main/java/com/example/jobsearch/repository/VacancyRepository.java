@@ -1,6 +1,8 @@
 package com.example.jobsearch.repository;
 
 import com.example.jobsearch.model.Vacancy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +19,10 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
     Integer countAllByIsActiveTrue();
 
     Integer countAllByIsActiveTrueAndCategoryId(Integer categoryId);
+
+    Page<Vacancy> findAll(Pageable pageable);
+
+    Page<Vacancy> findAllByCategory_Id(Integer categoryId, Pageable pageable);
 
     @Query(value = """
             select * from VACANCIES

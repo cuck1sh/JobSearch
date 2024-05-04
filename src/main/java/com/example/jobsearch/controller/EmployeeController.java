@@ -82,7 +82,7 @@ public class EmployeeController {
     public String getMessenger(@PathVariable int resumeId, @PathVariable int vacancyId, Model model) {
         RespondMessengerDto messengerDto = respondedApplicantsService.getRespondMessenger(FileUtil.TEST_RESUME_ID, FileUtil.TEST_VACANCY_ID);
         model.addAttribute("messenger", messengerDto);
-        return "messenger";
+        return "pages/messenger";
     }
 
 }

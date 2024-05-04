@@ -1,4 +1,4 @@
-<#import  "layout.ftlh" as main>
+<#import  "../layout.ftlh" as main>
 <@main.layout>
 
     <form id="form">

@@ -24,18 +24,6 @@ public class UserController {
     private final UserService userService;
     private final ProfileService profileService;
 
-    @GetMapping("register")
-    public String createUser() {
-        return "user/register";
-    }
-
-    @PostMapping("register")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String createUser(UserDto user, @RequestParam(name = "file") MultipartFile file) {
-        userService.createUser(user, file);
-        return "redirect: /";
-    }
-
     @GetMapping("profile")
     public String getProfile(Model model) {
         profileService.getProfile(model);
@@ -58,11 +46,6 @@ public class UserController {
     public String updateUser(UserDto user, @RequestParam(name = "file") MultipartFile file) {
         userService.updateUser(user, file);
         return "redirect:/users/profile";
-    }
-
-    @GetMapping("login")
-    public String login() {
-        return "/login";
     }
 
 }

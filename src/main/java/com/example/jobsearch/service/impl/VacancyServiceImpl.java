@@ -16,6 +16,9 @@ import com.example.jobsearch.service.VacancyService;
 import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -87,43 +90,25 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> getVacanciesWithPaging(Integer page, Integer pageSize, String category) {
-        int count;
-        int totalPages;
-        int offset;
-        List<Vacancy> vacancies;
+    public Page<VacancyDto> getVacanciesWithPaging(Pageable pageable, String category) {
 
-        if (category.equals("none")) {
-            count = getVacanciesCount();
-            totalPages = count / pageSize;
+        Page<Vacancy> vacancies = category.equals("none")
+                ? vacancyRepository.findAll(pageable)
+                : vacancyRepository.findAllByCategory_Id(categoryService.checkInCategories(category), pageable);
 
-            if (totalPages <= page) {
-                page = totalPages;
-            } else if (page < 0) {
-                page = 0;
-            }
+        log.error("SERVICE VACANCIES TOTAL PAGES: {}", vacancies.getTotalPages());
+        log.error("SERVICE VACANCIES pageable: {}", pageable);
 
-            offset = page * pageSize;
 
-            vacancies = vacancyRepository.findPagedVacancies(pageSize, offset);
-        } else {
-            int categoryId = categoryService.checkInCategories(category);
+        List<VacancyDto> vacancyDtos = getVacancyDtos(vacancies.getContent());
 
-            count = getVacanciesWithCategoryCount(categoryId);
-            totalPages = count / pageSize;
 
-            if (totalPages <= page) {
-                page = totalPages;
-            } else if (page < 0) {
-                page = 0;
-            }
+        var page = new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByIsActiveTrue());
 
-            offset = page * pageSize;
+        log.error("SERVICE PAGE TOTAL PAGES: {}", page.getTotalPages());
+        log.error("SERVICE PAGE pageable: {}", pageable);
 
-            vacancies = vacancyRepository.findPagedVacanciesWithCategory(pageSize, offset, categoryId);
-        }
-
-        return getVacancyDtos(vacancies);
+        return page;
     }
 
     @Override
