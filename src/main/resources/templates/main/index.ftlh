@@ -12,10 +12,10 @@
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">none</a></li>
             <li><a class="dropdown-item"
-                   href="?page=0&size=#{page.getSize()}&sort=RespondedApplicantsVacancyId,desc&filter=${filter}">По
+                   href="${url}?page=0&size=#{page.getSize()}&sort=RespondedApplicantsVacancyId,desc&filter=${filter}">По
                     убыванию</a></li>
             <li><a class="dropdown-item"
-                   href="?page=0&size=#{page.getSize()}&sort=RespondedApplicantsVacancyId,asc&filter=${filter}">По
+                   href="${url}?page=0&size=#{page.getSize()}&sort=RespondedApplicantsVacancyId,asc&filter=${filter}">По
                     возрастанию</a></li>
         </ul>
 
@@ -25,9 +25,11 @@
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">none</a></li>
-            <li><a class="dropdown-item" href="?page=0&size=#{page.getSize()}&sort=CreatedDate,desc&filter=${filter}">Новые</a>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=CreatedDate,desc&filter=${filter}">Новые</a>
             </li>
-            <li><a class="dropdown-item" href="?page=0&size=#{page.getSize()}&sort=CreatedDate,asc&filter=${filter}">Старые</a>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=CreatedDate,asc&filter=${filter}">Старые</a>
             </li>
         </ul>
 
@@ -36,10 +38,10 @@
             Выберите категорию
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/">none</a></li>
+            <li><a class="dropdown-item" href="${url}?page=0&size=#{page.getSize()}&sort=${sort}">none</a></li>
             <#list categories as category>
                 <li><a class="dropdown-item"
-                       href="?page=0&size=#{page.getSize()}&sort=${sort}&filter=${category.name}">${category.name}</a>
+                       href="${url}?page=0&size=#{page.getSize()}&sort=${sort}&filter=${category.name}">${category.name}</a>
                 </li>
             </#list>
         </ul>

@@ -1,10 +1,54 @@
 <#import  "../layout.ftlh" as main>
+<#import "../pager.ftlh" as p>
 <@main.layout>
 
-    <h1 class="text-center text-danger mb-3">Резюме:</h1>
+    <h1 class="text-center text-danger mb-1">Резюме:</h1>
+
+    <div class="dropdown d-flex justify-content-center m-3">
+        <button class="btn border me-2 dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+            SORT: Кол-во откликов
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">none</a></li>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=RespondedApplicantsResumeId,desc&filter=${filter}">По
+                    убыванию</a></li>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=RespondedApplicantsResumeId,asc&filter=${filter}">По
+                    возрастанию</a></li>
+        </ul>
+
+        <button class="btn border me-2 dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+            SORT: Дата создания
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">none</a></li>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=CreatedDate,desc&filter=${filter}">Новые</a>
+            </li>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=CreatedDate,asc&filter=${filter}">Старые</a>
+            </li>
+        </ul>
+
+        <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+            Выберите категорию
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="${url}?page=0&size=#{page.getSize()}&sort=${sort}">none</a></li>
+            <#list categories as category>
+                <li><a class="dropdown-item"
+                       href="?page=0&size=#{page.getSize()}&sort=${sort}&filter=${category.name}">${category.name}</a>
+                </li>
+            </#list>
+        </ul>
+    </div>
 
     <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-        <#list resumes as resume>
+        <#list page.content as resume>
             <div class="col">
                 <div class="card h-100">
                     <div class="card-body">
@@ -36,22 +80,24 @@
         </#list>
     </div>
 
-    <nav aria-label="Page navigation example" class="d-flex my-4 justify-content-center">
-        <ul class="pagination">
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item"><a class="page-link" href="/employer/resumes?page=0&pageSize=5">1</a></li>
-            <li class="page-item"><a class="page-link" href="/employer/resumes?page=1&pageSize=5">2</a></li>
-            <li class="page-item"><a class="page-link" href="/employer/resumes?page=2&pageSize=5">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <@p.pager url page filter sort/>
+
+<#--    <nav aria-label="Page navigation example" class="d-flex my-4 justify-content-center">-->
+<#--        <ul class="pagination">-->
+<#--            <li class="page-item">-->
+<#--                <a class="page-link" href="#" aria-label="Previous">-->
+<#--                    <span aria-hidden="true">&laquo;</span>-->
+<#--                </a>-->
+<#--            </li>-->
+<#--            <li class="page-item"><a class="page-link" href="/employer/resumes?page=0&pageSize=5">1</a></li>-->
+<#--            <li class="page-item"><a class="page-link" href="/employer/resumes?page=1&pageSize=5">2</a></li>-->
+<#--            <li class="page-item"><a class="page-link" href="/employer/resumes?page=2&pageSize=5">3</a></li>-->
+<#--            <li class="page-item">-->
+<#--                <a class="page-link" href="#" aria-label="Next">-->
+<#--                    <span aria-hidden="true">&raquo;</span>-->
+<#--                </a>-->
+<#--            </li>-->
+<#--        </ul>-->
+<#--    </nav>-->
 
 </@main.layout>

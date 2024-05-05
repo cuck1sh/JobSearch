@@ -16,6 +16,10 @@ import java.util.List;
 public interface ResumeRepository extends JpaRepository<Resume, Integer> {
     List<Resume> findAllByIsActiveTrue();
 
+    Page<Resume> findAllByIsActiveTrue(Pageable pageable);
+
+    Page<Resume> findAllByIsActiveTrueAndCategory_Id(Integer categoryId, Pageable pageable);
+
     List<Resume> findAllByCategoryNameAndIsActiveTrue(String category);
 
     List<Resume> findAllByUserIdAndIsActiveTrue(Integer id);
@@ -27,6 +31,8 @@ public interface ResumeRepository extends JpaRepository<Resume, Integer> {
     Boolean existsByUserId(Integer userId);
 
     Integer countAllByIsActiveTrue();
+
+    Integer countAllByIsActiveTrueAndCategory_Id(Integer categoryId);
 
     @Transactional
     @Modifying

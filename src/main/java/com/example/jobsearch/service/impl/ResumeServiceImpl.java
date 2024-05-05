@@ -112,21 +112,21 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public List<ResumeDto> getResumesWithPaging(Integer page, Integer pageSize) {
-        int count = getResumesCount();
-        int totalPages = count / pageSize;
+    public Page<ResumeDto> getResumesWithPaging(Pageable pageable, String filter) {
+        Page<Resume> resumes;
 
-        if (totalPages <= page) {
-            page = totalPages;
-        } else if (page < 0) {
-            page = 0;
+        if (filter.equals("none")) {
+            resumes = repository.findAllByIsActiveTrue(pageable);
+
+            List<ResumeDto> resumeDtos = getResumeDtos(resumes.getContent());
+            return new PageImpl<>(resumeDtos, pageable, repository.countAllByIsActiveTrue());
+        } else {
+            Integer categoryId = categoryService.checkInCategories(filter);
+            resumes = repository.findAllByIsActiveTrueAndCategory_Id(categoryId, pageable);
+
+            List<ResumeDto> resumeDtos = getResumeDtos(resumes.getContent());
+            return new PageImpl<>(resumeDtos, pageable, repository.countAllByIsActiveTrueAndCategory_Id(categoryId));
         }
-
-        int offset = page * pageSize;
-
-        List<Resume> resumes = repository.findPagedResumes(pageSize, offset);
-
-        return getResumeDtos(resumes);
     }
 
 

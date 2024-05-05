@@ -94,7 +94,6 @@ public class VacancyServiceImpl implements VacancyService {
     public Page<VacancyDto> getVacanciesWithPaging(Pageable pageable, String category) {
         Page<Vacancy> vacancies;
 
-
         if (category.equals("none")) {
             vacancies = vacancyRepository.findAllByIsActiveTrue(pageable);
 

@@ -5,6 +5,9 @@ import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,12 +55,20 @@ public class EmployerController {
 
     @GetMapping("resumes")
     public String getMainPage(Model model,
-                              @RequestParam(name = "page", defaultValue = "0") Integer page,
-                              @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize
+                              @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                              @RequestParam(name = "filter", required = false, defaultValue = "none") String category
     ) {
-        model.addAttribute("resumes", resumeService.getResumesWithPaging(page, pageSize));
-        model.addAttribute("page", page);
-        model.addAttribute("resumesCount", resumeService.getResumesCount());
+        model.addAttribute("page", resumeService.getResumesWithPaging(pageable, category));
+        model.addAttribute("filter", category);
+        model.addAttribute("url", "/employer/resumes");
+        model.addAttribute("categories", categoryService.getAllCategories());
+
+        String sort;
+        StringBuilder sb = new StringBuilder();
+        pageable.getSort().forEach(e -> sb.append(e.getProperty()).append(",").append(e.getDirection()));
+        sort = sb.toString();
+
+        model.addAttribute("sort", sort);
         return "employer/resumes";
     }
 

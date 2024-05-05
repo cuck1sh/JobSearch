@@ -19,9 +19,7 @@ public interface ResumeService {
     ResumeDto getResumeById(int id) throws UserNotFoundException;
     List<ResumeDto> getResumesByCategory(String category);
     List<ResumeDto> getResumesByUserId(int id);
-
     Page<UserMainItem> getResumeMainItem(Integer userId, Pageable pageable);
-
     void createResume(InputResumeDto resumeDto);
     Boolean isResumeInSystem(int id);
     Boolean isUsersResumesInSystem(int userId);
@@ -29,6 +27,7 @@ public interface ResumeService {
     List<ResumeDto> getActiveResumes();
     void changeResume(InputResumeDto resume, InputContactInfoDto contacts);
     void getResume(int id, Model model);
-    List<ResumeDto> getResumesWithPaging(Integer page, Integer pageSize);
+
+    Page<ResumeDto> getResumesWithPaging(Pageable pageable, String filter);
     Integer getResumesCount();
 }

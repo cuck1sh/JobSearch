@@ -61,13 +61,6 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (userService.isEmployee(user.getEmail())) {
             if (resumeService.isUsersResumesInSystem(user.getId())) {
-//                List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
-//                List<UserMainItem> resumeDtos = new ArrayList<>();
-//                resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
-//                        .id(e.getId())
-//                        .name(e.getName())
-//                        .timestamp(e.getUpdateTime())
-//                        .build()));
 
                 model.addAttribute("page", resumeService.getResumeMainItem(user.getId(), pageable));
                 model.addAttribute("responsesQuantity", respondedApplicantsService.getResponsesForEmployee(user.getId()).size());
@@ -76,14 +69,6 @@ public class ProfileServiceImpl implements ProfileService {
             }
         } else {
             if (vacancyService.isUsersVacanciesInSystem(user.getId())) {
-//                var vacancies = vacancyService.getAllVacanciesByCompany(user.getId());
-//                List<UserMainItem> vacanciesDtos = new ArrayList<>();
-//                vacancies.forEach(e -> vacanciesDtos.add(UserMainItem.builder()
-//                        .id(e.getId())
-//                        .name(e.getName())
-//                        .timestamp(e.getUpdateTime())
-//                        .build()));
-
                 model.addAttribute("page", vacancyService.getVacancyMainItem(user.getId(), pageable));
             }
         }
