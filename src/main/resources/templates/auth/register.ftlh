@@ -2,7 +2,7 @@
 <@main.layout>
 
     <div class="w-50 p-4 mx-auto border rounded-2 mb-4">
-        <form action="/users/register" method="post" enctype="multipart/form-data">
+        <form action="/auth/register" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="account_type" class="form-label">Укажите тип вашего аккаунта: соискатель или
                     работодатель</label>

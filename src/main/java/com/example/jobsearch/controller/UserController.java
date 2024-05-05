@@ -5,6 +5,9 @@ import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,14 +28,23 @@ public class UserController {
     private final ProfileService profileService;
 
     @GetMapping("profile")
-    public String getProfile(Model model) {
-        profileService.getProfile(model);
+    public String getProfile(
+            @PageableDefault(size = 3, sort = "CreatedDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(name = "filter", required = false, defaultValue = "none") String filter,
+            Model model
+    ) {
+        profileService.getProfile(pageable, filter, model);
         return "user/profile";
     }
 
     @GetMapping("profile/{email}")
-    public String viewProfile(@PathVariable String email, Model model) {
-        profileService.getProfile(email, model);
+    public String viewProfile(
+            @PathVariable String email,
+            @PageableDefault(size = 3, sort = "CreatedDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(name = "filter", required = false, defaultValue = "none") String filter,
+            Model model
+    ) {
+        profileService.getProfile(email, pageable, filter, model);
         return "user/decorationProfile";
     }
 

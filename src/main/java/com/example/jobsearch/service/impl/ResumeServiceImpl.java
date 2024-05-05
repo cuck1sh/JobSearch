@@ -4,6 +4,7 @@ import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Category;
@@ -19,6 +20,9 @@ import com.example.jobsearch.service.WorkExperienceInfoService;
 import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -86,6 +90,20 @@ public class ResumeServiceImpl implements ResumeService {
             return getResumeDtos(resumes);
         }
         throw new ResumeNotFoundException("Can not find resume with user id: " + id);
+    }
+
+    @Override
+    public Page<UserMainItem> getResumeMainItem(Integer userId, Pageable pageable) {
+        Page<Resume> pagedResumes = repository.findAllByUserId(userId, pageable);
+        List<UserMainItem> resumeDtos = new ArrayList<>();
+        pagedResumes.getContent().forEach(e -> resumeDtos.add(UserMainItem.builder()
+                .id(e.getId())
+                .name(e.getName())
+                .timestamp(e.getUpdateTime())
+                .build()));
+
+
+        return new PageImpl<>(resumeDtos, pageable, repository.countByUserId(userId));
     }
 
     @Override

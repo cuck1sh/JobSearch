@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
@@ -106,6 +107,20 @@ public class VacancyServiceImpl implements VacancyService {
             List<VacancyDto> vacancyDtos = getVacancyDtos(vacancies.getContent());
             return new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByIsActiveTrueAndCategory_Id(categoryId));
         }
+    }
+
+
+    @Override
+    public Page<UserMainItem> getVacancyMainItem(Integer userId, Pageable pageable) {
+        Page<Vacancy> pagedVacancies = vacancyRepository.findAllByUserId(userId, pageable);
+        List<UserMainItem> vacancyDtos = new ArrayList<>();
+        pagedVacancies.getContent().forEach(e -> vacancyDtos.add(UserMainItem.builder()
+                .id(e.getId())
+                .name(e.getName())
+                .timestamp(e.getUpdateTime())
+                .build()));
+
+        return new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByUserId(userId));
     }
 
     @Override

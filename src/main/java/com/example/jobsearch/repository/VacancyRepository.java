@@ -23,6 +23,10 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
 
     Integer countAllByIdAndRespondedApplicants_VacancyId(Integer id, Integer vacancyId);
 
+    Integer countAllByUserId(Integer userId);
+
+    Page<Vacancy> findAllByUserId(Integer id, Pageable pageable);
+
     Page<Vacancy> findAllByIsActiveTrue(Pageable pageable);
 
     Page<Vacancy> findAllByIsActiveTrueAndCategory_Id(Integer categoryId, Pageable pageable);

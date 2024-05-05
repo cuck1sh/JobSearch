@@ -1,6 +1,7 @@
 package com.example.jobsearch.service;
 
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -19,12 +20,14 @@ public interface VacancyService {
     Boolean isVacancyInSystem(int id);
     Boolean isUsersVacanciesInSystem(int userId);
     Boolean isVacancyActive(int vacancyId);
-
     void createVacancy(InputVacancyDto vacancy);
-
     void changeVacancy(InputVacancyDto vacancy);
     HttpStatus delete(Authentication auth, int id);
     List<VacancyDto> getAllVacanciesByCompany(int userId);
+
+    Page<UserMainItem> getVacancyMainItem(Integer userId, Pageable pageable);
+
+
     List<VacancyDto> getVacanciesByCategory(String category);
     List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category);
     void getVacancy(int id, Model model);

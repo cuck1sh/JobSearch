@@ -1,9 +1,7 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.ProfileDto;
 import com.example.jobsearch.dto.user.UserDto;
-import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.RespondedApplicantsService;
@@ -12,13 +10,11 @@ import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -30,23 +26,25 @@ public class ProfileServiceImpl implements ProfileService {
     private final RespondedApplicantsService respondedApplicantsService;
 
     @Override
-    public void getProfile(String email, Model model) {
+    public void getProfile(String email, Pageable pageable, String filter, Model model) {
         UserDto user = userService.getUserByEmail(email);
-        putProfileInModel(user, model);
+        putProfileInModel(user, pageable, filter, model);
+        model.addAttribute("url", "/users/profile/" + email);
     }
 
     @Override
-    public void getProfile(Model model) {
+    public void getProfile(Pageable pageable, String filter, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             UserDto user = userService.getUserByEmail(auth.getName());
-            putProfileInModel(user, model);
+            putProfileInModel(user, pageable, filter, model);
+            model.addAttribute("url", "/users/profile");
         } else {
             throw new UserNotFoundException("Не найден пользователь для профиля");
         }
     }
 
-    private void putProfileInModel(UserDto user, Model model) {
+    private void putProfileInModel(UserDto user, Pageable pageable, String filter, Model model) {
         String userName = userService.isEmployee(user.getId()) ? String.join(" ", user.getName(), user.getSurname()) : user.getName();
 
         ProfileDto profileDto = ProfileDto.builder()
@@ -63,29 +61,39 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (userService.isEmployee(user.getEmail())) {
             if (resumeService.isUsersResumesInSystem(user.getId())) {
-                List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
-                List<UserMainItem> resumeDtos = new ArrayList<>();
-                resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
-                        .id(e.getId())
-                        .name(e.getName())
-                        .timestamp(e.getUpdateTime())
-                        .build()));
-                model.addAttribute("userMainItems", resumeDtos.reversed());
+//                List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
+//                List<UserMainItem> resumeDtos = new ArrayList<>();
+//                resumes.forEach(e -> resumeDtos.add(UserMainItem.builder()
+//                        .id(e.getId())
+//                        .name(e.getName())
+//                        .timestamp(e.getUpdateTime())
+//                        .build()));
+
+                model.addAttribute("page", resumeService.getResumeMainItem(user.getId(), pageable));
                 model.addAttribute("responsesQuantity", respondedApplicantsService.getResponsesForEmployee(user.getId()).size());
             } else {
                 model.addAttribute("responsesQuantity", 0);
             }
         } else {
             if (vacancyService.isUsersVacanciesInSystem(user.getId())) {
-                var vacancies = vacancyService.getAllVacanciesByCompany(user.getId());
-                List<UserMainItem> vacanciesDtos = new ArrayList<>();
-                vacancies.forEach(e -> vacanciesDtos.add(UserMainItem.builder()
-                        .id(e.getId())
-                        .name(e.getName())
-                        .timestamp(e.getUpdateTime())
-                        .build()));
-                model.addAttribute("userMainItems", vacanciesDtos.reversed());
+//                var vacancies = vacancyService.getAllVacanciesByCompany(user.getId());
+//                List<UserMainItem> vacanciesDtos = new ArrayList<>();
+//                vacancies.forEach(e -> vacanciesDtos.add(UserMainItem.builder()
+//                        .id(e.getId())
+//                        .name(e.getName())
+//                        .timestamp(e.getUpdateTime())
+//                        .build()));
+
+                model.addAttribute("page", vacancyService.getVacancyMainItem(user.getId(), pageable));
             }
         }
+
+        String sort;
+        StringBuilder sb = new StringBuilder();
+        pageable.getSort().forEach(e -> sb.append(e.getProperty()).append(",").append(e.getDirection()));
+        sort = sb.toString();
+
+        model.addAttribute("sort", sort);
+        model.addAttribute("filter", filter);
     }
 }

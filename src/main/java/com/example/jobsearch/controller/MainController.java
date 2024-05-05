@@ -48,9 +48,4 @@ public class MainController {
         vacancyService.getVacancy(id, model);
         return "employer/vacancy";
     }
-
-    @GetMapping("login")
-    public String getTestLogin() {
-        return "auth/login";
-    }
 }

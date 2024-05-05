@@ -4,7 +4,6 @@ import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.service.CategoryService;
-import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.util.FileUtil;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class EmployeeController {
     private final ResumeService resumeService;
     private final CategoryService categoryService;
-    private final ProfileService profileService;
     private final RespondedApplicantsService respondedApplicantsService;
 
     @GetMapping("resumes/{id}")
@@ -43,11 +41,9 @@ public class EmployeeController {
 
     @PostMapping("resumes/add")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeResume(InputResumeDto resumeDto,
-                             Model model) {
+    public String makeResume(InputResumeDto resumeDto) {
         resumeService.createResume(resumeDto);
-        profileService.getProfile(model);
-        return "user/profile";
+        return "redirect:/users/profile";
     }
 
     @GetMapping("resumes/update/{resumeId}")
@@ -61,8 +57,7 @@ public class EmployeeController {
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String remakeResume(InputResumeDto resumeDto, InputContactInfoDto contacts, Model model) {
         resumeService.changeResume(resumeDto, contacts);
-        profileService.getProfile(model);
-        return "user/profile";
+        return "redirect:/users/profile";
     }
 
     @GetMapping("resume/add/workExp/{resumeId}")

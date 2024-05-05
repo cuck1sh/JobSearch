@@ -1,4 +1,5 @@
 <#import  "../layout.ftlh" as main>
+<#import "../pager.ftlh" as p>
 <@main.layout>
 
     <div class="w-75 px-5 py-3 my-4 mx-auto border border-2 border-black rounded-4">
@@ -80,9 +81,9 @@
             <#else>
                 <h2>Созданные вакансии:</h2>
             </#if>
-            <#if userMainItems??>
+            <#if page??>
                 <div class="row row-cols-1 row-cols-lg-3 g-4 mt-1">
-                    <#list userMainItems as item>
+                    <#list page.content as item>
                         <div class="col card-group">
                             <div class="card border-black border-2 rounded-4 p-3">
                                 <div class="card-body">
@@ -117,6 +118,8 @@
                         </div>
                     </#list>
                 </div>
+
+                <@p.pager url page filter sort/>
             </#if>
 
         </div>

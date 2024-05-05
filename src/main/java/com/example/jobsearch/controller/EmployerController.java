@@ -2,7 +2,6 @@ package com.example.jobsearch.controller;
 
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.service.CategoryService;
-import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class EmployerController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
-    private final ProfileService profileService;
     private final ResumeService resumeService;
 
     @GetMapping("vacancies/add")
@@ -33,10 +31,9 @@ public class EmployerController {
 
     @PostMapping("vacancies/add")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeVacancy(InputVacancyDto vacancyDto, Model model) {
+    public String makeVacancy(InputVacancyDto vacancyDto) {
         vacancyService.createVacancy(vacancyDto);
-        profileService.getProfile(model);
-        return "user/profile";
+        return "redirect:/users/profile";
     }
 
     @GetMapping("vacancies/update/{vacancyId}")
@@ -48,10 +45,9 @@ public class EmployerController {
 
     @PostMapping("vacancies/update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeUpdate(InputVacancyDto inputVacancyDto, Model model) {
+    public String makeUpdate(InputVacancyDto inputVacancyDto) {
         vacancyService.changeVacancy(inputVacancyDto);
-        profileService.getProfile(model);
-        return "user/profile";
+        return "redirect:/users/profile";
     }
 
     @GetMapping("resumes")
