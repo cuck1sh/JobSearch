@@ -53,7 +53,7 @@ public class SecurityConfig {
                                 .requestMatchers("/").permitAll()
                                 .requestMatchers("/auth/register").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                                .requestMatchers("/vacancies/*/").permitAll()
+                                .requestMatchers("/vacancies/*").permitAll()
                                 .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
                                 .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
                                 .requestMatchers(HttpMethod.POST, "/employee/**").hasAuthority("EMPLOYEE")

@@ -306,7 +306,7 @@ public class VacancyServiceImpl implements VacancyService {
         if (isVacancyInSystem(id)) {
             model.addAttribute("vacancy", vacancyDto);
         } else {
-            throw new ResumeNotFoundException("Не найдена вакансия");
+            throw new VacancyNotFoundException("Не найдена вакансия");
         }
     }
 }

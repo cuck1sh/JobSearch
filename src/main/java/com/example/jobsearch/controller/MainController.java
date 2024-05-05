@@ -44,7 +44,7 @@ public class MainController {
     }
 
     @GetMapping("vacancies/{id}")
-    public String getResume(@PathVariable int id, Model model) {
+    public String getVacancy(@PathVariable int id, Model model) {
         vacancyService.getVacancy(id, model);
         return "employer/vacancy";
     }
