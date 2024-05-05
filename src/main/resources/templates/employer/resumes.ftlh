@@ -82,22 +82,4 @@
 
     <@p.pager url page filter sort/>
 
-<#--    <nav aria-label="Page navigation example" class="d-flex my-4 justify-content-center">-->
-<#--        <ul class="pagination">-->
-<#--            <li class="page-item">-->
-<#--                <a class="page-link" href="#" aria-label="Previous">-->
-<#--                    <span aria-hidden="true">&laquo;</span>-->
-<#--                </a>-->
-<#--            </li>-->
-<#--            <li class="page-item"><a class="page-link" href="/employer/resumes?page=0&pageSize=5">1</a></li>-->
-<#--            <li class="page-item"><a class="page-link" href="/employer/resumes?page=1&pageSize=5">2</a></li>-->
-<#--            <li class="page-item"><a class="page-link" href="/employer/resumes?page=2&pageSize=5">3</a></li>-->
-<#--            <li class="page-item">-->
-<#--                <a class="page-link" href="#" aria-label="Next">-->
-<#--                    <span aria-hidden="true">&raquo;</span>-->
-<#--                </a>-->
-<#--            </li>-->
-<#--        </ul>-->
-<#--    </nav>-->
-
 </@main.layout>

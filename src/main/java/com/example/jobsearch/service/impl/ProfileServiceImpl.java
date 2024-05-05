@@ -3,6 +3,7 @@ package com.example.jobsearch.service.impl;
 import com.example.jobsearch.dto.user.ProfileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
+import com.example.jobsearch.model.User;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
@@ -10,11 +11,16 @@ import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -45,19 +51,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     private void putProfileInModel(UserDto user, Pageable pageable, String filter, Model model) {
-        String userName = userService.isEmployee(user.getId()) ? String.join(" ", user.getName(), user.getSurname()) : user.getName();
-
-        ProfileDto profileDto = ProfileDto.builder()
-                .id(user.getId())
-                .name(userName)
-                .age(user.getAge())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .avatar(user.getAvatar())
-                .accountType(user.getAccountType())
-                .build();
-
-        model.addAttribute("user", profileDto);
+        model.addAttribute("user", getProfileDto(user));
 
         if (userService.isEmployee(user.getEmail())) {
             if (resumeService.isUsersResumesInSystem(user.getId())) {
@@ -80,5 +74,43 @@ public class ProfileServiceImpl implements ProfileService {
 
         model.addAttribute("sort", sort);
         model.addAttribute("filter", filter);
+    }
+
+    private ProfileDto getProfileDto(UserDto user) {
+        String userName = userService.isEmployee(user.getId()) ? String.join(" ", user.getName(), user.getSurname()) : user.getName();
+
+        return ProfileDto.builder()
+                .id(user.getId())
+                .name(userName)
+                .age(user.getAge())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .avatar(user.getAvatar())
+                .accountType(user.getAccountType())
+                .build();
+    }
+
+    private ProfileDto getProfileDto(User user) {
+        String userName = userService.isEmployee(user.getId()) ? String.join(" ", user.getName(), user.getSurname()) : user.getName();
+
+        return ProfileDto.builder()
+                .id(user.getId())
+                .name(userName)
+                .age(user.getAge())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .avatar(user.getAvatar())
+                .accountType(user.getAccountType())
+                .build();
+    }
+
+    @Override
+    public Page<ProfileDto> getProfiles(Pageable pageable, Model model) {
+        Page<User> users = userService.getCompanies(pageable);
+        List<ProfileDto> profiles = new ArrayList<>();
+
+        users.forEach(e -> profiles.add(getProfileDto(e)));
+
+        return new PageImpl<>(profiles, pageable, userService.countCompanies());
     }
 }
