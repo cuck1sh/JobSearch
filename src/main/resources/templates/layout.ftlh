@@ -32,7 +32,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav d-flex flex-fill">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/employee/resumes/1/vacancy/2">Messages(Test)</a>
+                        <a class="nav-link active" aria-current="page" href="/messages/resumes/1/vacancy/2">Messages(Test)</a>
                     </li>
                 </ul>
             </div>

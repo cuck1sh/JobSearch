@@ -247,9 +247,15 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public UserDto getUserByResume(int resumeId) {
+        Resume resume = repository.findById(resumeId)
+                .orElseThrow(() -> new ResumeNotFoundException("Резюме не найдено"));
+        return userService.getUserById(resume.getUser().getId());
+    }
+
+    @Override
     public void getResume(int id, Model model) {
         UserDto authUser = authenticatedUserProvider.getAuthUser();
-
         ResumeDto resumeDto = getResumeById(id);
 
         if (authUser.getEmail().equals(resumeDto.getUserEmail())) {
@@ -257,5 +263,7 @@ public class ResumeServiceImpl implements ResumeService {
         } else {
             throw new ResumeNotFoundException("Несоответствие юзера и юзера в резюме");
         }
+
+
     }
 }

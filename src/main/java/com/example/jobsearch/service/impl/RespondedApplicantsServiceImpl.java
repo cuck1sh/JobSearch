@@ -16,6 +16,7 @@ import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
     private final UserService userService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
     public Integer getRespondId(int resumeId, int vacancyId) {
@@ -69,8 +71,12 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
 
     @Override
     public RespondMessengerDto getRespondMessenger(int resumeId, int vacancyId) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
         Integer respondedApplicantsId = getRespondId(resumeId, vacancyId);
-        UserDto user = vacancyService.getUserByVacancy(vacancyId);
+        UserDto user = userService.isEmployee(authUser.getId())
+                ? vacancyService.getUserByVacancy(vacancyId)
+                : resumeService.getUserByResume(resumeId);
+
         ProfileDto profile = ProfileDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -80,7 +86,6 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
                 .avatar(user.getAvatar())
                 .accountType(user.getAccountType())
                 .build();
-
 
         return RespondMessengerDto.builder()
                 .respondedApplicantsId(respondedApplicantsId)

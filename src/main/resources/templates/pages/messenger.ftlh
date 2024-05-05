@@ -7,11 +7,16 @@
                 <div class="col-md-4">
 
                     <div class="card border mt-5 ms-5" style="max-width: 18rem;">
-                        <div class="card-header bg-transparent border-success">${messenger.employerProfile.name}</div>
+                        <img src="/api/users/avatar/${messenger.employerProfile.id}" class="card-img-top h-75"
+                             alt="avatar">
                         <div class="card-body">
-                            <h5 class="card-title">${messenger.employerProfile.email}</h5>
+                            <h4>${messenger.employerProfile.name}</h4>
+                            <h5 class="card-title">
+                                <a href="/users/profile/${messenger.employerProfile.email}"
+                                   class="text-secondary">${messenger.employerProfile.email}</a>
+                            </h5>
                             <p class="card-text">Возраст: ${messenger.employerProfile.age}</p>
-                            <p class="card-text">Номер телефона: ${messenger.employerProfile.phoneNumber}</p>
+                            <p class="card-text">Phone: ${messenger.employerProfile.phoneNumber}</p>
                         </div>
                         <div class="card-footer bg-transparent border">${messenger.employerProfile.accountType}</div>
 

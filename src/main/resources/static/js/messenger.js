@@ -12,7 +12,6 @@ window.addEventListener('load', () => {
 
     function intervalRequest() {
 
-
         try {
             const userJson = localStorage.getItem('user')
             const user = JSON.parse(userJson)
@@ -29,7 +28,6 @@ window.addEventListener('load', () => {
                         }
                     }
 
-
                     oldData = newData;
                 })
                 .catch(error => console.log(error));
@@ -44,7 +42,6 @@ window.addEventListener('load', () => {
         let borderElement = document.createElement('div');
         borderElement.className = 'border-bottom p-2';
         borderElement.innerHTML =
-            //TODO Заменить хардкод UserName на подстановку
             '<p class="card-text mb-1">' + userEmail + '</p>' +
             '<p class="card-text mb-1">' + content + '</p>' +
             '<p class="card-text"><small class="text-body-secondary">' + dateTime + '</small></p>';
@@ -67,22 +64,9 @@ window.addEventListener('load', () => {
         document.getElementById("messageValue").value = "";
     }
 
-
-    // Найти способ вызвать fetchAuthorized из login.js
     async function fetchAuthorized(url, user) {
-
-        let headers = new Headers()
-        headers.set('Content-Type', 'application/json')
-        headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
-
         try {
-            return await makeRequest(url, updateOptions({
-                method: 'post',
-                headers: headers,
-                body: JSON.stringify(user)
-            }));
-
-
+            return await makeRequest(url, {method: 'get'});
         } catch (e) {
             alert(e)
         }

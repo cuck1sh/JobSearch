@@ -3,6 +3,7 @@ package com.example.jobsearch.service;
 import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.exception.UserNotFoundException;
 import org.springframework.data.domain.Page;
@@ -30,4 +31,6 @@ public interface ResumeService {
 
     Page<ResumeDto> getResumesWithPaging(Pageable pageable, String filter);
     Integer getResumesCount();
+
+    UserDto getUserByResume(int resumeId);
 }
