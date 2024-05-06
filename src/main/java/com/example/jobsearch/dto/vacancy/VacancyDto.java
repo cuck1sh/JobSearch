@@ -59,4 +59,6 @@ public class VacancyDto {
     private LocalDateTime updateTime;
 
     private Integer responseQty;
+
+    private String companyName;
 }

@@ -1,5 +1,6 @@
 package com.example.jobsearch.exception.handler;
 
+import com.example.jobsearch.exception.AccessException;
 import com.example.jobsearch.exception.ErrorResponseBody;
 import com.example.jobsearch.service.ErrorService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,8 +43,16 @@ public class GlobalExceptionHandler {
         model.addAttribute("details", request);
     }
 
+    @ExceptionHandler(AccessException.class)
+    public String accessFoundHandler(Model model, HttpServletRequest request) {
+        model.addAttribute("status", HttpStatus.FORBIDDEN.value());
+        model.addAttribute("reason", HttpStatus.FORBIDDEN.getReasonPhrase());
+        model.addAttribute("details", request);
+        return "errors/error";
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
-    public String resumeFoundHandler(Model model, HttpServletRequest request) {
+    public String globalFoundHandler(Model model, HttpServletRequest request) {
         fulfilModel(model, request);
         return "errors/error";
     }

@@ -4,6 +4,7 @@ import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
 import com.example.jobsearch.dto.user.ProfileDto;
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.exception.AccessException;
 import com.example.jobsearch.exception.ResponseFoundException;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -70,27 +71,33 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     }
 
     @Override
-    public RespondMessengerDto getRespondMessenger(int resumeId, int vacancyId) {
+    public RespondMessengerDto getRespondMessenger(int respondId) {
         UserDto authUser = authenticatedUserProvider.getAuthUser();
-        Integer respondedApplicantsId = getRespondId(resumeId, vacancyId);
-        UserDto user = userService.isEmployee(authUser.getId())
-                ? vacancyService.getUserByVacancy(vacancyId)
-                : resumeService.getUserByResume(resumeId);
+        RespondedApplicantsDto response = getRespondedApplicants(respondId);
 
-        ProfileDto profile = ProfileDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .age(user.getAge())
-                .phoneNumber(user.getPhoneNumber())
-                .avatar(user.getAvatar())
-                .accountType(user.getAccountType())
-                .build();
+        UserDto employee = userService.getUserByEmail(response.getResume().getUserEmail());
+        UserDto employer = userService.getUserByEmail(response.getVacancy().getUserEmail());
 
-        return RespondMessengerDto.builder()
-                .respondedApplicantsId(respondedApplicantsId)
-                .employerProfile(profile)
-                .build();
+        UserDto profileDto = authUser.getEmail().equals(employee.getEmail()) ? employer : employee;
+
+        if (authUser.getEmail().equals(employee.getEmail()) || authUser.getEmail().equals(employer.getEmail())) {
+            ProfileDto profile = ProfileDto.builder()
+                    .id(profileDto.getId())
+                    .name(profileDto.getName())
+                    .email(profileDto.getEmail())
+                    .age(profileDto.getAge())
+                    .phoneNumber(profileDto.getPhoneNumber())
+                    .avatar(profileDto.getAvatar())
+                    .accountType(profileDto.getAccountType())
+                    .build();
+
+            return RespondMessengerDto.builder()
+                    .respondedApplicantsId(respondId)
+                    .employerProfile(profile)
+                    .build();
+        }
+        log.error("Попытка доступа к сообщениям чужого юзера getRespondMessenger()");
+        throw new AccessException("Попытка доступа к сообщениям чужого юзера");
     }
 
     @Override
@@ -149,6 +156,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
         applicants.forEach(e -> {
             try {
                 dtos.add(RespondedApplicantsDto.builder()
+                        .id(e.getId())
                         .resume(resumeService.getResumeById(e.getResume().getId()))
                         .vacancy(vacancyService.getVacancyById(e.getVacancy().getId()))
                         .confirmation(e.getConfirmation())

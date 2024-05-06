@@ -57,6 +57,7 @@ public class ProfileServiceImpl implements ProfileService {
             if (resumeService.isUsersResumesInSystem(user.getId())) {
 
                 model.addAttribute("page", resumeService.getResumeMainItem(user.getId(), pageable));
+                model.addAttribute("responses", respondedApplicantsService.getResponsesForEmployee(user.getId()));
                 model.addAttribute("responsesQuantity", respondedApplicantsService.getResponsesForEmployee(user.getId()).size());
             } else {
                 model.addAttribute("responsesQuantity", 0);

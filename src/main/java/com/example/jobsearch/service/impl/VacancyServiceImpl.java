@@ -55,6 +55,7 @@ public class VacancyServiceImpl implements VacancyService {
                     .userEmail(vacancy.getUser().getEmail())
                     .createdDate(vacancy.getCreatedDate())
                     .updateTime(vacancy.getUpdateTime())
+                    .companyName(vacancy.getUser().getName())
                     .build();
         } else {
             log.error("Не найдена вакансия с айди: " + id + " для метода getVacancyById(id)");
@@ -147,6 +148,7 @@ public class VacancyServiceImpl implements VacancyService {
                 .createdDate(e.getCreatedDate())
                 .updateTime(e.getUpdateTime())
                 .responseQty(vacancyRepository.countAllByIdAndRespondedApplicants_VacancyId(e.getId(), e.getId()))
+                .companyName(e.getUser().getName())
                 .build()));
 
         return dtos;

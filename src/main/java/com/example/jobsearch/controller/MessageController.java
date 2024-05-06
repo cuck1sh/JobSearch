@@ -3,7 +3,6 @@ package com.example.jobsearch.controller;
 import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.service.MessageService;
 import com.example.jobsearch.service.RespondedApplicantsService;
-import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,9 +28,9 @@ public class MessageController {
         messageService.takeMessage(respondId, message);
     }
 
-    @GetMapping("resumes/{resumeId}/vacancy/{vacancyId}")
-    public String getMessenger(@PathVariable int resumeId, @PathVariable int vacancyId, Model model) {
-        RespondMessengerDto messengerDto = respondedApplicantsService.getRespondMessenger(FileUtil.TEST_RESUME_ID, FileUtil.TEST_VACANCY_ID);
+    @GetMapping("{respondId}")
+    public String getMessenger(@PathVariable int respondId, Model model) {
+        RespondMessengerDto messengerDto = respondedApplicantsService.getRespondMessenger(respondId);
         model.addAttribute("messenger", messengerDto);
         return "pages/messenger";
     }

@@ -39,9 +39,10 @@
 
                             <div class="col">
                                 <button type="button"
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
                                         class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
-                                    <a href="/api/employee/responses/users/${user.id}"
-                                       class="text-dark text-decoration-none">Отклики </a>
+                                    Отклики
+
                                     <#if responsesQuantity gt 0>
                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         ${responsesQuantity}
@@ -50,6 +51,51 @@
                                     </#if>
                                 </button>
                             </div>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Отклики на вакансии</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <#if responses?size gt 0>
+                                                <#list responses as response>
+                                                    <ol class="list-group list-group-numbered">
+                                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                            <div class="ms-2 me-auto">
+                                                                <div class="fw-bold">${response.vacancy.companyName}</div>
+                                                                <p class="mb-2">
+                                                                    <a href="/vacancies/${response.vacancy.id}"
+                                                                       class="text-dark">Вакансия: ${response.vacancy.name}</a>
+                                                                </p>
+                                                                Резюме: ${response.resume.name}
+                                                            </div>
+
+                                                            <span class="badge text-bg-primary rounded-pill">
+                                                                <a href="/messages/${response.id}"
+                                                                   class="text-white text-decoration-none">Переписка</a>
+                                                            </span>
+                                                        </li>
+                                                    </ol>
+                                                </#list>
+                                            <#else>
+                                                У вас еще нет откликов на вакансии
+                                            </#if>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         <#else>
                             <div class="col">
                                 <button type="button"
@@ -124,6 +170,15 @@
 
         </div>
     </div>
+
+    <script>
+        const myModal = document.getElementById('myModal')
+        const myInput = document.getElementById('myInput')
+
+        myModal.addEventListener('shown.bs.modal', () => {
+            myInput.focus()
+        })
+    </script>
 
 
 </@main.layout>

@@ -13,7 +13,8 @@ public interface RespondedApplicantsService {
     RespondedApplicantsDto getRespondedApplicants(int respond);
 
     Boolean isRespondInSystem(int respond);
-    RespondMessengerDto getRespondMessenger(int resumeId, int vacancyId);
+
+    RespondMessengerDto getRespondMessenger(int respondId);
     List<RespondedApplicantsDto> getUserResponses(String email);
     List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId);
     List<RespondedApplicantsDto> getResponsesForResume(int resumeId);
