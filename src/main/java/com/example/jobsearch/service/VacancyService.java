@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
 
 import java.util.List;
 
@@ -30,7 +29,6 @@ public interface VacancyService {
 
     List<VacancyDto> getVacanciesByCategory(String category);
     List<VacancyDto> getVacanciesByCategoryAndUser(int userId, String category);
-    void getVacancy(int id, Model model);
 
     UserDto getUserByVacancy(int vacancyId);
 

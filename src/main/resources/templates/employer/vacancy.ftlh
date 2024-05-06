@@ -82,8 +82,6 @@
                 Откликнуться
             </button>
 
-
-
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
@@ -109,13 +107,85 @@
                                                         </p>
                                                     </#if>
                                                 </#if>
-                                                Зарплата: ${resume.salary}
+                                                <#if resume.salary??>
+                                                    Зарплата: ${resume.salary}
+                                                <#else>
+                                                    Зарплата: -
+                                                </#if>
+
                                             </div>
                                             <button type="button"
                                                     class="btn btn-success my-auto"
                                                     onclick="responseVacancy(${vacancy.id}, ${resume.id})">
                                                 Прикрепить
                                             </button>
+                                        </li>
+                                    </#list>
+                                </ol>
+                            <#else>
+                                У вас еще нет откликов на вакансии
+                            </#if>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </#if>
+
+        <#if responses??>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-success mx-auto mb-4 position-relative" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                Отклики
+
+                <#if responsesQty gt 0>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        ${responsesQty}
+                        <span class="visually-hidden">unread messages</span>
+                    </span>
+                </#if>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Отклики на вакансию</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <#if responses?size gt 0>
+                                <ol class="list-group list-group-numbered">
+                                    <#list responses as response>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto text-start">
+                                                <div class="fw-bold">
+                                                    <a href="/users/profile/${response.resume.userEmail}"
+                                                       class="text-dark">${response.resume.userEmail}</a>
+                                                </div>
+                                                <p class="mb-2">Резюме:
+                                                    <a href="/employer/resumes/${response.resume.id}"
+                                                       class="text-dark">${response.resume.name}</a>
+                                                </p>
+                                                <#if response.resume.salary??>
+                                                    Зарплата: ${response.resume.salary}
+                                                <#else>
+                                                    Зарплата: -
+                                                </#if>
+
+                                            </div>
+
+                                            <span class="badge text-bg-primary rounded-pill">
+                                                                    <a href="/messages/${response.id}"
+                                                                       class="text-white text-decoration-none">Переписка</a>
+                                                                </span>
                                         </li>
                                     </#list>
                                 </ol>

@@ -1,6 +1,7 @@
 package com.example.jobsearch.controller;
 
 import com.example.jobsearch.service.CategoryService;
+import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MainController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
+    private final RespondedApplicantsService respondedApplicantsService;
 
     @GetMapping
     public String getMainPage(Model model,
@@ -45,7 +47,7 @@ public class MainController {
 
     @GetMapping("vacancies/{id}")
     public String getVacancy(@PathVariable int id, Model model) {
-        vacancyService.getVacancy(id, model);
+        respondedApplicantsService.getVacancy(id, model);
         return "employer/vacancy";
     }
 }

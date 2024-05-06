@@ -1,6 +1,5 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
@@ -25,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -302,23 +300,5 @@ public class VacancyServiceImpl implements VacancyService {
             throw new VacancyNotFoundException("У Юзера " + userId + " не найдено вакансий");
         }
         throw new VacancyNotFoundException("Юзер " + userId + " не найден");
-    }
-
-    @Override
-    public void getVacancy(int id, Model model) {
-        VacancyDto vacancyDto = getVacancyById(id);
-
-        if (isVacancyInSystem(id)) {
-            UserDto user = authenticatedUserProvider.getAuthUser();
-
-            if (user.getId() != null && userService.isEmployee(user.getId())) {
-                List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
-                model.addAttribute("resumes", resumes);
-            }
-
-            model.addAttribute("vacancy", vacancyDto);
-        } else {
-            throw new VacancyNotFoundException("Не найдена вакансия");
-        }
     }
 }

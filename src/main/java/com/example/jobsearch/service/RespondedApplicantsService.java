@@ -3,10 +3,13 @@ package com.example.jobsearch.service;
 import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 
 import java.util.List;
 
 public interface RespondedApplicantsService {
+    void getVacancy(int id, Model model);
+
     Integer getRespondId(int resumeId, int vacancyId);
 
     RespondedApplicantsDto getRespondedApplicants(int respond);

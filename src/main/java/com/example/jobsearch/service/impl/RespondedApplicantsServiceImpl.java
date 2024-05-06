@@ -2,8 +2,10 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
+import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.ProfileDto;
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.AccessException;
 import com.example.jobsearch.exception.ResponseFoundException;
 import com.example.jobsearch.exception.ResumeNotFoundException;
@@ -23,6 +25,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,30 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     private final VacancyService vacancyService;
     private final UserService userService;
     private final AuthenticatedUserProvider authenticatedUserProvider;
+
+    @Override
+    public void getVacancy(int id, Model model) {
+        VacancyDto vacancyDto = vacancyService.getVacancyById(id);
+
+        if (vacancyService.isVacancyInSystem(id)) {
+            UserDto user = authenticatedUserProvider.getAuthUser();
+
+            if (user.getId() != null) {
+                if (userService.isEmployee(user.getId())) {
+                    List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
+                    model.addAttribute("resumes", resumes);
+                } else {
+                    List<RespondedApplicantsDto> responses = getResponsesForEmployer(user.getId());
+                    model.addAttribute("responses", responses);
+                    model.addAttribute("responsesQty", responses.size());
+                }
+            }
+
+            model.addAttribute("vacancy", vacancyDto);
+        } else {
+            throw new VacancyNotFoundException("Не найдена вакансия");
+        }
+    }
 
     @Override
     public Integer getRespondId(int resumeId, int vacancyId) {
@@ -142,7 +169,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     @Override
     public List<RespondedApplicantsDto> getResponsesForEmployer(int userId) {
         if (!userService.isEmployee(userId)) {
-            List<RespondedApplicants> applicants = repository.findRespondedApplicantsByEmployerId(userId);
+            List<RespondedApplicants> applicants = repository.findAllByVacancyUserId(userId);
             return getRespondedApplicantsDtos(applicants);
         }
         throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
