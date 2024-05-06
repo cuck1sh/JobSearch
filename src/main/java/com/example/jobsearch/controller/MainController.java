@@ -50,4 +50,9 @@ public class MainController {
         respondedApplicantsService.getVacancy(id, model);
         return "employer/vacancy";
     }
+
+    @GetMapping("search")
+    public String search() {
+        return "pages/search";
+    }
 }

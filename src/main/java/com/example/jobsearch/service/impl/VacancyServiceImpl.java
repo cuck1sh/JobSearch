@@ -301,4 +301,9 @@ public class VacancyServiceImpl implements VacancyService {
         }
         throw new VacancyNotFoundException("Юзер " + userId + " не найден");
     }
+
+    @Override
+    public List<VacancyDto> searchVacancies(String text) {
+        return getVacancyDtos(vacancyRepository.search(text.toLowerCase().strip())).reversed();
+    }
 }

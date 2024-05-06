@@ -37,4 +37,6 @@ public interface VacancyService {
     Integer getVacanciesCount();
 
     Integer getVacanciesWithCategoryCount(int categoryId);
+
+    List<VacancyDto> searchVacancies(String text);
 }

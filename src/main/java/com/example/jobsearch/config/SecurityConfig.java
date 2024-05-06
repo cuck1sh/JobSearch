@@ -54,6 +54,8 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/register").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                                 .requestMatchers("/vacancies/*").permitAll()
+                                .requestMatchers("/search").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/vacancies/search").permitAll()
                                 .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
                                 .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
                                 .requestMatchers(HttpMethod.POST, "/employee/**").hasAuthority("EMPLOYEE")

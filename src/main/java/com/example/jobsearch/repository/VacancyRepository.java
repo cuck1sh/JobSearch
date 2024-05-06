@@ -75,4 +75,17 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
     List<Vacancy> findAllByUserId(Integer userId);
 
     List<Vacancy> findAllByUserIdAndCategoryNameAndIsActiveTrue(Integer userId, String category);
+
+    @Query("""
+            select v from Vacancy as v
+                inner join Category as c on v.category.id = c.id
+                inner join User as u on v.user.id = u.id
+            where lower(v.name) like %:text%
+                    or lower(v.description) like %:text%
+                    or lower(c.name) like %:text%
+                    or lower(c.parent.name) like %:text%
+                    or lower(u.name) like %:text%
+                    or lower(u.email) like %:text%
+            """)
+    List<Vacancy> search(String text);
 }

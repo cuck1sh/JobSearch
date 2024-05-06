@@ -30,11 +30,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <#--                <ul class="navbar-nav d-flex flex-fill">-->
-                <#--                    <li class="nav-item">-->
-                <#--                        <a class="nav-link active" aria-current="page" href="/messages/resumes/1/vacancy/2">Messages(Test)</a>-->
-                <#--                    </li>-->
-                <#--                </ul>-->
+                <ul class="navbar-nav d-flex flex-fill">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/search">Поиск</a>
+                    </li>
+                </ul>
             </div>
             <#assign
             known = SPRING_SECURITY_CONTEXT??
