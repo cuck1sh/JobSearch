@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/api/auth/login")
                         .defaultSuccessUrl("/")
-                        .failureUrl("/auth/login")
+                        .failureUrl("/auth/login?error=true")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

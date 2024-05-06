@@ -52,7 +52,7 @@
                 </#list>
 
                 <#if auth?? && auth>
-                    <a href="employer/resumes"
+                    <a href="/employer/resumes"
                        class="d-flex text-light text-decoration-none fs-5 m-1 m-sm-0">Резюме</a>
                 <#else>
                     <a href="/employee/companies"
