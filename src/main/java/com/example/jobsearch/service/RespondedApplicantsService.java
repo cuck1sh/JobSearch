@@ -2,8 +2,7 @@ package com.example.jobsearch.service;
 
 import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -20,5 +19,6 @@ public interface RespondedApplicantsService {
     List<RespondedApplicantsDto> getResponsesForResume(int resumeId);
     List<RespondedApplicantsDto> getResponsesForEmployee(int userId);
     List<RespondedApplicantsDto> getResponsesForEmployer(int userId);
-    HttpStatus sendResponseForVacancy(Authentication auth, int vacancyId, int resumeId);
+
+    ResponseEntity<Integer> createResponse(int vacancyId, int resumeId);
 }

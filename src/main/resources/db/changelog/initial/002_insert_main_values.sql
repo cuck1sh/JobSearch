@@ -27,8 +27,8 @@ values ((select id from USERS where EMAIL = 'egor.kirin20@gmail.com'),
         (select id from CATEGORIES where name = 'Программирование'),
         995999.99,
         true,
-        '2024-03-11 21:41:12',
-        '2024-03-11 21:48:12');
+        '2024-03-12 22:33:42',
+        '2024-03-12 11:28:32');
 
 
 insert into contact_types (type)

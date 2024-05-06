@@ -1,8 +1,7 @@
 'use strict'
 window.addEventListener('load', () => {
-    // Тестовый ввод ендпоинта хардкодом, потом исправить,
-    // Добавлял сообщения от работодателя через в базу
-    const base_url = 'http://localhost:8089/api/messages/1';
+    const responseId = document.getElementById("responseId").innerText
+    const base_url = 'http://localhost:8089/api/messages/' + responseId;
     let messages = document.getElementById('messages');
     let oldData = [];
 
@@ -10,8 +9,30 @@ window.addEventListener('load', () => {
 
     setInterval(intervalRequest, 5000);
 
-    function intervalRequest() {
+    let form = document.getElementById('form');
+    form.addEventListener('submit', loginHandler);
 
+    function loginHandler(e) {
+        e.preventDefault();
+        const form = e.target;
+        let data = new FormData(form);
+
+        fetch('/messages/' + responseId, {
+            method: 'POST',
+            body: data
+        });
+        document.getElementById("messageValue").value = "";
+    }
+
+    async function fetchAuthorized(url, user) {
+        try {
+            return await makeRequest(url, {method: 'get'});
+        } catch (e) {
+            alert(e)
+        }
+    }
+
+    function intervalRequest() {
         try {
             const userJson = localStorage.getItem('user')
             const user = JSON.parse(userJson)
@@ -48,29 +69,7 @@ window.addEventListener('load', () => {
         messages.appendChild(borderElement);
     }
 
-    let form = document.getElementById('form');
 
-    form.addEventListener('submit', loginHandler);
-
-    function loginHandler(e) {
-        e.preventDefault();
-        const form = e.target;
-        let data = new FormData(form);
-
-        fetch('/messages/1', {
-            method: 'POST',
-            body: data
-        });
-        document.getElementById("messageValue").value = "";
-    }
-
-    async function fetchAuthorized(url, user) {
-        try {
-            return await makeRequest(url, {method: 'get'});
-        } catch (e) {
-            alert(e)
-        }
-    }
 
     function makeHeaders() {
         let user = restoreUser()

@@ -1,5 +1,6 @@
 package com.example.jobsearch.service.impl;
 
+import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
@@ -12,6 +13,7 @@ import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.Vacancy;
 import com.example.jobsearch.repository.VacancyRepository;
 import com.example.jobsearch.service.CategoryService;
+import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import com.example.jobsearch.util.AuthenticatedUserProvider;
@@ -37,6 +39,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final UserService userService;
     private final CategoryService categoryService;
     private final AuthenticatedUserProvider authenticatedUserProvider;
+    private final ResumeService resumeService;
 
     @Override
     public VacancyDto getVacancyById(int id) throws UserNotFoundException {
@@ -306,6 +309,13 @@ public class VacancyServiceImpl implements VacancyService {
         VacancyDto vacancyDto = getVacancyById(id);
 
         if (isVacancyInSystem(id)) {
+            UserDto user = authenticatedUserProvider.getAuthUser();
+
+            if (user.getId() != null && userService.isEmployee(user.getId())) {
+                List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
+                model.addAttribute("resumes", resumes);
+            }
+
             model.addAttribute("vacancy", vacancyDto);
         } else {
             throw new VacancyNotFoundException("Не найдена вакансия");

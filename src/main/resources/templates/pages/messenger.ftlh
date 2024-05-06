@@ -1,6 +1,8 @@
 <#import  "../layout.ftlh" as main>
 <@main.layout>
 
+    <div id="responseId" hidden="hidden">${respondId}</div>
+
     <form id="form">
         <div class="card mb-3">
             <div class="row">

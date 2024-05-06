@@ -64,8 +64,8 @@
                                         </div>
                                         <div class="modal-body">
                                             <#if responses?size gt 0>
-                                                <#list responses as response>
-                                                    <ol class="list-group list-group-numbered">
+                                                <ol class="list-group list-group-numbered">
+                                                    <#list responses as response>
                                                         <li class="list-group-item d-flex justify-content-between align-items-start">
                                                             <div class="ms-2 me-auto">
                                                                 <div class="fw-bold">${response.vacancy.companyName}</div>
@@ -77,12 +77,12 @@
                                                             </div>
 
                                                             <span class="badge text-bg-primary rounded-pill">
-                                                                <a href="/messages/${response.id}"
-                                                                   class="text-white text-decoration-none">Переписка</a>
-                                                            </span>
+                                                                    <a href="/messages/${response.id}"
+                                                                       class="text-white text-decoration-none">Переписка</a>
+                                                                </span>
                                                         </li>
-                                                    </ol>
-                                                </#list>
+                                                    </#list>
+                                                </ol>
                                             <#else>
                                                 У вас еще нет откликов на вакансии
                                             </#if>
@@ -170,15 +170,6 @@
 
         </div>
     </div>
-
-    <script>
-        const myModal = document.getElementById('myModal')
-        const myInput = document.getElementById('myInput')
-
-        myModal.addEventListener('shown.bs.modal', () => {
-            myInput.focus()
-        })
-    </script>
 
 
 </@main.layout>

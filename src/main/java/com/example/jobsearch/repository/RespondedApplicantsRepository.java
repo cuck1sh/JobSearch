@@ -22,6 +22,8 @@ public interface RespondedApplicantsRepository extends JpaRepository<RespondedAp
             " where RESUME_ID in (select r.USER_ID from RESUMES r where r.USER_ID = :userId);", nativeQuery = true)
     List<RespondedApplicants> findRespondedApplicantsByEmployeeId(Integer userId);
 
+    List<RespondedApplicants> findAllByResumeUserId(Integer userId);
+
     @Query(value = "select * from PUBLIC.RESPONDED_APPLICANTS" +
             " where VACANCY_ID in (select r.USER_ID from RESUMES r where r.USER_ID = :userId);", nativeQuery = true)
     List<RespondedApplicants> findRespondedApplicantsByEmployerId(Integer userId);
