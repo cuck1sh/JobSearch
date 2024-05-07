@@ -1,9 +1,11 @@
 package com.example.jobsearch.service;
 
-import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.dto.user.EmployeeFindDto;
 import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +24,9 @@ public interface UserService {
     Boolean isEmployee(int userId);
     HttpStatus createUser(UserDto user, MultipartFile file);
 
+    Page<User> getCompanies(Pageable pageable);
+
+    Integer countCompanies();
     void uploadUserAvatar(UserAvatarFileDto avatarDto);
     ResponseEntity<?> downloadAvatar(int userId);
     List<UserDto> getEmployee(EmployeeFindDto employeeFindDto);
@@ -29,5 +34,4 @@ public interface UserService {
 
     void updateUser(UserDto user, MultipartFile file);
 
-    HttpStatus login(AuthUserDto authUserDto);
 }

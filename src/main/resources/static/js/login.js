@@ -14,31 +14,20 @@ function onLoginHandler(event) {
     let data = new FormData(target)
     let user = Object.fromEntries(data)
 
-    fetchAuthorized(url, user).then(r => {
-        let userJson = JSON.stringify(user)
-        localStorage.setItem('user', userJson)
-        window.location.href = 'http://localhost:8089/'
-    })
+    fetchAuthorized(url, user)
 }
 
 
 async function fetchAuthorized(url, user) {
-
-    let headers = new Headers()
-    headers.set('Content-Type', 'application/json')
-    headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
-
     try {
-        await makeRequest(url, updateOptions({
-            method: 'post',
-            headers: headers,
-            body: JSON.stringify(user)
-        }));
-
+        await makeRequest(url, {method: 'post'})
+            .then(r => {
+                let userJson = JSON.stringify(user)
+                localStorage.setItem('user', userJson)
+            })
+            .catch(e => localStorage.removeItem('user'))
     } catch (e) {
         localStorage.removeItem('user')
-        window.location.href = 'http://localhost:8089/login'
-        alert(e)
     }
 }
 

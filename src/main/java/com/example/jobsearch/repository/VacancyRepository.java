@@ -1,6 +1,8 @@
 package com.example.jobsearch.repository;
 
 import com.example.jobsearch.model.Vacancy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +18,27 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
 
     Integer countAllByIsActiveTrue();
 
+    Integer countAllByIsActiveTrueAndCategory_Id(Integer categoryId);
     Integer countAllByIsActiveTrueAndCategoryId(Integer categoryId);
+
+    Integer countAllByIdAndRespondedApplicants_VacancyId(Integer id, Integer vacancyId);
+
+    Integer countAllByUserId(Integer userId);
+
+    Page<Vacancy> findAllByUserId(Integer id, Pageable pageable);
+
+    Page<Vacancy> findAllByIsActiveTrue(Pageable pageable);
+
+    Page<Vacancy> findAllByIsActiveTrueAndCategory_Id(Integer categoryId, Pageable pageable);
+
+    @Query("""
+            select v from Vacancy v
+                inner join RespondedApplicants ra on v.id = ra.vacancy.id
+            where v.category.id = :categoryId
+            order by count(ra.vacancy.id) desc
+            """)
+    Page<Vacancy> getPagedFilteredAndSorted(Integer categoryId, Pageable pageable);
+
 
     @Query(value = """
             select * from VACANCIES
@@ -53,4 +75,17 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
     List<Vacancy> findAllByUserId(Integer userId);
 
     List<Vacancy> findAllByUserIdAndCategoryNameAndIsActiveTrue(Integer userId, String category);
+
+    @Query("""
+            select v from Vacancy as v
+                inner join Category as c on v.category.id = c.id
+                inner join User as u on v.user.id = u.id
+            where lower(v.name) like %:text%
+                    or lower(v.description) like %:text%
+                    or lower(c.name) like %:text%
+                    or lower(c.parent.name) like %:text%
+                    or lower(u.name) like %:text%
+                    or lower(u.email) like %:text%
+            """)
+    List<Vacancy> search(String text);
 }

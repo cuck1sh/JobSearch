@@ -1,8 +1,7 @@
 'use strict'
 window.addEventListener('load', () => {
-    // Тестовый ввод ендпоинта хардкодом, потом исправить,
-    // Добавлял сообщения от работодателя через в базу
-    const base_url = 'http://localhost:8089/api/messages/1';
+    const responseId = document.getElementById("responseId").innerText
+    const base_url = 'http://localhost:8089/api/messages/' + responseId;
     let messages = document.getElementById('messages');
     let oldData = [];
 
@@ -10,9 +9,30 @@ window.addEventListener('load', () => {
 
     setInterval(intervalRequest, 5000);
 
+    let form = document.getElementById('form');
+    form.addEventListener('submit', loginHandler);
+
+    function loginHandler(e) {
+        e.preventDefault();
+        const form = e.target;
+        let data = new FormData(form);
+
+        fetch('/messages/' + responseId, {
+            method: 'POST',
+            body: data
+        });
+        document.getElementById("messageValue").value = "";
+    }
+
+    async function fetchAuthorized(url, user) {
+        try {
+            return await makeRequest(url, {method: 'get'});
+        } catch (e) {
+            alert(e)
+        }
+    }
+
     function intervalRequest() {
-
-
         try {
             const userJson = localStorage.getItem('user')
             const user = JSON.parse(userJson)
@@ -29,7 +49,6 @@ window.addEventListener('load', () => {
                         }
                     }
 
-
                     oldData = newData;
                 })
                 .catch(error => console.log(error));
@@ -44,49 +63,13 @@ window.addEventListener('load', () => {
         let borderElement = document.createElement('div');
         borderElement.className = 'border-bottom p-2';
         borderElement.innerHTML =
-            //TODO Заменить хардкод UserName на подстановку
             '<p class="card-text mb-1">' + userEmail + '</p>' +
             '<p class="card-text mb-1">' + content + '</p>' +
             '<p class="card-text"><small class="text-body-secondary">' + dateTime + '</small></p>';
         messages.appendChild(borderElement);
     }
 
-    let form = document.getElementById('form');
 
-    form.addEventListener('submit', loginHandler);
-
-    function loginHandler(e) {
-        e.preventDefault();
-        const form = e.target;
-        let data = new FormData(form);
-
-        fetch('/messages/1', {
-            method: 'POST',
-            body: data
-        });
-        document.getElementById("messageValue").value = "";
-    }
-
-
-    // Найти способ вызвать fetchAuthorized из login.js
-    async function fetchAuthorized(url, user) {
-
-        let headers = new Headers()
-        headers.set('Content-Type', 'application/json')
-        headers.set('Authorization', 'Basic ' + btoa(user.email + ':' + user.password))
-
-        try {
-            return await makeRequest(url, updateOptions({
-                method: 'post',
-                headers: headers,
-                body: JSON.stringify(user)
-            }));
-
-
-        } catch (e) {
-            alert(e)
-        }
-    }
 
     function makeHeaders() {
         let user = restoreUser()

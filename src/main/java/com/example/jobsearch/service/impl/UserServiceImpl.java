@@ -1,6 +1,5 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dto.user.AuthUserDto;
 import com.example.jobsearch.dto.user.EmployeeFindDto;
 import com.example.jobsearch.dto.user.UserAvatarDto;
 import com.example.jobsearch.dto.user.UserAvatarFileDto;
@@ -13,6 +12,8 @@ import com.example.jobsearch.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -253,29 +254,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HttpStatus login(AuthUserDto authUserDto) {
-        if (authUserDto != null && authUserDto.getUsername() != null && authUserDto.getPassword() != null) {
-            String email = authUserDto.getUsername();
-            String password = authUserDto.getPassword();
+    public Page<User> getCompanies(Pageable pageable) {
+        return userRepository.getCompanies(pageable);
+    }
 
-            if (isUserInSystem(email)) {
-                UserDto user = getUserByEmail(email);
-
-                if (passwordEncoder.matches(password, user.getPassword())) {
-                    log.info("Аутентификация юзера " + email + " успешно пройдена");
-                    return HttpStatus.OK;
-
-                } else {
-                    log.error("Не верно указан пароль юзером: " + email);
-                    throw new UserNotFoundException("Не верно указан пароль юзером: " + email);
-                }
-            } else {
-                log.error("Не найден юзер с email: " + email);
-                throw new UserNotFoundException("Не найден юзер с email: " + email);
-            }
-        } else {
-            log.error("Отсутствуют данные в форме");
-            throw new UserNotFoundException("Отсутствуют данные в форме");
-        }
+    @Override
+    public Integer countCompanies() {
+        return userRepository.countCompanies();
     }
 }

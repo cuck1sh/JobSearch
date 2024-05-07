@@ -4,6 +4,7 @@ import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Category;
@@ -19,6 +20,9 @@ import com.example.jobsearch.service.WorkExperienceInfoService;
 import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -89,26 +93,40 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public Page<UserMainItem> getResumeMainItem(Integer userId, Pageable pageable) {
+        Page<Resume> pagedResumes = repository.findAllByUserId(userId, pageable);
+        List<UserMainItem> resumeDtos = new ArrayList<>();
+        pagedResumes.getContent().forEach(e -> resumeDtos.add(UserMainItem.builder()
+                .id(e.getId())
+                .name(e.getName())
+                .timestamp(e.getUpdateTime())
+                .build()));
+
+
+        return new PageImpl<>(resumeDtos, pageable, repository.countByUserId(userId));
+    }
+
+    @Override
     public Integer getResumesCount() {
         return Math.toIntExact(repository.countAllByIsActiveTrue());
     }
 
     @Override
-    public List<ResumeDto> getResumesWithPaging(Integer page, Integer pageSize) {
-        int count = getResumesCount();
-        int totalPages = count / pageSize;
+    public Page<ResumeDto> getResumesWithPaging(Pageable pageable, String filter) {
+        Page<Resume> resumes;
 
-        if (totalPages <= page) {
-            page = totalPages;
-        } else if (page < 0) {
-            page = 0;
+        if (filter.equals("none")) {
+            resumes = repository.findAllByIsActiveTrue(pageable);
+
+            List<ResumeDto> resumeDtos = getResumeDtos(resumes.getContent());
+            return new PageImpl<>(resumeDtos, pageable, repository.countAllByIsActiveTrue());
+        } else {
+            Integer categoryId = categoryService.checkInCategories(filter);
+            resumes = repository.findAllByIsActiveTrueAndCategory_Id(categoryId, pageable);
+
+            List<ResumeDto> resumeDtos = getResumeDtos(resumes.getContent());
+            return new PageImpl<>(resumeDtos, pageable, repository.countAllByIsActiveTrueAndCategory_Id(categoryId));
         }
-
-        int offset = page * pageSize;
-
-        List<Resume> resumes = repository.findPagedResumes(pageSize, offset);
-
-        return getResumeDtos(resumes);
     }
 
 
@@ -229,9 +247,15 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public UserDto getUserByResume(int resumeId) {
+        Resume resume = repository.findById(resumeId)
+                .orElseThrow(() -> new ResumeNotFoundException("Резюме не найдено"));
+        return userService.getUserById(resume.getUser().getId());
+    }
+
+    @Override
     public void getResume(int id, Model model) {
         UserDto authUser = authenticatedUserProvider.getAuthUser();
-
         ResumeDto resumeDto = getResumeById(id);
 
         if (authUser.getEmail().equals(resumeDto.getUserEmail())) {
@@ -239,5 +263,7 @@ public class ResumeServiceImpl implements ResumeService {
         } else {
             throw new ResumeNotFoundException("Несоответствие юзера и юзера в резюме");
         }
+
+
     }
 }

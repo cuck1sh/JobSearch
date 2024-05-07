@@ -1,6 +1,8 @@
 package com.example.jobsearch.repository;
 
 import com.example.jobsearch.model.Resume;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,13 +16,23 @@ import java.util.List;
 public interface ResumeRepository extends JpaRepository<Resume, Integer> {
     List<Resume> findAllByIsActiveTrue();
 
+    Page<Resume> findAllByIsActiveTrue(Pageable pageable);
+
+    Page<Resume> findAllByIsActiveTrueAndCategory_Id(Integer categoryId, Pageable pageable);
+
     List<Resume> findAllByCategoryNameAndIsActiveTrue(String category);
 
     List<Resume> findAllByUserIdAndIsActiveTrue(Integer id);
 
+    Page<Resume> findAllByUserId(Integer userId, Pageable pageable);
+
+    Integer countByUserId(Integer userId);
+
     Boolean existsByUserId(Integer userId);
 
     Integer countAllByIsActiveTrue();
+
+    Integer countAllByIsActiveTrueAndCategory_Id(Integer categoryId);
 
     @Transactional
     @Modifying

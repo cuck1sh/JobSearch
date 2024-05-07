@@ -1,29 +1,59 @@
 package com.example.jobsearch.exception.handler;
 
+import com.example.jobsearch.exception.AccessException;
 import com.example.jobsearch.exception.ErrorResponseBody;
 import com.example.jobsearch.service.ErrorService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.nio.file.NoSuchFileException;
 import java.util.NoSuchElementException;
 
-@RestControllerAdvice
+@ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     private final ErrorService errorService;
 
-    @ExceptionHandler(NoSuchElementException.class)
+    @ExceptionHandler(NoSuchFileException.class)
+    @ResponseStatus
     public ResponseEntity<ErrorResponseBody> noSuchElementException(NoSuchElementException ex) {
         return new ResponseEntity<>(errorService.makeResponse(ex), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus
     public ResponseEntity<ErrorResponseBody> validationHandler(MethodArgumentNotValidException ex) {
         return new ResponseEntity<>(errorService.makeResponse(ex.getBindingResult()), HttpStatus.BAD_REQUEST);
+    }
+
+    ////////////////////////////////////////// MVC
+
+    // tech fulfilling model with data
+    private void fulfilModel(Model model, HttpServletRequest request) {
+        model.addAttribute("status", HttpStatus.NOT_FOUND.value());
+        model.addAttribute("reason", HttpStatus.NOT_FOUND.getReasonPhrase());
+        model.addAttribute("details", request);
+    }
+
+    @ExceptionHandler(AccessException.class)
+    public String accessFoundHandler(Model model, HttpServletRequest request) {
+        model.addAttribute("status", HttpStatus.FORBIDDEN.value());
+        model.addAttribute("reason", HttpStatus.FORBIDDEN.getReasonPhrase());
+        model.addAttribute("details", request);
+        return "errors/error";
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public String globalFoundHandler(Model model, HttpServletRequest request) {
+        fulfilModel(model, request);
+        return "errors/error";
     }
 }

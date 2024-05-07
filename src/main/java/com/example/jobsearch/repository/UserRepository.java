@@ -1,6 +1,8 @@
 package com.example.jobsearch.repository;
 
 import com.example.jobsearch.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +14,16 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
+
+    @Query("""
+            select u from User u where u.accountType like 'EMPLOYER'
+            """)
+    Page<User> getCompanies(Pageable pageable);
+
+    @Query("""
+            select count(u) from User u where u.accountType like 'EMPLOYER'
+            """)
+    Integer countCompanies();
 
     @Query("select u from User u where u.name = :name")
     List<User> findUserByName(String name);

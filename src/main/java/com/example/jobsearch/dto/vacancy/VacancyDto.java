@@ -57,4 +57,8 @@ public class VacancyDto {
     @PastOrPresent
     @JsonProperty("update_time")
     private LocalDateTime updateTime;
+
+    private Integer responseQty;
+
+    private String companyName;
 }

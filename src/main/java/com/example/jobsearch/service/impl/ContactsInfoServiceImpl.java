@@ -26,10 +26,7 @@ public class ContactsInfoServiceImpl implements ContactsInfoService {
     public InputContactInfoDto getContactInfoByResumeId(int resumeId) {
         List<ContactsInfo> info = contactsInfoRepository.findAllByResumeId(resumeId);
 
-        log.error("КОНТАКТ ИНФО: " + info.toString());
-
         Map<String, String> contactsMap = new HashMap<>();
-
         info.forEach(e -> contactsMap.put(e.getType().getType(), e.getInfo()));
 
         return InputContactInfoDto.builder()

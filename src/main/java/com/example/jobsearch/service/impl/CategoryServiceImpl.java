@@ -76,7 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
                     .getId();
         } else {
             log.error("Не найдена категория: " + category);
-            return null;
+            return 1;
         }
     }
 }

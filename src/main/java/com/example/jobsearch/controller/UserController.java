@@ -5,6 +5,9 @@ import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,27 +27,24 @@ public class UserController {
     private final UserService userService;
     private final ProfileService profileService;
 
-    @GetMapping("register")
-    public String createUser() {
-        return "user/register";
-    }
-
-    @PostMapping("register")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String createUser(UserDto user, @RequestParam(name = "file") MultipartFile file) {
-        userService.createUser(user, file);
-        return "redirect: /";
-    }
-
     @GetMapping("profile")
-    public String getProfile(Model model) {
-        profileService.getProfile(model);
+    public String getProfile(
+            @PageableDefault(size = 3, sort = "CreatedDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(name = "filter", required = false, defaultValue = "none") String filter,
+            Model model
+    ) {
+        profileService.getProfile(pageable, filter, model);
         return "user/profile";
     }
 
     @GetMapping("profile/{email}")
-    public String viewProfile(@PathVariable String email, Model model) {
-        profileService.getProfile(email, model);
+    public String viewProfile(
+            @PathVariable String email,
+            @PageableDefault(size = 3, sort = "CreatedDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(name = "filter", required = false, defaultValue = "none") String filter,
+            Model model
+    ) {
+        profileService.getProfile(email, pageable, filter, model);
         return "user/decorationProfile";
     }
 
@@ -58,11 +58,6 @@ public class UserController {
     public String updateUser(UserDto user, @RequestParam(name = "file") MultipartFile file) {
         userService.updateUser(user, file);
         return "redirect:/users/profile";
-    }
-
-    @GetMapping("login")
-    public String login() {
-        return "/login";
     }
 
 }

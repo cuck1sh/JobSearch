@@ -1,3 +1,4 @@
+<#import "spring.ftl" as spring>
 <#macro layout>
 
     <!doctype html>
@@ -31,29 +32,52 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav d-flex flex-fill">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/users/profile">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/employee/resumes/1/vacancy/2">Messages(Test)</a>
-                    </li>
-                    <li class="nav-item ms-lg-auto">
-                        <a class="nav-link active" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/users/register">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/logout">Logout</a>
+                        <a class="nav-link active" aria-current="page" href="/search">Поиск</a>
                     </li>
                 </ul>
             </div>
+            <#assign
+            known = SPRING_SECURITY_CONTEXT??
+            >
+            <#if known>
+                <#assign
+                user = SPRING_SECURITY_CONTEXT.authentication.principal
+                name = user.getUsername()
+                >
+
+                <#list SPRING_SECURITY_CONTEXT.authentication.getAuthorities() as authority>
+                    <#if authority == 'EMPLOYER'>
+                        <#assign auth = true>
+                    </#if>
+                </#list>
+
+                <#if auth?? && auth>
+                    <a href="/employer/resumes"
+                       class="d-flex text-light text-decoration-none fs-5 m-1 m-sm-0">Резюме</a>
+                <#else>
+                    <a href="/employee/companies"
+                       class="d-flex text-light text-decoration-none fs-5 m-1 m-sm-0">Компании</a>
+                </#if>
+
+                <a href="/users/profile"
+                   class="d-flex text-secondary text-decoration-none fs-5 ps-3 m-1 m-sm-0">${name}</a>
+
+
+                <a href="/logout" class="btn btn-outline-info ms-3 m-1"
+                   id="logout">Logout</a>
+
+            <#else>
+                <a href="/auth/login"
+                   class="btn btn-outline-info m-1">Login</a>
+                <a href="/auth/register"
+                   class="btn btn-outline-info m-1">Register</a>
+            </#if>
         </div>
     </nav>
 
     <div class="container">
         <#nested >
     </div>
-
     </body>
 
 </html>

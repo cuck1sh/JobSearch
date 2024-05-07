@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.ResumeNotFoundException;
@@ -11,15 +12,18 @@ import com.example.jobsearch.model.User;
 import com.example.jobsearch.model.Vacancy;
 import com.example.jobsearch.repository.VacancyRepository;
 import com.example.jobsearch.service.CategoryService;
+import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
 import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +37,7 @@ public class VacancyServiceImpl implements VacancyService {
     private final UserService userService;
     private final CategoryService categoryService;
     private final AuthenticatedUserProvider authenticatedUserProvider;
+    private final ResumeService resumeService;
 
     @Override
     public VacancyDto getVacancyById(int id) throws UserNotFoundException {
@@ -51,6 +56,7 @@ public class VacancyServiceImpl implements VacancyService {
                     .userEmail(vacancy.getUser().getEmail())
                     .createdDate(vacancy.getCreatedDate())
                     .updateTime(vacancy.getUpdateTime())
+                    .companyName(vacancy.getUser().getName())
                     .build();
         } else {
             log.error("Не найдена вакансия с айди: " + id + " для метода getVacancyById(id)");
@@ -87,43 +93,35 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> getVacanciesWithPaging(Integer page, Integer pageSize, String category) {
-        int count;
-        int totalPages;
-        int offset;
-        List<Vacancy> vacancies;
+    public Page<VacancyDto> getVacanciesWithPaging(Pageable pageable, String category) {
+        Page<Vacancy> vacancies;
 
         if (category.equals("none")) {
-            count = getVacanciesCount();
-            totalPages = count / pageSize;
+            vacancies = vacancyRepository.findAllByIsActiveTrue(pageable);
 
-            if (totalPages <= page) {
-                page = totalPages;
-            } else if (page < 0) {
-                page = 0;
-            }
-
-            offset = page * pageSize;
-
-            vacancies = vacancyRepository.findPagedVacancies(pageSize, offset);
+            List<VacancyDto> vacancyDtos = getVacancyDtos(vacancies.getContent());
+            return new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByIsActiveTrue());
         } else {
-            int categoryId = categoryService.checkInCategories(category);
+            Integer categoryId = categoryService.checkInCategories(category);
+            vacancies = vacancyRepository.findAllByIsActiveTrueAndCategory_Id(categoryId, pageable);
 
-            count = getVacanciesWithCategoryCount(categoryId);
-            totalPages = count / pageSize;
-
-            if (totalPages <= page) {
-                page = totalPages;
-            } else if (page < 0) {
-                page = 0;
-            }
-
-            offset = page * pageSize;
-
-            vacancies = vacancyRepository.findPagedVacanciesWithCategory(pageSize, offset, categoryId);
+            List<VacancyDto> vacancyDtos = getVacancyDtos(vacancies.getContent());
+            return new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByIsActiveTrueAndCategory_Id(categoryId));
         }
+    }
 
-        return getVacancyDtos(vacancies);
+
+    @Override
+    public Page<UserMainItem> getVacancyMainItem(Integer userId, Pageable pageable) {
+        Page<Vacancy> pagedVacancies = vacancyRepository.findAllByUserId(userId, pageable);
+        List<UserMainItem> vacancyDtos = new ArrayList<>();
+        pagedVacancies.getContent().forEach(e -> vacancyDtos.add(UserMainItem.builder()
+                .id(e.getId())
+                .name(e.getName())
+                .timestamp(e.getUpdateTime())
+                .build()));
+
+        return new PageImpl<>(vacancyDtos, pageable, vacancyRepository.countAllByUserId(userId));
     }
 
     @Override
@@ -150,7 +148,10 @@ public class VacancyServiceImpl implements VacancyService {
                 .userEmail(e.getUser().getEmail())
                 .createdDate(e.getCreatedDate())
                 .updateTime(e.getUpdateTime())
+                .responseQty(vacancyRepository.countAllByIdAndRespondedApplicants_VacancyId(e.getId(), e.getId()))
+                .companyName(e.getUser().getName())
                 .build()));
+
         return dtos;
     }
 
@@ -302,13 +303,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public void getVacancy(int id, Model model) {
-        VacancyDto vacancyDto = getVacancyById(id);
-
-        if (isVacancyInSystem(id)) {
-            model.addAttribute("vacancy", vacancyDto);
-        } else {
-            throw new ResumeNotFoundException("Не найдена вакансия");
-        }
+    public List<VacancyDto> searchVacancies(String text) {
+        return getVacancyDtos(vacancyRepository.search(text.toLowerCase().strip())).reversed();
     }
 }

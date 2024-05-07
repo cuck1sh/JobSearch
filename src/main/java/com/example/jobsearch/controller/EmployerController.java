@@ -2,10 +2,12 @@ package com.example.jobsearch.controller;
 
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.service.CategoryService;
-import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class EmployerController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
-    private final ProfileService profileService;
     private final ResumeService resumeService;
 
     @GetMapping("vacancies/add")
@@ -33,10 +34,9 @@ public class EmployerController {
 
     @PostMapping("vacancies/add")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeVacancy(InputVacancyDto vacancyDto, Model model) {
+    public String makeVacancy(InputVacancyDto vacancyDto) {
         vacancyService.createVacancy(vacancyDto);
-        profileService.getProfile(model);
-        return "user/profile";
+        return "redirect:/users/profile";
     }
 
     @GetMapping("vacancies/update/{vacancyId}")
@@ -48,20 +48,27 @@ public class EmployerController {
 
     @PostMapping("vacancies/update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeUpdate(InputVacancyDto inputVacancyDto, Model model) {
+    public String makeUpdate(InputVacancyDto inputVacancyDto) {
         vacancyService.changeVacancy(inputVacancyDto);
-        profileService.getProfile(model);
-        return "user/profile";
+        return "redirect:/users/profile";
     }
 
     @GetMapping("resumes")
     public String getMainPage(Model model,
-                              @RequestParam(name = "page", defaultValue = "0") Integer page,
-                              @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize
+                              @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                              @RequestParam(name = "filter", required = false, defaultValue = "none") String category
     ) {
-        model.addAttribute("resumes", resumeService.getResumesWithPaging(page, pageSize));
-        model.addAttribute("page", page);
-        model.addAttribute("resumesCount", resumeService.getResumesCount());
+        model.addAttribute("page", resumeService.getResumesWithPaging(pageable, category));
+        model.addAttribute("filter", category);
+        model.addAttribute("url", "/employer/resumes");
+        model.addAttribute("categories", categoryService.getAllCategories());
+
+        String sort;
+        StringBuilder sb = new StringBuilder();
+        pageable.getSort().forEach(e -> sb.append(e.getProperty()).append(",").append(e.getDirection()));
+        sort = sb.toString();
+
+        model.addAttribute("sort", sort);
         return "employer/resumes";
     }
 

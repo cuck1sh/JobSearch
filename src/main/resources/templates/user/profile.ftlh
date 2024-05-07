@@ -1,4 +1,5 @@
 <#import  "../layout.ftlh" as main>
+<#import "../pager.ftlh" as p>
 <@main.layout>
 
     <div class="w-75 px-5 py-3 my-4 mx-auto border border-2 border-black rounded-4">
@@ -38,9 +39,10 @@
 
                             <div class="col">
                                 <button type="button"
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
                                         class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
-                                    <a href="/api/employee/responses/users/${user.id}"
-                                       class="text-dark text-decoration-none">Отклики </a>
+                                    Отклики
+
                                     <#if responsesQuantity gt 0>
                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         ${responsesQuantity}
@@ -49,6 +51,51 @@
                                     </#if>
                                 </button>
                             </div>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Отклики на вакансии</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <#if responses?size gt 0>
+                                                <ol class="list-group list-group-numbered">
+                                                    <#list responses as response>
+                                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                            <div class="ms-2 me-auto">
+                                                                <div class="fw-bold">${response.vacancy.companyName}</div>
+                                                                <p class="mb-2">
+                                                                    <a href="/vacancies/${response.vacancy.id}"
+                                                                       class="text-dark">Вакансия: ${response.vacancy.name}</a>
+                                                                </p>
+                                                                Резюме: ${response.resume.name}
+                                                            </div>
+
+                                                            <span class="badge text-bg-primary rounded-pill">
+                                                                    <a href="/messages/${response.id}"
+                                                                       class="text-white text-decoration-none">Переписка</a>
+                                                                </span>
+                                                        </li>
+                                                    </#list>
+                                                </ol>
+                                            <#else>
+                                                У вас еще нет откликов на вакансии
+                                            </#if>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         <#else>
                             <div class="col">
                                 <button type="button"
@@ -80,9 +127,9 @@
             <#else>
                 <h2>Созданные вакансии:</h2>
             </#if>
-            <#if userMainItems??>
+            <#if page??>
                 <div class="row row-cols-1 row-cols-lg-3 g-4 mt-1">
-                    <#list userMainItems as item>
+                    <#list page.content as item>
                         <div class="col card-group">
                             <div class="card border-black border-2 rounded-4 p-3">
                                 <div class="card-body">
@@ -117,6 +164,8 @@
                         </div>
                     </#list>
                 </div>
+
+                <@p.pager url page filter sort/>
             </#if>
 
         </div>

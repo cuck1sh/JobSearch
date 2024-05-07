@@ -2,8 +2,11 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dto.RespondMessengerDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
+import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.ProfileDto;
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.vacancy.VacancyDto;
+import com.example.jobsearch.exception.AccessException;
 import com.example.jobsearch.exception.ResponseFoundException;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
@@ -16,13 +19,13 @@ import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,31 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
     private final UserService userService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
+
+    @Override
+    public void getVacancy(int id, Model model) {
+        VacancyDto vacancyDto = vacancyService.getVacancyById(id);
+
+        if (vacancyService.isVacancyInSystem(id)) {
+            UserDto user = authenticatedUserProvider.getAuthUser();
+
+            if (user.getId() != null) {
+                if (userService.isEmployee(user.getId())) {
+                    List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
+                    model.addAttribute("resumes", resumes);
+                } else {
+                    List<RespondedApplicantsDto> responses = getResponsesForEmployer(user.getId());
+                    model.addAttribute("responses", responses);
+                    model.addAttribute("responsesQty", responses.size());
+                }
+            }
+
+            model.addAttribute("vacancy", vacancyDto);
+        } else {
+            throw new VacancyNotFoundException("Не найдена вакансия");
+        }
+    }
 
     @Override
     public Integer getRespondId(int resumeId, int vacancyId) {
@@ -68,24 +96,33 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     }
 
     @Override
-    public RespondMessengerDto getRespondMessenger(int resumeId, int vacancyId) {
-        Integer respondedApplicantsId = getRespondId(resumeId, vacancyId);
-        UserDto user = vacancyService.getUserByVacancy(vacancyId);
-        ProfileDto profile = ProfileDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .age(user.getAge())
-                .phoneNumber(user.getPhoneNumber())
-                .avatar(user.getAvatar())
-                .accountType(user.getAccountType())
-                .build();
+    public RespondMessengerDto getRespondMessenger(int respondId) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+        RespondedApplicantsDto response = getRespondedApplicants(respondId);
 
+        UserDto employee = userService.getUserByEmail(response.getResume().getUserEmail());
+        UserDto employer = userService.getUserByEmail(response.getVacancy().getUserEmail());
 
-        return RespondMessengerDto.builder()
-                .respondedApplicantsId(respondedApplicantsId)
-                .employerProfile(profile)
-                .build();
+        UserDto profileDto = authUser.getEmail().equals(employee.getEmail()) ? employer : employee;
+
+        if (authUser.getEmail().equals(employee.getEmail()) || authUser.getEmail().equals(employer.getEmail())) {
+            ProfileDto profile = ProfileDto.builder()
+                    .id(profileDto.getId())
+                    .name(profileDto.getName())
+                    .email(profileDto.getEmail())
+                    .age(profileDto.getAge())
+                    .phoneNumber(profileDto.getPhoneNumber())
+                    .avatar(profileDto.getAvatar())
+                    .accountType(profileDto.getAccountType())
+                    .build();
+
+            return RespondMessengerDto.builder()
+                    .respondedApplicantsId(respondId)
+                    .employerProfile(profile)
+                    .build();
+        }
+        log.error("Попытка доступа к сообщениям чужого юзера getRespondMessenger()");
+        throw new AccessException("Попытка доступа к сообщениям чужого юзера");
     }
 
     @Override
@@ -121,7 +158,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     public List<RespondedApplicantsDto> getResponsesForEmployee(int userId) {
         if (userService.isUserInSystem(userId)) {
             if (userService.isEmployee(userId)) {
-                List<RespondedApplicants> applicants = repository.findRespondedApplicantsByEmployeeId(userId);
+                List<RespondedApplicants> applicants = repository.findAllByResumeUserId(userId);
                 return getRespondedApplicantsDtos(applicants);
             }
             throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
@@ -132,7 +169,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     @Override
     public List<RespondedApplicantsDto> getResponsesForEmployer(int userId) {
         if (!userService.isEmployee(userId)) {
-            List<RespondedApplicants> applicants = repository.findRespondedApplicantsByEmployerId(userId);
+            List<RespondedApplicants> applicants = repository.findAllByVacancyUserId(userId);
             return getRespondedApplicantsDtos(applicants);
         }
         throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
@@ -144,6 +181,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
         applicants.forEach(e -> {
             try {
                 dtos.add(RespondedApplicantsDto.builder()
+                        .id(e.getId())
                         .resume(resumeService.getResumeById(e.getResume().getId()))
                         .vacancy(vacancyService.getVacancyById(e.getVacancy().getId()))
                         .confirmation(e.getConfirmation())
@@ -156,23 +194,26 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     }
 
     @Override
-    public HttpStatus sendResponseForVacancy(Authentication auth, int vacancyId, int resumeId) {
-        User user = (User) auth.getPrincipal();
+    public ResponseEntity<Integer> createResponse(int vacancyId, int resumeId) {
+        UserDto user = authenticatedUserProvider.getAuthUser();
         if (resumeService.isResumeInSystem(resumeId)) {
-            if (userService.isEmployee(user.getUsername())) {
-                if (user.getUsername().equals(userService.getUserByEmail(resumeService.getResumeById(resumeId).getUserEmail()).getEmail())) {
+            if (userService.isEmployee(user.getEmail())) {
+                if (user.getEmail().equals(userService.getUserByEmail(resumeService.getResumeById(resumeId).getUserEmail()).getEmail())) {
                     if (vacancyService.isVacancyInSystem(vacancyId) && vacancyService.isVacancyActive(vacancyId)) {
-                        repository.save(RespondedApplicants.builder()
+                        return ResponseEntity.ok(
+                                repository.save(RespondedApplicants.builder()
                                 .vacancy(Vacancy.builder().id(vacancyId).build())
                                 .resume(Resume.builder().id(resumeId).build())
-                                .build());
-                        return HttpStatus.OK;
+                                        .build()).getId()
+                        );
+
+
                     }
                     throw new VacancyNotFoundException("Вакансия с айди: " + vacancyId + "не найдена в системе или не активна");
                 }
-                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getUsername() + " с юзером указанным в резюме");
+                throw new ResumeNotFoundException("Не найдено совпдаение Юзера " + user.getEmail() + " с юзером указанным в резюме");
             }
-            throw new ResumeNotFoundException("Юзер " + user.getUsername() + " не найден среди соискателей");
+            throw new ResumeNotFoundException("Юзер " + user.getEmail() + " не найден среди соискателей");
         }
         throw new ResumeNotFoundException("Резюме с айди " + resumeId + " не найдено в системе для отклика на вакансию");
     }

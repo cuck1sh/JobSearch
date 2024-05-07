@@ -3,13 +3,15 @@ package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dto.MessageDto;
 import com.example.jobsearch.dto.RespondedApplicantsDto;
-import com.example.jobsearch.dto.user.AuthUserDto;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.MessageFoundException;
 import com.example.jobsearch.model.Message;
 import com.example.jobsearch.model.RespondedApplicants;
+import com.example.jobsearch.model.User;
 import com.example.jobsearch.repository.MessagesRepository;
 import com.example.jobsearch.service.MessageService;
 import com.example.jobsearch.service.RespondedApplicantsService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,14 +28,20 @@ import java.util.List;
 public class MessageServiceImpl implements MessageService {
     private final MessagesRepository messagesRepository;
     private final RespondedApplicantsService respondedApplicantsService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
-    public ResponseEntity<?> getMessages(AuthUserDto authUserDto, int respond) {
+    public ResponseEntity<?> getMessages(int respond) {
+        UserDto user = authenticatedUserProvider.getAuthUser();
 
         List<Message> messages = messagesRepository.findAllByRespondedApplicantId(respond);
         RespondedApplicantsDto respondedApplicantsDto = respondedApplicantsService.getRespondedApplicants(respond);
 
-        if (respondedApplicantsDto.getResume().getUserEmail().equals(authUserDto.getUsername())) {
+        String targetInfo = user.getAccountType().equals("EMPLOYER")
+                ? respondedApplicantsDto.getVacancy().getUserEmail()
+                : respondedApplicantsDto.getResume().getUserEmail();
+
+        if (targetInfo.equals(user.getEmail())) {
             List<MessageDto> messageDtos = new ArrayList<>();
 
             messages.forEach(e -> messageDtos.add(MessageDto.builder()
@@ -52,8 +60,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void takeMessage(int respond, String message) {
         if (!message.isBlank()) {
+            UserDto user = authenticatedUserProvider.getAuthUser();
             Message newMessage = Message.builder()
                     .respondedApplicant(RespondedApplicants.builder().id(respond).build())
+                    .user(User.builder().id(user.getId()).build())
                     .content(message)
                     .timestamp(LocalDateTime.now())
                     .build();

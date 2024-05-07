@@ -39,10 +39,10 @@ public class SecurityConfig {
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage("/auth/login")
                         .loginProcessingUrl("/api/auth/login")
                         .defaultSuccessUrl("/")
-                        .failureUrl("/login?error=true")
+                        .failureUrl("/auth/login?error=true")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -51,11 +51,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers("/").permitAll()
-//                                .requestMatchers("/users/login").permitAll()
-                                .requestMatchers("/users/register").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
-//                                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                                .requestMatchers("/vacancies/*/").permitAll()
+                                .requestMatchers("/auth/register").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                                .requestMatchers("/vacancies/*").permitAll()
+                                .requestMatchers("/search").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/vacancies/search").permitAll()
                                 .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
                                 .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
                                 .requestMatchers(HttpMethod.POST, "/employee/**").hasAuthority("EMPLOYEE")
