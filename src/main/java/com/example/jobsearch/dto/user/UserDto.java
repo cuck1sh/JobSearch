@@ -2,8 +2,11 @@ package com.example.jobsearch.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,6 +27,10 @@ public class UserDto {
     String name;
 
     String surname;
+
+    @Positive
+    @Min(18)
+    @Max(99)
     Integer age;
 
     @NotBlank

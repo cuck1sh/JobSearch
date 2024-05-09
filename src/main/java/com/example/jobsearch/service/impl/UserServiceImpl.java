@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserByPhone(String phone) {
-        User user = userRepository.findUserByPhoneNumber(phone)
+        User user = userRepository.findByPhoneNumber(phone)
                 .orElseThrow(() -> new UserNotFoundException("Can not find user with phone: " + phone));
         return UserDto.builder()
                 .id(user.getId())
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserByEmail(String email) {
-        User user = userRepository.findUserByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Can not find user with email: " + email));
         return UserDto.builder()
                 .id(user.getId())

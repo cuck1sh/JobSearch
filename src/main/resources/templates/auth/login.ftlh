@@ -13,6 +13,11 @@
             <label class="form-label" for="form2Example2">Password</label>
         </div>
 
+        <#if _csrf??>
+            <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                   value="${(_csrf.token)!'csrf-token'}"/>
+        </#if>
+
         <div class="d-grid gap-2">
             <button type="submit" class="btn bg-success border p-2 text-dark bg-opacity-10 rounded-3 mb-4">Логин
             </button>
