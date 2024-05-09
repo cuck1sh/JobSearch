@@ -31,6 +31,12 @@
                 <label for="formFile" class="form-label">Загрузить аватар</label>
                 <input name="file" class="form-control" type="file" id="formFile">
             </div>
+
+            <#if _csrf??>
+                <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                       value="${(_csrf.token)!'csrf-token'}"/>
+            </#if>
+
             <button type="submit" class="btn btn-primary">Изменить</button>
         </form>
     </div>

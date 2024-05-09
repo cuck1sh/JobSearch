@@ -38,10 +38,10 @@ public class UserDto {
     String email;
 
     @NotBlank
-    @Size(min = 4, max = 24, message = "Length must be more than 4 and less than 24 characters")
+    @Size(min = 4, max = 24, message = "Длина должна быть в диапазоне от 4 до 24 символов")
     @Pattern(
             regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).+$",
-            message = "Should contain at least one UPPER case letter, One number"
+            message = "Должны содержаться минимум один заглавный символ и одна цифра"
     )
     String password;
 
@@ -52,7 +52,7 @@ public class UserDto {
     String avatar;
 
     @JsonProperty("account_type")
-    @Pattern(regexp = "^((EMPLOYER|EMPLOYEE)$)", message = "Тип может быть либо 'EMPLOYER' или 'EMPLOYEE'")
+    @Pattern(regexp = "^((EMPLOYER|EMPLOYEE)$)", message = "Тип аккаунта может быть либо 'Соискатель' или 'Работодатель'")
     String accountType;
 }
 

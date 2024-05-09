@@ -2,24 +2,24 @@
 <@main.layout ; spring>
 
     <div class="w-50 p-4 mx-auto border rounded-2 mb-4">
-        <form action="/auth/register" method="post" enctype="multipart/form-data">
+        <form action="/auth/register" method="post" id="form" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="account_type" class="form-label">Укажите тип вашего аккаунта: соискатель или
+                <label for="accountType" class="form-label">Укажите тип вашего аккаунта: соискатель или
                     работодатель</label>
                 <@spring.formSingleSelect "userDto.accountType",
                 {"0": "Тип аккаунта", "EMPLOYEE": "Соискатель", "EMPLOYER": "Работодатель"},
-                "id='account_type' class='form-select' required" />
+                "id='accountType' class='form-select' required" />
             </div>
-            <div class="mb-3">
-                <label for="name" class="form-label">Имя</label>
-                <@spring.formInput "userDto.name" 'id="name" class="form-control" placeholder="Иван" required'/>
+            <div class="mb-3" id="nameBlock">
+                <label for="name" id="labelName" class="form-label">Имя</label>
+                <@spring.formInput "userDto.name" 'id="name" class="form-control" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
-            <div class="mb-3">
+            <div class="mb-3" id="surnameBlock">
                 <label for="surname" class="form-label">Фамилия</label>
-                <@spring.formInput "userDto.surname" 'id="surname" class="form-control" placeholder="Иванов"'/>
+                <@spring.formInput "userDto.surname" 'id="surname" class="form-control"'/>
             </div>
-            <div class="mb-3">
+            <div class="mb-3" id="ageBlock">
                 <label for="age" class="form-label">Возраст</label>
                 <@spring.formInput "userDto.age" 'id="age" class="form-control" placeholder="25 лет"'/>
                 <@spring.showErrors "<br>" "error text-danger" />
@@ -38,7 +38,7 @@
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3">
-                <label for="phone_number" class="form-label">Номер телефона</label>
+                <label for="phoneNumber" class="form-label">Номер телефона</label>
                 <div id="phoneNumberHelp" class="form-text">Формат номера: 996-ddd-dd-dd-dd</div>
                 <@spring.formInput "userDto.phoneNumber" 'id="phoneNumber" class="form-control" placeholder="996-ddd-dd-dd-dd" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />
@@ -56,5 +56,74 @@
             <button type="submit" class="btn btn-primary">Создать</button>
         </form>
     </div>
+
+    <script>
+        'use strict'
+
+        window.addEventListener('load', () => {
+
+            let accountType = document.getElementById('accountType')
+            let selectedOption = accountType.value
+
+            let form = document.getElementById('form')
+            let nameBlock = document.getElementById('nameBlock')
+
+            buildForm(selectedOption)
+
+            accountType.addEventListener('change', e => {
+                let selected = e.target.value
+
+                buildForm(selected)
+            })
+
+
+            function buildForm(selectedOption) {
+                let surnameBlock = document.getElementById('surnameBlock')
+                let ageBlock = document.getElementById('ageBlock')
+                let labelName = document.getElementById('labelName')
+
+                if (selectedOption === 'EMPLOYEE') {
+                    if (labelName.innerText === 'Название компании') {
+                        labelName.innerText = 'Имя'
+                    }
+                    if (!surnameBlock) {
+                        createSurnameAndAgeBlock()
+                    }
+                } else if (selectedOption === 'EMPLOYER') {
+                    if (labelName.innerText === 'Имя') {
+                        labelName.innerText = 'Название компании'
+                    }
+                    if (surnameBlock) {
+                        surnameBlock.remove()
+                        ageBlock.remove()
+                    }
+                }
+            }
+
+
+            function createSurnameAndAgeBlock() {
+                let newSurnameBlock = document.createElement('div')
+                newSurnameBlock.className = 'mb-3'
+                newSurnameBlock.id = 'surnameBlock'
+                newSurnameBlock.innerHTML =
+                    '<label for="surname" class="form-label">Фамилия</label>' +
+                    `<@spring.formInput "userDto.surname" 'id="surname" class="form-control"'/>`
+                form.appendChild(newSurnameBlock)
+                nameBlock.after(newSurnameBlock)
+
+                let newAgeBlock = document.createElement('div')
+                newAgeBlock.className = 'mb-3'
+                newAgeBlock.id = 'ageBlock'
+                newAgeBlock.innerHTML =
+                    '<label for="age" class="form-label">Возраст</label>' +
+                    `<@spring.formInput "userDto.age" 'id="age" class="form-control"'/>`
+                form.appendChild(newAgeBlock)
+                newSurnameBlock.after(newAgeBlock)
+            }
+
+        })
+
+    </script>
+
 
 </@main.layout>
