@@ -39,7 +39,8 @@ public class AuthController {
     public String createUser(@Valid UserDto user,
                              BindingResult bindingResult,
                              Model model,
-                             @RequestParam(name = "file") MultipartFile file) {
+                             @RequestParam(name = "file") MultipartFile file
+    ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("userDto", user);
             return "auth/register";

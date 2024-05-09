@@ -38,6 +38,5 @@ public class EducationInfoDto {
     @JsonProperty("end_date")
     private LocalDate endDate;
 
-    @NotBlank
     private String degree;
 }

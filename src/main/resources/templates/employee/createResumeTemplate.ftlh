@@ -1,5 +1,5 @@
 <#import  "../layout.ftlh" as main>
-<@main.layout>
+<@main.layout ; spring>
 
     <div class="col-12 col-lg-6 p-4 mx-auto border rounded-2 mb-4">
         <h1 class="text-center mt-2 mb-3 text-danger">Создание резюме:</h1>
@@ -10,23 +10,22 @@
 
                     <div class="mb-3">
                         <label for="name" class="form-label">Название резюме:</label>
-                        <input name="name" type="text" class="form-control" id="name" placeholder="Введите название"
-                               required>
+                        <@spring.formInput "inputResumeDto.name" 'id="name" class="form-control" placeholder="Введите название" required'/>
+                        <@spring.showErrors "<br>" "error text-danger" />
                     </div>
 
                     <div class="mb-3">
-                        <label for="category" class="form-label">Категория:</label>
-                        <select name="category" id="category" class="form-select">
-                            <option value="0">Выберите категорию</option>
-                            <#list categories as category>
-                                <option value=${category.id}>${category.name}</option>
-                            </#list>
-                        </select>
+
+                        <label for="category" class="form-label">Выберите категорию:</label>
+                        <@spring.formSingleSelect "inputResumeDto.category",
+                        categories,
+                        "id='category' class='form-select' required"/>
                     </div>
 
                     <div class="mb-3">
                         <label for="salary" class="form-label">Ожидаемый уровень оклада</label>
-                        <input name="salary" type="number" class="form-control" id="salary" placeholder="Введите оклад">
+                        <@spring.formInput "inputResumeDto.salary" 'id="salary" class="form-control" placeholder="Введите оклад"'/>
+                        <@spring.showErrors "<br>" "error text-danger" />
                     </div>
                 </div>
             </div>
@@ -51,6 +50,45 @@
                         <span class="fs-1">+</span>
                     </button>
                 </div>
+
+                <#if inputResumeDto.workExperienceInfoDtos??>
+                    <#list (inputResumeDto.workExperienceInfoDtos?size - 1)..0 as i>
+                        <div class="row py-2 mb-3 mx-0 extra-info-row">
+                            <div class="col-7 pt-2 bg-success text-dark bg-opacity-10 rounded-3">
+                                <div class="mb-3">
+                                    <label for="years" class="form-label">Годы работы:</label>
+                                    <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].years" 'id="years" class="form-control" placeholder="стаж" required'/>
+                                    <@spring.showErrors "<br>" "error text-danger" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="companyName" class="form-label">Название компании:</label>
+                                    <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].companyName" 'id="companyName" class="form-control" placeholder="Введите название" required'/>
+                                    <@spring.showErrors "<br>" "error text-danger" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="position" class="form-label">Должность:</label>
+                                    <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].position" 'id="position" class="form-control" required'/>
+                                    <@spring.showErrors "<br>" "error text-danger" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="responsibilities" class="form-label">Обязанности:</label>
+                                    <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].responsibilities" 'id="responsibilities" class="form-control" required'/>
+                                    <@spring.showErrors "<br>" "error text-danger" />
+                                </div>
+                            </div>
+
+                            <div class="btn remove-button col-3 m-2 d-flex justify-content-center align-items-center bg-danger p-2 bg-opacity-10 rounded-3"
+                                 onclick=deleteExpRow(this)
+                            >
+                                <span class="fs-1">-</span>
+                            </div>
+
+                        </div>
+                    </#list>
+                </#if>
             </div>
 
             <div id="educationInfo">
@@ -71,6 +109,52 @@
                         <span class="fs-1">+</span>
                     </button>
                 </div>
+
+                <#if inputResumeDto.educationInfos??>
+                    <#list (inputResumeDto.educationInfos?size - 1)..0 as i>
+                        <div class="row py-2 mb-3 mx-0 extra-info-row">
+                            <div class="col-7 pt-2 bg-info text-dark bg-opacity-10 rounded-3">
+                                <div class="mb-3">
+                                    <label for="institution" class="form-label">Название образовательного
+                                        учреждения:</label>
+                                    <@spring.formInput "inputResumeDto.educationInfos["+i+"].institution" 'id="institution" class="form-control" placeholder="Введите название" required'/>
+                                    <@spring.showErrors "<br>" "error text-danger" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="program" class="form-label">Программа обучения:</label>
+                                    <@spring.formInput "inputResumeDto.educationInfos["+i+"].program" 'id="program" class="form-control" required'/>
+                                    <@spring.showErrors "<br>" "error text-danger" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="startDate" class="form-label">Дата поступления:</label>
+                                    <@spring.formInput "inputResumeDto.educationInfos["+i+"].startDate" 'id="startDate" class="form-control" required'/>
+                                    <@spring.showErrors "<br>" "error text-danger" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="endDate" class="form-label">Дата окончания:</label>
+                                    <@spring.formInput "inputResumeDto.educationInfos["+i+"].endDate" 'id="endDate" class="form-control" required'/>
+                                    <@spring.showErrors "<br>" "error text-danger" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="degree" class="form-label">Полученная степень:</label>
+                                    <@spring.formInput "inputResumeDto.educationInfos["+i+"].degree" 'id="degree" class="form-control"'/>
+                                </div>
+                            </div>
+
+                            <div class="btn remove-button col-3 m-2 d-flex justify-content-center align-items-center bg-danger p-2 bg-opacity-10 rounded-3"
+                                 onclick=deleteExpRow(this)
+                            >
+                                <span class="fs-1">-</span>
+                            </div>
+                        </div>
+                    </#list>
+                </#if>
+
+
             </div>
 
 
@@ -80,38 +164,41 @@
                 <div class="col">
 
                     <div class="d-flex">
-                        <input name="contacts.telegram" type="text" class="form-control me-2 my-3" id="telegram">
+                        <@spring.formInput "inputResumeDto.contacts.telegram" 'id="telegram" class="form-control me-2 my-3"'/>
+                        <@spring.showErrors "<br>" "error text-danger" />
                         <i class="bi bi-telegram align-content-center fs-2"></i>
                     </div>
 
                     <div class="d-flex">
-                        <input name="contacts.email" type="email" class="form-control me-2 my-3" id="email"
-                               placeholder="example@mail.com">
+                        <@spring.formInput "inputResumeDto.contacts.email" 'id="email" class="form-control me-2 my-3" placeholder="example@mail.com"' 'email'/>
+                        <@spring.showErrors "<br>" "error text-danger" />
                         <i class="bi bi-envelope-at align-content-center fs-2"></i>
                     </div>
 
                     <div class="d-flex">
-                        <input name="contacts.phoneNumber" type="text" class="form-control me-2 my-3" id="phoneNumber"
-                               placeholder="996-779-11-22-33">
+                        <@spring.formInput "inputResumeDto.contacts.phoneNumber" 'id="phoneNumber" class="form-control me-2 my-3" placeholder="996-779-11-22-33"'/>
+                        <@spring.showErrors "<br>" "error text-danger" />
                         <i class="bi bi-telephone-inbound align-content-center fs-2"></i>
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="d-flex">
-                        <input name="contacts.facebook" type="text" class="form-control me-2 my-3" id="facebook">
+                        <@spring.formInput "inputResumeDto.contacts.facebook" 'id="facebook" class="form-control me-2 my-3"'/>
+                        <@spring.showErrors "<br>" "error text-danger" />
                         <i class="bi bi-facebook align-content-center fs-2"></i>
                     </div>
 
                     <div class="d-flex">
-                        <input name="contacts.linkedIn" type="text" class="form-control me-2 my-3" id="linkedIn">
+                        <@spring.formInput "inputResumeDto.contacts.linkedIn" 'id="linkedIn" class="form-control me-2 my-3"'/>
+                        <@spring.showErrors "<br>" "error text-danger" />
                         <i class="bi bi-linkedin align-content-center fs-2"></i>
                     </div>
                 </div>
             </div>
 
             <div class="form-check mb-3">
-                <input class="form-check-input" name="isActive" type="checkbox" value=true id="isActive">
+                <@spring.formCheckbox "inputResumeDto.isActive", 'class="form-check-input" id="isActive"'/>
                 <label class="form-check-label" for="isActive">
                     Активно
                 </label>
@@ -130,5 +217,13 @@
     </div>
 
     <script src="/static/js/resumeCreation.js"></script>
+    <script>
+        function deleteExpRow(button) {
+            const row = button.closest('.extra-info-row');
+            if (row) {
+                row.remove();
+            }
+        }
+    </script>
 
 </@main.layout>

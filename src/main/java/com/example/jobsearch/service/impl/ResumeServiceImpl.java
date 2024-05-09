@@ -59,11 +59,13 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumeDto getResumeById(int id) throws UserNotFoundException {
         Resume resume = repository.findById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
+        Integer categoryId = resume.getCategory() != null ? resume.getCategory().getId() : 0;
+
         return ResumeDto.builder()
                 .id(resume.getId())
                 .userEmail(resume.getUser().getEmail())
                 .name(resume.getName())
-                .category(categoryService.getCategoryById(resume.getCategory().getId()))
+                .category(categoryService.getCategoryById(categoryId))
                 .salary(resume.getSalary())
                 .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
                 .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
@@ -169,19 +171,24 @@ public class ResumeServiceImpl implements ResumeService {
             Resume newResume = Resume.builder()
                     .user(User.builder().id(user.getId()).build())
                     .name(resumeDto.getName())
-                    .category(Category.builder().id(categoryService.checkInCategories(resumeDto.getCategory())).build())
                     .salary(resumeDto.getSalary())
                     .isActive(resumeDto.getIsActive())
                     .createdDate(LocalDateTime.now())
                     .updateTime(LocalDateTime.now())
                     .build();
 
+            Integer categoryId = categoryService.checkInCategories(resumeDto.getCategory());
 
-            Integer newResumeKey = repository.saveAndFlush(newResume).getId();
+            if (categoryId != null) {
+                newResume.setCategory(Category.builder().id(categoryId).build());
+            }
+
+            Integer newResumeKey = repository.save(newResume).getId();
 
             if (resumeDto.getWorkExperienceInfoDtos() != null) {
                 workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
             }
+
             if (resumeDto.getEducationInfos() != null) {
                 educationInfoService.createEducationInfo(resumeDto.getEducationInfos(), newResumeKey);
             }
