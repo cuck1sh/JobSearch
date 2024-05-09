@@ -1,6 +1,7 @@
 package com.example.jobsearch.service.impl;
 
 import com.example.jobsearch.dto.user.ProfileDto;
+import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
@@ -9,6 +10,7 @@ import com.example.jobsearch.service.RespondedApplicantsService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.service.VacancyService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
     private final RespondedApplicantsService respondedApplicantsService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
     public void getProfile(String email, Pageable pageable, String filter, Model model) {
@@ -113,5 +117,55 @@ public class ProfileServiceImpl implements ProfileService {
         users.forEach(e -> profiles.add(getProfileDto(e)));
 
         return new PageImpl<>(profiles, pageable, userService.countCompanies());
+    }
+
+    @Override
+    public void updateUser(UserDto userDto, MultipartFile file) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+
+//        if (userDto.getName().isBlank()) {
+//            userDto.setName(actualUser.getName());
+//        }
+//
+//        if (userDto.getSurname().isBlank()) {
+//            userDto.setSurname(actualUser.getSurname());
+//        }
+//
+//        if (userDto.getAge() == null) {
+//            userDto.setAge(actualUser.getAge());
+//        }
+//
+//        if (userDto.getPhoneNumber().isBlank()) {
+//            userDto.setPhoneNumber(actualUser.getPhoneNumber());
+//        }
+//
+//        User user = User.builder()
+//                .id(actualUser.getId())
+//                .name(userDto.getName())
+//                .surname(userDto.getSurname())
+//                .age(userDto.getAge())
+//                .phoneNumber(userDto.getPhoneNumber())
+//                .build();
+
+        User user = User.builder()
+                .id(authUser.getId())
+                .name(userDto.getName())
+                .surname(userDto.getSurname())
+                .age(userDto.getAge())
+                .phoneNumber(userDto.getPhoneNumber())
+                .build();
+
+        if (!userDto.getPassword().isBlank()) {
+            user.setPassword(userDto.getPassword());
+        }
+
+        userService.updateUser(user);
+
+        if (file.getOriginalFilename().length() != 0) {
+            userService.uploadUserAvatar(UserAvatarFileDto.builder()
+                    .file(file)
+                    .userId(authUser.getId())
+                    .build());
+        }
     }
 }

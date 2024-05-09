@@ -38,7 +38,7 @@
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3">
-                <label for="phoneNumber" class="form-label">Номер телефона</label>
+                <label for="phoneNumber" class="form-label mb-0">Номер телефона</label>
                 <div id="phoneNumberHelp" class="form-text">Формат номера: 996-ddd-dd-dd-dd</div>
                 <@spring.formInput "userDto.phoneNumber" 'id="phoneNumber" class="form-control" placeholder="996-ddd-dd-dd-dd" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />

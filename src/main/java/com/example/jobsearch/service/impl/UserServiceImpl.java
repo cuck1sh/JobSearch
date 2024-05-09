@@ -17,8 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -207,51 +205,7 @@ public class UserServiceImpl implements UserService {
         throw new UserNotFoundException("Пользователь с таким Email уже существует");
     }
 
-    @Override
-    public void updateUser(UserDto userDto, MultipartFile file) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDto actualUser = getUserByEmail(authentication.getName());
 
-        if (userDto.getName().isBlank()) {
-            userDto.setName(actualUser.getName());
-        }
-
-        if (userDto.getSurname().isBlank()) {
-            userDto.setSurname(actualUser.getSurname());
-        }
-
-        if (userDto.getAge() == null) {
-            userDto.setAge(actualUser.getAge());
-        }
-
-        if (userDto.getPhoneNumber().isBlank()) {
-            userDto.setPhoneNumber(actualUser.getPhoneNumber());
-        }
-        User user = User.builder()
-                .id(actualUser.getId())
-                .name(userDto.getName())
-                .surname(userDto.getSurname())
-                .age(userDto.getAge())
-                .phoneNumber(userDto.getPhoneNumber())
-                .build();
-
-        if (!userDto.getPassword().isBlank()) {
-            user.setPassword(userDto.getPassword());
-        }
-
-        userRepository.updateBy(user.getName(),
-                user.getSurname(),
-                user.getAge(),
-                user.getPhoneNumber(),
-                user.getId());
-
-        if (file.getOriginalFilename().length() != 0) {
-            uploadUserAvatar(UserAvatarFileDto.builder()
-                    .file(file)
-                    .userId(actualUser.getId())
-                    .build());
-        }
-    }
 
     @Override
     public Page<User> getCompanies(Pageable pageable) {
@@ -262,4 +216,15 @@ public class UserServiceImpl implements UserService {
     public Integer countCompanies() {
         return userRepository.countCompanies();
     }
+
+    @Override
+    public void updateUser(User user) {
+
+        userRepository.updateBy(user.getName(),
+                user.getSurname(),
+                user.getAge(),
+                user.getPhoneNumber(),
+                user.getId());
+    }
+
 }
