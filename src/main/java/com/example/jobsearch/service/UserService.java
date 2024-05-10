@@ -32,6 +32,6 @@ public interface UserService {
     List<UserDto> getEmployee(EmployeeFindDto employeeFindDto);
     List<UserDto> getEmployer(String name);
 
-    void updateUser(UserDto user, MultipartFile file);
+    void updateUser(User user);
 
 }

@@ -3,6 +3,7 @@ package com.example.jobsearch.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class WorkExperienceInfoDto {
     private Integer years;
 
     @NotBlank
+    @NotEmpty
     @JsonProperty("company_name")
     private String companyName;
 

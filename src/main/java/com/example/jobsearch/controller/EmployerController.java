@@ -4,6 +4,7 @@ import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -11,6 +12,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,27 +30,51 @@ public class EmployerController {
 
     @GetMapping("vacancies/add")
     public String addVacancy(Model model) {
-        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("inputVacancyDto", new InputVacancyDto());
+        model.addAttribute("categories", categoryService.getStringedCategories());
         return "employer/createVacancyTemplate";
     }
 
     @PostMapping("vacancies/add")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeVacancy(InputVacancyDto vacancyDto) {
-        vacancyService.createVacancy(vacancyDto);
+    public String makeVacancy(@Valid InputVacancyDto inputVacancyDto,
+                              BindingResult bindingResult,
+                              Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("inputVacancyDto", inputVacancyDto);
+            model.addAttribute("categories", categoryService.getStringedCategories());
+            return "employer/createVacancyTemplate";
+        }
+
+        if (inputVacancyDto.getExpFrom() > inputVacancyDto.getExpTo()) {
+            model.addAttribute("inputVacancyDto", inputVacancyDto);
+            model.addAttribute("categories", categoryService.getStringedCategories());
+            model.addAttribute("expErr", true);
+            return "employer/createVacancyTemplate";
+        }
+        vacancyService.createVacancy(inputVacancyDto);
         return "redirect:/users/profile";
     }
 
     @GetMapping("vacancies/update/{vacancyId}")
-    public String updateVacancy(Model model, @PathVariable int vacancyId) {
-        model.addAttribute("vacancy", vacancyService.getVacancyById(vacancyId));
-        model.addAttribute("categories", categoryService.getAllCategories());
+    public String updateVacancy(@PathVariable int vacancyId, Model model) {
+        model.addAttribute("inputVacancyDto", vacancyService.getInputVacancyById(vacancyId));
+        model.addAttribute("categories", categoryService.getStringedCategories());
         return "employer/updateVacancyTemplate";
     }
 
     @PostMapping("vacancies/update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String makeUpdate(InputVacancyDto inputVacancyDto) {
+    public String makeUpdate(@Valid InputVacancyDto inputVacancyDto,
+                             BindingResult bindingResult,
+                             Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("inputVacancyDto", inputVacancyDto);
+            model.addAttribute("categories", categoryService.getStringedCategories());
+            return "employer/updateVacancyTemplate";
+        }
         vacancyService.changeVacancy(inputVacancyDto);
         return "redirect:/users/profile";
     }

@@ -42,9 +42,9 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
 
     @Override
     public void getVacancy(int id, Model model) {
-        VacancyDto vacancyDto = vacancyService.getVacancyById(id);
 
         if (vacancyService.isVacancyInSystem(id)) {
+            VacancyDto vacancyDto = vacancyService.getVacancyById(id);
             UserDto user = authenticatedUserProvider.getAuthUser();
 
             if (user.getId() != null) {
@@ -52,7 +52,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
                     List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
                     model.addAttribute("resumes", resumes);
                 } else {
-                    List<RespondedApplicantsDto> responses = getResponsesForEmployer(user.getId());
+                    List<RespondedApplicantsDto> responses = getResponsesForEmployer(id, user.getId());
                     model.addAttribute("responses", responses);
                     model.addAttribute("responsesQty", responses.size());
                 }
@@ -167,11 +167,12 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     }
 
     @Override
-    public List<RespondedApplicantsDto> getResponsesForEmployer(int userId) {
+    public List<RespondedApplicantsDto> getResponsesForEmployer(int vacancyId, int userId) {
         if (!userService.isEmployee(userId)) {
-            List<RespondedApplicants> applicants = repository.findAllByVacancyUserId(userId);
+            List<RespondedApplicants> applicants = repository.findAllByVacancyIdAndVacancyUserId(vacancyId, userId);
             return getRespondedApplicantsDtos(applicants);
         }
+        log.error("Юзер " + userId + " не найден среди работодателей");
         throw new VacancyNotFoundException("Юзер " + userId + " не найден среди работодателей");
     }
 

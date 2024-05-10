@@ -37,11 +37,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             " where LCASE(NAME) = :name and ACCOUNT_TYPE not like 'EMPLOYEE';", nativeQuery = true)
     List<User> findEmployer(String name);
 
-    @Query("select u from User u where u.phoneNumber = :phoneNumber")
-    Optional<User> findUserByPhoneNumber(String phoneNumber);
 
-    @Query("select u from User u where u.email = :email")
-    Optional<User> findUserByEmail(String email);
+    Optional<User> findByPhoneNumber(String phoneNumber);
+
+    Optional<User> findByEmail(String email);
 
     @Transactional
     @Modifying

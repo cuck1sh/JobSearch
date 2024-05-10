@@ -1,6 +1,6 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dto.resume.InputContactInfoDto;
+import com.example.jobsearch.dto.CategoryDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
@@ -59,11 +59,13 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public ResumeDto getResumeById(int id) throws UserNotFoundException {
         Resume resume = repository.findById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
+        Integer categoryId = resume.getCategory() != null ? resume.getCategory().getId() : 0;
+
         return ResumeDto.builder()
                 .id(resume.getId())
                 .userEmail(resume.getUser().getEmail())
                 .name(resume.getName())
-                .category(categoryService.getCategoryById(resume.getCategory().getId()))
+                .category(categoryService.getCategoryById(categoryId))
                 .salary(resume.getSalary())
                 .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
                 .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
@@ -71,6 +73,24 @@ public class ResumeServiceImpl implements ResumeService {
                 .isActive(resume.getIsActive())
                 .createdDate(resume.getCreatedDate())
                 .updateTime(resume.getUpdateTime())
+                .build();
+    }
+
+    @Override
+    public InputResumeDto getInputResumeById(int id) throws UserNotFoundException {
+        Resume resume = repository.findById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
+        String categoryName = (resume.getCategory() != null) ? resume.getCategory().getName() : "Пусто";
+
+        return InputResumeDto.builder()
+                .id(resume.getId())
+                .userEmail(resume.getUser().getEmail())
+                .name(resume.getName())
+                .category(categoryName)
+                .salary(resume.getSalary())
+                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
+                .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
+                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .isActive(resume.getIsActive())
                 .build();
     }
 
@@ -133,21 +153,34 @@ public class ResumeServiceImpl implements ResumeService {
     // Служебный метод
     private List<ResumeDto> getResumeDtos(List<Resume> resumes) {
         List<ResumeDto> dtos = new ArrayList<>();
-        resumes.forEach(e -> dtos.add(ResumeDto.builder()
-                .id(e.getId())
-                .userEmail(e.getUser().getEmail())
-                .name(e.getName())
-                .category(categoryService.getCategoryById(e.getCategory().getId()))
-                .salary(e.getSalary())
-                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
-                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
-                .educationInfos(educationInfoService.getEducationInfoById(e.getId()))
-                .isActive(e.getIsActive())
-                .createdDate(e.getCreatedDate())
-                .updateTime(e.getUpdateTime())
-                .build()));
 
+        resumes.forEach(e -> dtos.add(getDto(e)));
         return dtos;
+    }
+
+
+    private ResumeDto getDto(Resume resume) {
+        CategoryDto categoryDto;
+
+        if (resume.getCategory() != null) {
+            categoryDto = categoryService.getCategoryById(resume.getCategory().getId());
+        } else {
+            categoryDto = null;
+        }
+
+        return ResumeDto.builder()
+                .id(resume.getId())
+                .userEmail(resume.getUser().getEmail())
+                .name(resume.getName())
+                .category(categoryDto)
+                .salary(resume.getSalary())
+                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
+                .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
+                .isActive(resume.getIsActive())
+                .createdDate(resume.getCreatedDate())
+                .updateTime(resume.getUpdateTime())
+                .build();
     }
 
     // Служебный метод
@@ -169,19 +202,24 @@ public class ResumeServiceImpl implements ResumeService {
             Resume newResume = Resume.builder()
                     .user(User.builder().id(user.getId()).build())
                     .name(resumeDto.getName())
-                    .category(Category.builder().id(categoryService.checkInCategories(resumeDto.getCategory())).build())
                     .salary(resumeDto.getSalary())
                     .isActive(resumeDto.getIsActive())
                     .createdDate(LocalDateTime.now())
                     .updateTime(LocalDateTime.now())
                     .build();
 
+            Integer categoryId = categoryService.checkInCategories(resumeDto.getCategory());
 
-            Integer newResumeKey = repository.saveAndFlush(newResume).getId();
+            if (categoryId != null) {
+                newResume.setCategory(Category.builder().id(categoryId).build());
+            }
+
+            Integer newResumeKey = repository.save(newResume).getId();
 
             if (resumeDto.getWorkExperienceInfoDtos() != null) {
                 workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
             }
+
             if (resumeDto.getEducationInfos() != null) {
                 educationInfoService.createEducationInfo(resumeDto.getEducationInfos(), newResumeKey);
             }
@@ -194,16 +232,15 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void changeResume(InputResumeDto resume, InputContactInfoDto contacts) {
-        String userEmail = authenticatedUserProvider.getAuthUser().getEmail();
+    public void changeResume(InputResumeDto resume) {
+        UserDto user = authenticatedUserProvider.getAuthUser();
 
-        if (userEmail.equals(resume.getUserEmail())) {
+        if (user.getEmail().equals(resume.getUserEmail())) {
             if (isResumeInSystem(resume.getId())) {
-                Integer userId = userService.getUserByEmail(userEmail).getId();
 
                 Resume newResume = Resume.builder()
                         .id(resume.getId())
-                        .user(User.builder().id(userId).build())
+                        .user(User.builder().id(user.getId()).build())
                         .name(resume.getName())
                         .category(Category.builder().id(categoryService.checkInCategories(resume.getCategory())).build())
                         .updateTime(LocalDateTime.now())
@@ -221,12 +258,42 @@ public class ResumeServiceImpl implements ResumeService {
                         newResume.getUpdateTime(),
                         newResume.getId());
 
-                contactsInfoService.updateContactInfo(contacts, newResume.getId());
+                log.error("WORKEXPDTOS: {}", resume.getWorkExperienceInfoDtos());
+
+                if (resume.getWorkExperienceInfoDtos() != null) {
+                    resume.getWorkExperienceInfoDtos().forEach(e -> {
+                        log.error("WORKEXP ID: {}", e.getId());
+                        if (e.getId() == null) {
+                            workExperienceInfoService.createWorkExperienceInfo(e, resume.getId());
+                        } else {
+                            workExperienceInfoService.changeWorkExperienceInfo(e);
+                        }
+                    });
+
+                }
+
+                if (resume.getEducationInfos() != null) {
+                    resume.getEducationInfos().forEach(e -> {
+                        if (e.getId() == null) {
+                            educationInfoService.createEducationInfo(e, resume.getId());
+                        } else {
+                            educationInfoService.changeEducationInfo(e);
+                        }
+                    });
+                }
+
+                if (resume.getContacts() != null) {
+                    contactsInfoService.createContactInfo(resume.getContacts(), resume.getId());
+                }
+
+                contactsInfoService.updateContactInfo(resume.getContacts(), newResume.getId());
             } else {
                 log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
+                throw new ResumeNotFoundException("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
             }
         } else {
-            log.error("Попытка юзера " + userEmail + " исправления чужого резюме с айди: " + resume.getId());
+            log.error("Попытка юзера " + user.getEmail() + " исправления чужого резюме с айди: " + resume.getId());
+            throw new ResumeNotFoundException("Попытка юзера " + user.getEmail() + " исправления чужого резюме с айди: " + resume.getId());
         }
     }
 

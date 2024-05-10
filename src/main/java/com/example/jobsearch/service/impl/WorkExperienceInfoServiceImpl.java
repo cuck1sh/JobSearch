@@ -7,6 +7,7 @@ import com.example.jobsearch.repository.WorkExperienceInfoRepository;
 import com.example.jobsearch.service.WorkExperienceInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import java.util.List;
 public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService {
 
     private final WorkExperienceInfoRepository workExperienceInfoRepository;
-    private static final String DEFAULT_VALUE = "undefined";
 
     @Override
     public Boolean isResumeExist(int resumeId) {
@@ -63,7 +63,7 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
     }
 
     @Override
-    public void changeWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfoDtos, Integer resumeId) {
+    public void changeWorkExperienceInfo(List<WorkExperienceInfoDto> workExperienceInfoDtos) {
         if (!workExperienceInfoDtos.isEmpty()) {
             workExperienceInfoDtos.forEach(e -> workExperienceInfoRepository.updateBy(e.getYears(),
                     e.getCompanyName(),
@@ -71,5 +71,32 @@ public class WorkExperienceInfoServiceImpl implements WorkExperienceInfoService 
                     e.getResponsibilities(),
                     e.getId()));
         }
+    }
+
+    @Override
+    public void createWorkExperienceInfo(WorkExperienceInfoDto workExperienceInfoDto, Integer resumeId) {
+        workExperienceInfoRepository.save(WorkExperienceInfo.builder()
+                .resume(Resume.builder().id(resumeId).build())
+                .years(workExperienceInfoDto.getYears())
+                .companyName(workExperienceInfoDto.getCompanyName())
+                .position(workExperienceInfoDto.getPosition())
+                .responsibilities(workExperienceInfoDto.getResponsibilities())
+                .build());
+    }
+
+    @Override
+    public void changeWorkExperienceInfo(WorkExperienceInfoDto workExperienceInfos) {
+        workExperienceInfoRepository.updateBy(workExperienceInfos.getYears(),
+                workExperienceInfos.getCompanyName(),
+                workExperienceInfos.getPosition(),
+                workExperienceInfos.getResponsibilities(),
+                workExperienceInfos.getId()
+        );
+    }
+
+    @Override
+    public HttpStatus deleteWorkExp(int workExpId) {
+        workExperienceInfoRepository.deleteById(workExpId);
+        return HttpStatus.OK;
     }
 }

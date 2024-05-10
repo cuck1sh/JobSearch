@@ -10,7 +10,9 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,14 +25,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategoryById(Integer id) {
         if (id != null) {
-            Category category = categoryRepository.findById(id)
-                    .orElseThrow(() -> new CategoryNotFoundException("Can not find category with id:" + id));
+            Optional<Category> category = categoryRepository.findById(id);
 
-            return CategoryDto.builder()
-                    .id(category.getId())
-                    .parent(getParentCategory(category.getParent()))
-                    .name(category.getName())
-                    .build();
+            return category.map(value -> CategoryDto.builder()
+                    .id(value.getId())
+                    .parent(getParentCategory(value.getParent()))
+                    .name(value.getName())
+                    .build()).orElse(null);
         } else {
             log.error("Не передан айди для категории");
             return null;
@@ -51,6 +52,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
+    }
+
+    @Override
+    public List<String> getStringedCategories() {
+        List<Category> categories = getAllCategories();
+        List<String> stringCategories = new ArrayList<>();
+
+        stringCategories.add("Пусто");
+
+        categories.forEach(e -> stringCategories.add(e.getName()));
+        return stringCategories;
     }
 
     @Override
@@ -76,7 +88,7 @@ public class CategoryServiceImpl implements CategoryService {
                     .getId();
         } else {
             log.error("Не найдена категория: " + category);
-            return 1;
+            return null;
         }
     }
 }

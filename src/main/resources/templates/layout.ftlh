@@ -8,6 +8,8 @@
         <meta name="viewport"
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta name="_csrf_header" content="${_csrf.headerName}"/>
+        <meta name="_csrf_token" content="${_csrf.token}"/>
         <title>Job search</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
@@ -62,9 +64,18 @@
                 <a href="/users/profile"
                    class="d-flex text-secondary text-decoration-none fs-5 ps-3 m-1 m-sm-0">${name}</a>
 
+                <#if _csrf??>
+                    <form action="/logout" method="post">
+                        <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                               value="${(_csrf.token)!'csrf-token'}"/>
+                        <button class="btn btn-outline-danger ms-3 m-1">Logout</button>
+                    </form>
+                <#else>
+                    <a href="/logout" class="btn btn-outline-info ms-3 m-1"
+                       id="logout">Logout</a>
+                </#if>
 
-                <a href="/logout" class="btn btn-outline-info ms-3 m-1"
-                   id="logout">Logout</a>
+
 
             <#else>
                 <a href="/auth/login"
@@ -76,7 +87,7 @@
     </nav>
 
     <div class="container">
-        <#nested >
+        <#nested spring>
     </div>
     </body>
 

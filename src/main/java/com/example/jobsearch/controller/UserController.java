@@ -3,6 +3,7 @@ package com.example.jobsearch.controller;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.UserService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     private final UserService userService;
     private final ProfileService profileService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @GetMapping("profile")
     public String getProfile(
@@ -49,14 +51,15 @@ public class UserController {
     }
 
     @GetMapping("update")
-    public String updateProfile() {
+    public String updateProfile(Model model) {
+        model.addAttribute("userDto", authenticatedUserProvider.getAuthUser());
         return "user/update";
     }
 
     @PostMapping("update")
     @ResponseStatus(HttpStatus.SEE_OTHER)
     public String updateUser(UserDto user, @RequestParam(name = "file") MultipartFile file) {
-        userService.updateUser(user, file);
+        profileService.updateUser(user, file);
         return "redirect:/users/profile";
     }
 
