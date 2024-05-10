@@ -1,5 +1,6 @@
 package com.example.jobsearch.config;
 
+import com.example.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Slf4j
@@ -16,6 +18,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final UserService userService;
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return new MySimpleUrlAuthenticationSuccessHandler();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -23,8 +31,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .formLogin(form -> form
                         .loginPage("/auth/login")
-                        .loginProcessingUrl("/api/auth/login")
-                        .defaultSuccessUrl("/")
+                        .loginProcessingUrl("/auth/login")
+//                        .defaultSuccessUrl("/")
+                        .successHandler(successHandler())
                         .failureUrl("/auth/login?error=true")
                         .permitAll())
                 .logout(logout -> logout

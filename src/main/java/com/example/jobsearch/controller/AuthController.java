@@ -2,6 +2,7 @@ package com.example.jobsearch.controller;
 
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.service.UserService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,21 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @GetMapping("login")
     public String login() {
         return "auth/login";
     }
+
+//    @PostMapping("login")
+//    @ResponseStatus(HttpStatus.SEE_OTHER)
+//    public String redirect(AuthUserDto userDto){
+//        log.info("ЗАШЛО В ПОСТ ЛОГИН");
+//        UserDto user = userService.getUserByEmail(userDto.getUsername());
+//        log.info("ACCOUNT TYPE: {}", user.getAccountType());
+//        return userService.isEmployee(user.getId()) ? "redirect:/" : "redirect:/employer/resumes";
+//    }
 
     @GetMapping("register")
     public String createUser(Model model) {
@@ -46,6 +57,6 @@ public class AuthController {
             return "auth/register";
         }
         userService.createUser(user, file);
-        return "redirect:/";
+        return "redirect:/auth/login";
     }
 }
