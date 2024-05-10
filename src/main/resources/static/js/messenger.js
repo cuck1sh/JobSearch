@@ -1,4 +1,7 @@
 'use strict'
+
+// const csrfToken = document.head.querySelector("[name~=csrf_token][content]").content;
+
 window.addEventListener('load', () => {
     const responseId = document.getElementById("responseId").innerText
     const base_url = 'http://localhost:8089/api/messages/' + responseId;

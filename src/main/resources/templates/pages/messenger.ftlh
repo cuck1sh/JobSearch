@@ -37,6 +37,12 @@
                                 <input type="text" id="messageValue" name="message" class="form-control"
                                        placeholder="Сообщение">
                             </div>
+
+                            <#if _csrf??>
+                                <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                       value="${(_csrf.token)!'csrf-token'}"/>
+                            </#if>
+
                             <div class="col-2">
                                 <button type="submit" id="submit"
                                         class="btn bg-success p-2 text-dark bg-opacity-10 rounded-3">Отправить

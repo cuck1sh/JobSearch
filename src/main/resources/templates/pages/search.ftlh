@@ -3,6 +3,11 @@
 
     <form class="mt-3 w-75" id="form">
         <div class="mb-3">
+            <#if _csrf??>
+                <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                       value="${(_csrf.token)!'csrf-token'}"/>
+            </#if>
+
             <label for="text" class="form-label">Поиск вакансии</label>
             <input type="text" id="input" name="text" class="form-control">
         </div>
