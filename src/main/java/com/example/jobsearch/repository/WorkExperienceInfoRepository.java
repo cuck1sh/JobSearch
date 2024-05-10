@@ -15,7 +15,6 @@ public interface WorkExperienceInfoRepository extends JpaRepository<WorkExperien
 
     List<WorkExperienceInfo> findAllByResumeId(Integer resumeId);
 
-
     @Transactional
     @Modifying
     @Query(value = "update work_experience_info" +

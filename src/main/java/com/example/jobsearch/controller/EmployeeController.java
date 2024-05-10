@@ -1,6 +1,5 @@
 package com.example.jobsearch.controller;
 
-import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ProfileService;
@@ -61,17 +60,24 @@ public class EmployeeController {
     }
 
     @GetMapping("resumes/update/{resumeId}")
-    public String updateResume(Model model, @PathVariable int resumeId) {
-        model.addAttribute("resume", resumeService.getResumeById(resumeId));
-        model.addAttribute("categories", categoryService.getAllCategories());
+    public String updateResume(@PathVariable int resumeId, Model model) {
+        model.addAttribute("inputResumeDto", resumeService.getInputResumeById(resumeId));
+        model.addAttribute("categories", categoryService.getStringedCategories());
         return "employee/updateResumeTemplate";
     }
 
     @PostMapping("resumes/update")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public String remakeResume(InputResumeDto resumeDto, InputContactInfoDto contacts, Model model) {
-        resumeService.changeResume(resumeDto, contacts);
-        return "redirect:/users/profile";
+    public String remakeResume(@Valid InputResumeDto inputResumeDto,
+                               BindingResult bindingResult,
+                               Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("inputResumeDto", inputResumeDto);
+            model.addAttribute("categories", categoryService.getStringedCategories());
+            return "employee/updateResumeTemplate";
+        }
+        resumeService.changeResume(inputResumeDto);
+        return "redirect:/employee/resumes/update/" + inputResumeDto.getId();
     }
 
     @GetMapping("resume/add/workExp/{resumeId}")

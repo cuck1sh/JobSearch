@@ -34,7 +34,6 @@ public class EducationInfoDto {
     private LocalDate startDate;
 
     @PastOrPresent
-    @NotBlank
     @JsonProperty("end_date")
     private LocalDate endDate;
 

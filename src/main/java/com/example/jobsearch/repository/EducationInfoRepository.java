@@ -24,4 +24,5 @@ public interface EducationInfoRepository extends JpaRepository<EducationInfo, In
             " degree = :degree" +
             " where id = :id;", nativeQuery = true)
     void updateBy(String institution, String program, LocalDate startDate, LocalDate endDate, String degree, Integer id);
+
 }

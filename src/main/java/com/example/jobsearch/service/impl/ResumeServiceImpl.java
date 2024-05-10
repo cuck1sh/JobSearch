@@ -1,6 +1,5 @@
 package com.example.jobsearch.service.impl;
 
-import com.example.jobsearch.dto.resume.InputContactInfoDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
@@ -73,6 +72,23 @@ public class ResumeServiceImpl implements ResumeService {
                 .isActive(resume.getIsActive())
                 .createdDate(resume.getCreatedDate())
                 .updateTime(resume.getUpdateTime())
+                .build();
+    }
+
+    @Override
+    public InputResumeDto getInputResumeById(int id) throws UserNotFoundException {
+        Resume resume = repository.findById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
+
+        return InputResumeDto.builder()
+                .id(resume.getId())
+                .userEmail(resume.getUser().getEmail())
+                .name(resume.getName())
+                .category(resume.getCategory().getName())
+                .salary(resume.getSalary())
+                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
+                .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
+                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .isActive(resume.getIsActive())
                 .build();
     }
 
@@ -201,16 +217,15 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public void changeResume(InputResumeDto resume, InputContactInfoDto contacts) {
-        String userEmail = authenticatedUserProvider.getAuthUser().getEmail();
+    public void changeResume(InputResumeDto resume) {
+        UserDto user = authenticatedUserProvider.getAuthUser();
 
-        if (userEmail.equals(resume.getUserEmail())) {
+        if (user.getEmail().equals(resume.getUserEmail())) {
             if (isResumeInSystem(resume.getId())) {
-                Integer userId = userService.getUserByEmail(userEmail).getId();
 
                 Resume newResume = Resume.builder()
                         .id(resume.getId())
-                        .user(User.builder().id(userId).build())
+                        .user(User.builder().id(user.getId()).build())
                         .name(resume.getName())
                         .category(Category.builder().id(categoryService.checkInCategories(resume.getCategory())).build())
                         .updateTime(LocalDateTime.now())
@@ -228,12 +243,42 @@ public class ResumeServiceImpl implements ResumeService {
                         newResume.getUpdateTime(),
                         newResume.getId());
 
-                contactsInfoService.updateContactInfo(contacts, newResume.getId());
+                log.error("WORKEXPDTOS: {}", resume.getWorkExperienceInfoDtos());
+
+                if (resume.getWorkExperienceInfoDtos() != null) {
+                    resume.getWorkExperienceInfoDtos().forEach(e -> {
+                        log.error("WORKEXP ID: {}", e.getId());
+                        if (e.getId() == null) {
+                            workExperienceInfoService.createWorkExperienceInfo(e, resume.getId());
+                        } else {
+                            workExperienceInfoService.changeWorkExperienceInfo(e);
+                        }
+                    });
+
+                }
+
+                if (resume.getEducationInfos() != null) {
+                    resume.getEducationInfos().forEach(e -> {
+                        if (e.getId() == null) {
+                            educationInfoService.createEducationInfo(e, resume.getId());
+                        } else {
+                            educationInfoService.changeEducationInfo(e);
+                        }
+                    });
+                }
+
+                if (resume.getContacts() != null) {
+                    contactsInfoService.createContactInfo(resume.getContacts(), resume.getId());
+                }
+
+                contactsInfoService.updateContactInfo(resume.getContacts(), newResume.getId());
             } else {
                 log.error("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
+                throw new ResumeNotFoundException("Резюме с айди " + resume.getId() + " не найдено в системе для его редактирования");
             }
         } else {
-            log.error("Попытка юзера " + userEmail + " исправления чужого резюме с айди: " + resume.getId());
+            log.error("Попытка юзера " + user.getEmail() + " исправления чужого резюме с айди: " + resume.getId());
+            throw new ResumeNotFoundException("Попытка юзера " + user.getEmail() + " исправления чужого резюме с айди: " + resume.getId());
         }
     }
 

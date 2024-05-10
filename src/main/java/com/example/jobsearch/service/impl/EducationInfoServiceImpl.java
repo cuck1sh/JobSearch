@@ -7,6 +7,7 @@ import com.example.jobsearch.repository.EducationInfoRepository;
 import com.example.jobsearch.service.EducationInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     @Override
-    public void changeEducationInfo(List<EducationInfoDto> educationInfoDtos, Integer resumeId) {
+    public void changeEducationInfo(List<EducationInfoDto> educationInfoDtos) {
         if (!educationInfoDtos.isEmpty()) {
             educationInfoDtos.forEach(e -> educationInfoRepository.updateBy(e.getInstitution(),
                     e.getProgram(),
@@ -72,5 +73,35 @@ public class EducationInfoServiceImpl implements EducationInfoService {
                     e.getDegree(),
                     e.getId()));
         }
+    }
+
+    @Override
+    public void createEducationInfo(EducationInfoDto educationInfo, Integer resumeId) {
+        educationInfoRepository.save(EducationInfo.builder()
+                .resume(Resume.builder().id(resumeId).build())
+                .institution(educationInfo.getInstitution())
+                .program(educationInfo.getProgram())
+                .startDate(educationInfo.getStartDate())
+                .endDate(educationInfo.getEndDate())
+                .degree(educationInfo.getDegree())
+                .build());
+    }
+
+    @Override
+    public void changeEducationInfo(EducationInfoDto educationInfo) {
+        educationInfoRepository.updateBy(
+                educationInfo.getInstitution(),
+                educationInfo.getProgram(),
+                educationInfo.getStartDate(),
+                educationInfo.getEndDate(),
+                educationInfo.getDegree(),
+                educationInfo.getId()
+        );
+    }
+
+    @Override
+    public HttpStatus deleteEduInfo(int eduInfoId) {
+        educationInfoRepository.deleteById(eduInfoId);
+        return HttpStatus.OK;
     }
 }

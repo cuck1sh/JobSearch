@@ -10,21 +10,11 @@
 
                     <div class="mb-3">
                         <label for="name" class="form-label">Название вакансии:</label>
-                        <#--                        <input name="name" type="text" class="form-control" id="name" placeholder="Введите название"-->
-                        <#--                               required>-->
                         <@spring.formInput "inputVacancyDto.name" 'id="name" class="form-control" placeholder="Введите название" required'/>
                         <@spring.showErrors "<br>" "error text-danger" />
                     </div>
 
                     <div class="mb-3">
-                        <#--                        <label for="category" class="form-label">Категория:</label>-->
-                        <#--                        <select name="category" id="category" class="form-select">-->
-                        <#--                            <option selected>Выберите категорию</option>-->
-                        <#--                            <#list categories as category>-->
-                        <#--                                <option value=${category.id}>${category.name}</option>-->
-                        <#--                            </#list>-->
-                        <#--                        </select>-->
-
                         <label for="category" class="form-label">Выберите категорию:</label>
                         <@spring.formSingleSelect "inputVacancyDto.category",
                         categories,
@@ -33,14 +23,12 @@
 
                     <div class="mb-3">
                         <label for="salary" class="form-label">Заработная плата</label>
-                        <#--                        <input name="salary" type="number" class="form-control" id="salary" placeholder="Введите оклад">-->
                         <@spring.formInput "inputVacancyDto.salary" 'id="salary" class="form-control" placeholder="Введите оклад"'/>
                         <@spring.showErrors "<br>" "error text-danger" />
                     </div>
 
                     <div class="mb-3">
                         <label for="description" class="form-label">Описание вакансии</label>
-                        <#--                        <textarea class="form-control" name="description" id="description" rows="3"></textarea>-->
                         <@spring.formTextarea "inputVacancyDto.description" 'id="description" class="form-control" rows="3"'/>
                         <@spring.showErrors "<br>" "error text-danger" />
                     </div>
@@ -50,13 +38,11 @@
                         <div class="row mb-1">
                             <label for="expFrom" class="col-2 col-form-label pe-0">от</label>
                             <div class="col-3 ps-0">
-                                <#--                                <input type="number" name="expFrom" class="form-control" id="expFrom">-->
                                 <@spring.formInput "inputVacancyDto.expFrom" 'id="expFrom" class="form-control"'/>
                                 <@spring.showErrors "<br>" "error text-danger" />
                             </div>
                             <label for="expTo" class="col-2 col-form-label  pe-0">до</label>
                             <div class="col-3 ps-0">
-                                <#--                                <input type="number" name="expTo" class="form-control" id="expTo">-->
                                 <@spring.formInput "inputVacancyDto.expTo" 'id="expTo" class="form-control"'/>
                                 <@spring.showErrors "<br>" "error text-danger" />
                             </div>
@@ -70,7 +56,6 @@
 
 
             <div class="form-check my-4">
-                <#--                <input class="form-check-input" name="isActive" type="checkbox" value=true id="isActive">-->
                 <@spring.formCheckbox "inputVacancyDto.isActive", 'class="form-check-input" id="isActive"'/>
                 <label class="form-check-label" for="isActive">
                     Активно
