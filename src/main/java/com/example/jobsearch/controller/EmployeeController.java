@@ -80,19 +80,6 @@ public class EmployeeController {
         return "redirect:/employee/resumes/update/" + inputResumeDto.getId();
     }
 
-    @GetMapping("resume/add/workExp/{resumeId}")
-    public String createWorkExp(Model model, @PathVariable int resumeId) {
-        model.addAttribute("resumeId", resumeId);
-        return "employee/createWorkExpTemplate";
-    }
-
-
-    @GetMapping("resume/add/education/{resumeId}")
-    public String createEducation(Model model, @PathVariable int resumeId) {
-        model.addAttribute("resumeId", resumeId);
-        return "employee/createEducationTemplate";
-    }
-
     @GetMapping("companies")
     public String getCompanies(Model model,
                                @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,

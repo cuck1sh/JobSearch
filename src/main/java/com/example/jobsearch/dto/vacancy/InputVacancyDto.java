@@ -41,4 +41,6 @@ public class InputVacancyDto {
 
     @JsonProperty("is_active")
     private Boolean isActive;
+
+    private String userEmail;
 }

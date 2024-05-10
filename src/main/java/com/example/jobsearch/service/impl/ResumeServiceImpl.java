@@ -1,5 +1,6 @@
 package com.example.jobsearch.service.impl;
 
+import com.example.jobsearch.dto.CategoryDto;
 import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
@@ -78,12 +79,13 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public InputResumeDto getInputResumeById(int id) throws UserNotFoundException {
         Resume resume = repository.findById(id).orElseThrow(() -> new ResumeNotFoundException("Can not find resume with id: " + id));
+        String categoryName = (resume.getCategory() != null) ? resume.getCategory().getName() : "Пусто";
 
         return InputResumeDto.builder()
                 .id(resume.getId())
                 .userEmail(resume.getUser().getEmail())
                 .name(resume.getName())
-                .category(resume.getCategory().getName())
+                .category(categoryName)
                 .salary(resume.getSalary())
                 .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
                 .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
@@ -151,21 +153,34 @@ public class ResumeServiceImpl implements ResumeService {
     // Служебный метод
     private List<ResumeDto> getResumeDtos(List<Resume> resumes) {
         List<ResumeDto> dtos = new ArrayList<>();
-        resumes.forEach(e -> dtos.add(ResumeDto.builder()
-                .id(e.getId())
-                .userEmail(e.getUser().getEmail())
-                .name(e.getName())
-                .category(categoryService.getCategoryById(e.getCategory().getId()))
-                .salary(e.getSalary())
-                .contacts(contactsInfoService.getContactInfoByResumeId(e.getId()))
-                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(e.getId()))
-                .educationInfos(educationInfoService.getEducationInfoById(e.getId()))
-                .isActive(e.getIsActive())
-                .createdDate(e.getCreatedDate())
-                .updateTime(e.getUpdateTime())
-                .build()));
 
+        resumes.forEach(e -> dtos.add(getDto(e)));
         return dtos;
+    }
+
+
+    private ResumeDto getDto(Resume resume) {
+        CategoryDto categoryDto;
+
+        if (resume.getCategory() != null) {
+            categoryDto = categoryService.getCategoryById(resume.getCategory().getId());
+        } else {
+            categoryDto = null;
+        }
+
+        return ResumeDto.builder()
+                .id(resume.getId())
+                .userEmail(resume.getUser().getEmail())
+                .name(resume.getName())
+                .category(categoryDto)
+                .salary(resume.getSalary())
+                .contacts(contactsInfoService.getContactInfoByResumeId(resume.getId()))
+                .workExperienceInfoDtos(workExperienceInfoService.WorkExperienceInfoById(resume.getId()))
+                .educationInfos(educationInfoService.getEducationInfoById(resume.getId()))
+                .isActive(resume.getIsActive())
+                .createdDate(resume.getCreatedDate())
+                .updateTime(resume.getUpdateTime())
+                .build();
     }
 
     // Служебный метод
