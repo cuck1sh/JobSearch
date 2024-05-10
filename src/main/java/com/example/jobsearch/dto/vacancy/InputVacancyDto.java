@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InputVacancyDto {
+
     private Integer id;
     @NotBlank
     private String name;
@@ -22,6 +23,8 @@ public class InputVacancyDto {
     private String category;
 
     @Positive
+    @Min(800)
+    @Max(9999999)
     private Double salary;
 
     private String description;

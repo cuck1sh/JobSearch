@@ -186,8 +186,10 @@ public class VacancyServiceImpl implements VacancyService {
                     .updateTime(now)
                     .build();
 
-            if (!vacancyDto.getCategory().equals("Выберите категорию")) {
-                vacancy.setCategory(Category.builder().id(Integer.parseInt(vacancyDto.getCategory())).build());
+            Integer categoryId = categoryService.checkInCategories(vacancyDto.getCategory());
+
+            if (categoryId != null) {
+                vacancy.setCategory(Category.builder().id(categoryId).build());
             }
 
             if (vacancyDto.getSalary() != null) {
