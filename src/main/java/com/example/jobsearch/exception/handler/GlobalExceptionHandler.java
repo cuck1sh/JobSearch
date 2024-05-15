@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -21,6 +22,7 @@ import java.util.NoSuchElementException;
 public class GlobalExceptionHandler {
 
     private final ErrorService errorService;
+    private static final String ERROR_TEMPLATE_PATH = "errors/error";
 
     @ExceptionHandler(NoSuchFileException.class)
     @ResponseStatus
@@ -48,12 +50,18 @@ public class GlobalExceptionHandler {
         model.addAttribute("status", HttpStatus.FORBIDDEN.value());
         model.addAttribute("reason", HttpStatus.FORBIDDEN.getReasonPhrase());
         model.addAttribute("details", request);
-        return "errors/error";
+        return ERROR_TEMPLATE_PATH;
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public String usernameFoundHandler(Model model, HttpServletRequest request) {
+        fulfilModel(model, request);
+        return ERROR_TEMPLATE_PATH;
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public String globalFoundHandler(Model model, HttpServletRequest request) {
         fulfilModel(model, request);
-        return "errors/error";
+        return ERROR_TEMPLATE_PATH;
     }
 }

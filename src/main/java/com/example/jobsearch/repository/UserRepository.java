@@ -15,6 +15,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
+    Optional<User> findByResetPasswordToken(String token);
+
     @Query("""
             select u from User u where u.accountType like 'EMPLOYER'
             """)
