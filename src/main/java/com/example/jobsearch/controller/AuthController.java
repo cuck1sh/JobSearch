@@ -47,14 +47,15 @@ public class AuthController {
     public String createUser(@Valid UserDto user,
                              BindingResult bindingResult,
                              Model model,
-                             @RequestParam(name = "file") MultipartFile file
+                             @RequestParam(name = "file") MultipartFile file,
+                             HttpServletRequest request
     ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("userDto", user);
             return "auth/register";
         }
-        userService.createUser(user, file);
-        return "redirect:/auth/login";
+        userService.createUser(user, file, request);
+        return user.getAccountType().equals("EMPLOYER") ? "redirect:/employer/resumes" : "redirect:/";
     }
 
     @GetMapping("forgot_password")

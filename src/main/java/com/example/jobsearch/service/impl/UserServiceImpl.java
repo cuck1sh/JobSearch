@@ -9,9 +9,13 @@ import com.example.jobsearch.model.User;
 import com.example.jobsearch.repository.UserRepository;
 import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.FileUtil;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -34,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FileUtil fileUtil;
     private final PasswordEncoder passwordEncoder;
+    protected Log logger = LogFactory.getLog(this.getClass());
 
 
     @Override
@@ -175,7 +180,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HttpStatus createUser(UserDto userDto, MultipartFile file) {
+    public HttpStatus createUser(UserDto userDto, MultipartFile file, HttpServletRequest request) {
         if (!isUserInSystem(userDto.getEmail())) {
             if (userDto.getAccountType().equals("EMPLOYER") || userDto.getAccountType().equals("EMPLOYEE")) {
                 User user = User.builder()
@@ -198,6 +203,7 @@ public class UserServiceImpl implements UserService {
                 } else {
                     userRepository.updateAvatar("default.png", newUser.getId());
                 }
+                authWithHttpServletRequest(request, userDto.getEmail(), userDto.getPassword());
                 return HttpStatus.OK;
             }
             throw new UserNotFoundException("Категория '" + userDto.getAccountType() + "' не найдена в списке доступных");
@@ -206,6 +212,14 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    // auto login after registration
+    private void authWithHttpServletRequest(HttpServletRequest request, String username, String password) {
+        try {
+            request.login(username, password);
+        } catch (ServletException e) {
+            logger.error("Error while login ", e);
+        }
+    }
 
     @Override
     public Page<User> getCompanies(Pageable pageable) {
