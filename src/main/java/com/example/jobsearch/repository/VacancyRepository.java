@@ -72,7 +72,7 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
     void updateBy(String name, String description, Integer categoryId, Double salary, Integer expFrom,
                   Integer expTo, Boolean isActive, LocalDateTime updateTime, Integer id);
 
-    List<Vacancy> findAllByUserId(Integer userId);
+    List<Vacancy> findAllByIsActiveTrueAndUserId(Integer userId);
 
     List<Vacancy> findAllByUserIdAndCategoryNameAndIsActiveTrue(Integer userId, String category);
 

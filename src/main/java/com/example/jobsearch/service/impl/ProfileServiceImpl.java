@@ -1,8 +1,10 @@
 package com.example.jobsearch.service.impl;
 
+import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.ProfileDto;
 import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.dto.vacancy.VacancyDto;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.service.ProfileService;
@@ -37,9 +39,27 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void getProfile(String email, Pageable pageable, String filter, Model model) {
-        UserDto user = userService.getUserByEmail(email);
-        putProfileInModel(user, pageable, filter, model);
+        UserDto userProfile = userService.getUserByEmail(email);
+        putProfileInModel(userProfile, pageable, filter, model);
         model.addAttribute("url", "/users/profile/" + email);
+        getItemsForResponse(userProfile, model);
+    }
+
+    private void getItemsForResponse(UserDto userProfile, Model model) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+        List<ResumeDto> resumes;
+        List<VacancyDto> vacancies;
+
+        if (userService.isEmployee(userProfile.getId())) {
+            resumes = resumeService.getResumesByUserId(userProfile.getId());
+            vacancies = vacancyService.getAllVacanciesByCompany(authUser.getId());
+        } else {
+            resumes = resumeService.getResumesByUserId(authUser.getId());
+            vacancies = vacancyService.getAllVacanciesByCompany(userProfile.getId());
+        }
+
+        model.addAttribute("resumes", resumes);
+        model.addAttribute("vacancies", vacancies);
     }
 
     @Override
@@ -122,30 +142,6 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void updateUser(UserDto userDto, MultipartFile file) {
         UserDto authUser = authenticatedUserProvider.getAuthUser();
-
-//        if (userDto.getName().isBlank()) {
-//            userDto.setName(actualUser.getName());
-//        }
-//
-//        if (userDto.getSurname().isBlank()) {
-//            userDto.setSurname(actualUser.getSurname());
-//        }
-//
-//        if (userDto.getAge() == null) {
-//            userDto.setAge(actualUser.getAge());
-//        }
-//
-//        if (userDto.getPhoneNumber().isBlank()) {
-//            userDto.setPhoneNumber(actualUser.getPhoneNumber());
-//        }
-//
-//        User user = User.builder()
-//                .id(actualUser.getId())
-//                .name(userDto.getName())
-//                .surname(userDto.getSurname())
-//                .age(userDto.getAge())
-//                .phoneNumber(userDto.getPhoneNumber())
-//                .build();
 
         User user = User.builder()
                 .id(authUser.getId())

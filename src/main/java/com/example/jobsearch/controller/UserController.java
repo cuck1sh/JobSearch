@@ -2,7 +2,6 @@ package com.example.jobsearch.controller;
 
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.service.ProfileService;
-import com.example.jobsearch.service.UserService;
 import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
     private final ProfileService profileService;
     private final AuthenticatedUserProvider authenticatedUserProvider;
 

@@ -28,6 +28,14 @@
 
                 <div class="col-md-8">
                     <div class="card-body" id="messages">
+                        <h4><span class="text-danger">Вакансия: </span>${vacancy.name}</h4>
+                        <p>Оклад: ${vacancy.salary!'-'}</p>
+
+                        <h4><span class="text-danger">Резюме: </span>${resume.name}</h4>
+                        <p>Ожидаемый оклад: ${resume.salary!'-'}</p>
+
+                        <hr>
+
                         <h5 class="card-title mb-4">Переписка</h5>
                     </div>
 

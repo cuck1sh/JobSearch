@@ -17,7 +17,9 @@
                         </div>
                         <div class="col ms-3">
                             <h2>${user.name}</h2>
-                            <p>Возраст: ${user.age}</p>
+                            <#if user.accountType == 'EMPLOYEE'>
+                                <p>Возраст: ${user.age}</p>
+                            </#if>
                             <button type="button"
                                     class="btn border-black border-2 bg-success p-2 text-dark bg-opacity-10"><a
                                         href="/users/update" class="text-dark text-decoration-none">Редактировать</a>

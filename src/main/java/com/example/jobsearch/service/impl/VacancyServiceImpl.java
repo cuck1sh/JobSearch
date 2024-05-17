@@ -318,7 +318,7 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     public List<VacancyDto> getAllVacanciesByCompany(int userId) {
         if (userService.isUserInSystem(userId)) {
-            List<Vacancy> vacancies = vacancyRepository.findAllByUserId(userId);
+            List<Vacancy> vacancies = vacancyRepository.findAllByIsActiveTrueAndUserId(userId);
             if (!vacancies.isEmpty()) {
                 return getVacancyDtos(vacancies);
             }

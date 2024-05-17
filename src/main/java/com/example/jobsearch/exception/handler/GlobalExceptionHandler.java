@@ -2,6 +2,7 @@ package com.example.jobsearch.exception.handler;
 
 import com.example.jobsearch.exception.AccessException;
 import com.example.jobsearch.exception.ErrorResponseBody;
+import com.example.jobsearch.exception.ResponseApiException;
 import com.example.jobsearch.service.ErrorService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchFileException.class)
     @ResponseStatus
     public ResponseEntity<ErrorResponseBody> noSuchElementException(NoSuchElementException ex) {
+        return new ResponseEntity<>(errorService.makeResponse(ex), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ResponseApiException.class)
+    @ResponseStatus
+    public ResponseEntity<ErrorResponseBody> responseApiException(NoSuchElementException ex) {
         return new ResponseEntity<>(errorService.makeResponse(ex), HttpStatus.NOT_FOUND);
     }
 
