@@ -29,6 +29,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String resetPasswordToken;
+
     private String name;
     private String surname;
     private Integer age;

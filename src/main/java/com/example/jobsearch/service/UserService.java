@@ -4,6 +4,7 @@ import com.example.jobsearch.dto.user.EmployeeFindDto;
 import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.model.User;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,8 @@ public interface UserService {
     Boolean isUserInSystem(int id);
     Boolean isEmployee(String userEmail);
     Boolean isEmployee(int userId);
-    HttpStatus createUser(UserDto user, MultipartFile file);
+
+    HttpStatus createUser(UserDto user, MultipartFile file, HttpServletRequest request);
 
     Page<User> getCompanies(Pageable pageable);
 

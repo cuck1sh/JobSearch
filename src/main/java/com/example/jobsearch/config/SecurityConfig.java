@@ -1,6 +1,5 @@
 package com.example.jobsearch.config;
 
-import com.example.jobsearch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserService userService;
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
@@ -43,8 +41,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers("/").permitAll()
-                                .requestMatchers("/auth/register").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/static/js/auth/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                                 .requestMatchers("/vacancies/*").permitAll()
                                 .requestMatchers("/search").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/vacancies/search").permitAll()

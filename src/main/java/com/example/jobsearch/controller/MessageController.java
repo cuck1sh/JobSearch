@@ -32,6 +32,7 @@ public class MessageController {
     public String getMessenger(@PathVariable int respondId, Model model) {
         RespondMessengerDto messengerDto = respondedApplicantsService.getRespondMessenger(respondId);
         model.addAttribute("messenger", messengerDto);
+        respondedApplicantsService.getResumeAndVacancyByResponseId(respondId, model);
         return "pages/messenger";
     }
 

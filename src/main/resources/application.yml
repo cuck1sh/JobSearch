@@ -25,6 +25,18 @@ spring:
         generate_statistics: true
         format_sql: true
     show-sql: false
+  #========== Mail config
+  mail:
+    host: smtp.gmail.com
+    username: egor.kirin20@gmail.com
+    password: bgmghjnawasfhzph
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:

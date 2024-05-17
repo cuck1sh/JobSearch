@@ -17,7 +17,15 @@
                         </div>
                         <div class="col ms-3">
                             <h2>${user.name}</h2>
-                            <p>Возраст: ${user.age}</p>
+                            <#if user.accountType == 'EMPLOYEE'>
+                                <p>Возраст: ${user.age}</p>
+                            </#if>
+
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                Написать
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -104,5 +112,47 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="form">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Откликнитесь</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Список вакансий
+                        <#list vacancies as vacancy>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="vacancyId" value="${vacancy.id}"
+                                       id="vacancy${vacancy?index}">
+                                <label class="form-check-label" for="vacancy${vacancy?index}">
+                                    ${vacancy.name}
+                                </label>
+                            </div>
+                        </#list>
+                        <hr>
+                        Список резюме
+                        <#list resumes as resume>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="resumeId" value="${resume.id}"
+                                       id="resume${resume?index}">
+                                <label class="form-check-label" for="resume${resume?index}">
+                                    ${resume.name}
+                                </label>
+                            </div>
+                        </#list>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Откликнуться</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/decorationProfile.js"></script>
 
 </@main.layout>

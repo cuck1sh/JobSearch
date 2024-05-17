@@ -9,6 +9,7 @@
                 <@spring.formSingleSelect "userDto.accountType",
                 {"0": "Тип аккаунта", "EMPLOYEE": "Соискатель", "EMPLOYER": "Работодатель"},
                 "id='accountType' class='form-select' required" />
+                <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3" id="nameBlock">
                 <label for="name" id="labelName" class="form-label">Имя</label>
@@ -122,7 +123,6 @@
             }
 
         })
-
     </script>
 
 

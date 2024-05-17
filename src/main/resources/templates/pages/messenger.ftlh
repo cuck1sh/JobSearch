@@ -28,7 +28,15 @@
 
                 <div class="col-md-8">
                     <div class="card-body" id="messages">
-                        <h5 class="card-title mb-4">Переписка</h5>
+                        <h4><span class="text-danger">Вакансия: </span>${vacancy.name}</h4>
+                        <p>Оклад: ${vacancy.salary!'-'}</p>
+
+                        <h4><span class="text-danger">Резюме: </span>${resume.name}</h4>
+                        <p>Ожидаемый оклад: ${resume.salary!'-'}</p>
+
+                        <hr>
+
+                        <h5 class="card-title mb-4">Переписка:</h5>
                     </div>
 
                     <div class="card-footer bg-transparent border rounded-3">
@@ -56,7 +64,5 @@
     </form>
 
     <script src="/static/js/messenger.js"></script>
-
-
 
 </@main.layout>
