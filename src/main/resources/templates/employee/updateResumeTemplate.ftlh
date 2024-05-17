@@ -224,54 +224,5 @@
     </div>
 
     <script src="/static/js/resumeUpdating.js"></script>
-    <script>
-        const csrfToken = document.head.querySelector("[name~=_csrf_token][content]").content;
-
-        function deleteExpRow(button) {
-            const row = button.closest('.workExp-row');
-            const id = button.id
-            fetch("/api/employee/resume/workExp/" + id, {
-                headers: {
-                    "X-CSRF-Token": csrfToken,
-                    "Content-Type": "application/json"
-                },
-                method: 'delete'
-            })
-                .then(response => {
-                    if (response.ok) {
-                        row.remove();
-                    } else {
-                        console.error('Ошибка сервера');
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-
-        function deleteEduRow(button) {
-            const row = button.closest('.eduInfo-row');
-            const id = button.id
-            fetch("/api/employee/resume/eduInfo/" + id, {
-                headers: {
-                    "X-CSRF-Token": csrfToken,
-                    "Content-Type": "application/json"
-                },
-                method: 'delete'
-            })
-                .then(response => {
-                    if (response.ok) {
-                        row.remove();
-                    } else {
-                        console.error('Ошибка сервера');
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-    </script>
-
-
 
 </@main.layout>

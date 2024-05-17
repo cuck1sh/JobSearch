@@ -36,7 +36,7 @@
 
                         <hr>
 
-                        <h5 class="card-title mb-4">Переписка</h5>
+                        <h5 class="card-title mb-4">Переписка:</h5>
                     </div>
 
                     <div class="card-footer bg-transparent border rounded-3">
@@ -64,7 +64,5 @@
     </form>
 
     <script src="/static/js/messenger.js"></script>
-
-
 
 </@main.layout>
