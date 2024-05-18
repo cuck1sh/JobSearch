@@ -2,7 +2,7 @@
 <@main.layout ; spring>
 
     <div class="col-12 col-lg-6 p-4 mx-auto border rounded-2 mb-4">
-        <h1 class="text-center mt-2 mb-3 text-danger">Редактирование резюме:</h1>
+        <h1 class="text-center mt-2 mb-3 text-danger"><@spring.message 'resume.updating.h1'/></h1>
         <form action="/employee/resumes/update" method="post" id="form">
 
             <@spring.formInput "inputResumeDto.id" 'id="id" class="form-control" ', 'hidden'/>
@@ -12,38 +12,40 @@
                 <div class="col-7">
 
                     <div class="mb-3">
-                        <label for="name" class="form-label">Название резюме:</label>
+                        <label for="name" class="form-label"><@spring.message 'resume.creation.name'/></label>
                         <@spring.formInput "inputResumeDto.name" 'id="name" class="form-control" placeholder="Введите название" required'/>
                         <@spring.showErrors "<br>" "error text-danger" />
                     </div>
 
                     <div class="mb-3">
 
-                        <label for="category" class="form-label">Выберите категорию:</label>
+                        <label for="category" class="form-label"><@spring.message 'resume.creation.category'/></label>
                         <@spring.formSingleSelect "inputResumeDto.category",
                         categories,
                         "id='category' class='form-select' required"/>
                     </div>
 
                     <div class="mb-3">
-                        <label for="salary" class="form-label">Ожидаемый уровень оклада</label>
+                        <label for="salary" class="form-label"><@spring.message 'resume.creation.salary'/></label>
                         <@spring.formInput "inputResumeDto.salary" 'id="salary" class="form-control" placeholder="Введите оклад"'/>
                         <@spring.showErrors "<br>" "error text-danger" />
                     </div>
                 </div>
             </div>
 
-            <h4>О себе</h4>
+            <h4><@spring.message 'resume.creation.yourself'/></h4>
             <div id="workExperienceInfo">
                 <div class="row mb-3" id="workExp">
                     <div class="col-7">
                         <div class="card">
                             <div class="card-body">
-                                <h6 class="card-text">Опыт работы:</h6>
-                                <h6 class="fw-normal">Год работы: ___________</h6>
-                                <h6 class="fw-normal">Название компании: ______________</h6>
-                                <h6 class="fw-normal">Должность: ____________</h6>
-                                <h6 class="fw-normal">Обязанности: _________</h6>
+                                <h6 class="card-text"><@spring.message 'resume.creation.experience'/></h6>
+                                <h6 class="fw-normal"><@spring.message 'resume.creation.years'/> ___________</h6>
+                                <h6 class="fw-normal"><@spring.message 'resume.creation.company.name'/>
+                                    ______________</h6>
+                                <h6 class="fw-normal"><@spring.message 'resume.creation.position'/> ____________</h6>
+                                <h6 class="fw-normal"><@spring.message 'resume.creation.responsibilities'/>
+                                    _________</h6>
                             </div>
                         </div>
                     </div>
@@ -61,25 +63,29 @@
                                 <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].id" 'id="workExp" class="form-control workExp-row" ', 'hidden'/>
 
                                 <div class="mb-3">
-                                    <label for="years" class="form-label">Годы работы:</label>
+                                    <label for="years"
+                                           class="form-label"><@spring.message 'resume.creation.years'/></label>
                                     <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].years" 'id="years" class="form-control" placeholder="стаж" required'/>
                                     <@spring.showErrors "<br>" "error text-danger" />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="companyName" class="form-label">Название компании:</label>
+                                    <label for="companyName"
+                                           class="form-label"><@spring.message 'resume.creation.company.name'/></label>
                                     <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].companyName" 'id="companyName" class="form-control" placeholder="Введите название" required'/>
                                     <@spring.showErrors "<br>" "error text-danger" />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="position" class="form-label">Должность:</label>
+                                    <label for="position"
+                                           class="form-label"><@spring.message 'resume.creation.position'/></label>
                                     <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].position" 'id="position" class="form-control" required'/>
                                     <@spring.showErrors "<br>" "error text-danger" />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="responsibilities" class="form-label">Обязанности:</label>
+                                    <label for="responsibilities"
+                                           class="form-label"><@spring.message 'resume.creation.responsibilities'/></label>
                                     <@spring.formInput "inputResumeDto.workExperienceInfoDtos["+i+"].responsibilities" 'id="responsibilities" class="form-control" required'/>
                                     <@spring.showErrors "<br>" "error text-danger" />
                                 </div>
@@ -102,10 +108,10 @@
                     <div class="col-7">
                         <div class="card">
                             <div class="card-body">
-                                <h6 class="card-text">Навыки:</h6>
-                                <h6 class="fw-normal">Образование: ___________</h6>
-                                <h6 class="fw-normal">Где учился: ______________</h6>
-                                <h6 class="fw-normal">Срок обучения: ____________</h6>
+                                <h6 class="card-text"><@spring.message 'resume.creation.skills'/></h6>
+                                <h6 class="fw-normal"><@spring.message 'resume.creation.education'/> ___________</h6>
+                                <h6 class="fw-normal"><@spring.message 'resume.creation.school'/> ______________</h6>
+                                <h6 class="fw-normal"><@spring.message 'resume.creation.edu.time'/> ____________</h6>
                             </div>
                         </div>
                     </div>
@@ -121,32 +127,37 @@
                         <div class="row py-2 mb-3 mx-0 eduInfo-row">
                             <div class="col-7 pt-2 bg-info text-dark bg-opacity-10 rounded-3">
                                 <div class="mb-3">
-                                    <label for="institution" class="form-label">Название образовательного
-                                        учреждения:</label>
+                                    <label for="institution" class="form-label">
+                                        <@spring.message 'resume.creation.school.name'/>
+                                    </label>
                                     <@spring.formInput "inputResumeDto.educationInfos["+i+"].institution" 'id="institution" class="form-control" placeholder="Введите название" required'/>
                                     <@spring.showErrors "<br>" "error text-danger" />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="program" class="form-label">Программа обучения:</label>
+                                    <label for="program"
+                                           class="form-label"><@spring.message 'resume.creation.program'/></label>
                                     <@spring.formInput "inputResumeDto.educationInfos["+i+"].program" 'id="program" class="form-control" required'/>
                                     <@spring.showErrors "<br>" "error text-danger" />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="startDate" class="form-label">Дата поступления:</label>
+                                    <label for="startDate"
+                                           class="form-label"><@spring.message 'resume.creation.start.date'/></label>
                                     <@spring.formInput "inputResumeDto.educationInfos["+i+"].startDate" 'id="startDate" class="form-control" required'/>
                                     <@spring.showErrors "<br>" "error text-danger" />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="endDate" class="form-label">Дата окончания:</label>
+                                    <label for="endDate"
+                                           class="form-label"><@spring.message 'resume.creation.end.date'/></label>
                                     <@spring.formInput "inputResumeDto.educationInfos["+i+"].endDate" 'id="endDate" class="form-control" required'/>
                                     <@spring.showErrors "<br>" "error text-danger" />
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="degree" class="form-label">Полученная степень:</label>
+                                    <label for="degree"
+                                           class="form-label"><@spring.message 'resume.creation.degree'/></label>
                                     <@spring.formInput "inputResumeDto.educationInfos["+i+"].degree" 'id="degree" class="form-control"'/>
                                 </div>
                             </div>
@@ -165,7 +176,7 @@
             </div>
 
 
-            <h4 class="">Ссылки на соц. сети:</h4>
+            <h4 class=""><@spring.message 'resume.creation.society'/></h4>
 
             <div class="row mb-3 row-cols-1 row-cols-lg-2">
                 <div class="col">
@@ -207,7 +218,7 @@
             <div class="form-check mb-3">
                 <@spring.formCheckbox "inputResumeDto.isActive", 'class="form-check-input" id="isActive"'/>
                 <label class="form-check-label" for="isActive">
-                    Активно
+                    <@spring.message 'resume.creation.active'/>
                 </label>
             </div>
 
@@ -217,11 +228,25 @@
             </#if>
 
             <div class="d-grid gap-2">
-                <button type="submit" class="btn bg-success border p-2 text-dark bg-opacity-10 rounded-3">Опубликовать
+                <button type="submit" class="btn bg-success border p-2 text-dark bg-opacity-10 rounded-3">
+                    <@spring.message 'resume.creation.button'/>
                 </button>
             </div>
         </form>
     </div>
+
+<#--    Translation to JS from FreeMarker macro-->
+    <div hidden="hidden" id="hidden-yearsOfWork"><@spring.message 'resume.creation.years'/></div>
+    <div hidden="hidden" id="hidden-companyName"><@spring.message 'resume.creation.company.name'/></div>
+    <div hidden="hidden" id="hidden-position"><@spring.message 'resume.creation.position'/></div>
+    <div hidden="hidden" id="hidden-responsibilities"><@spring.message 'resume.creation.responsibilities'/></div>
+
+    <div hidden="hidden" id="hidden-schoolName"><@spring.message 'resume.creation.school.name'/></div>
+    <div hidden="hidden" id="hidden-program"><@spring.message 'resume.creation.program'/></div>
+    <div hidden="hidden" id="hidden-startDate"><@spring.message 'resume.creation.start.date'/></div>
+    <div hidden="hidden" id="hidden-endDate"><@spring.message 'resume.creation.end.date'/></div>
+    <div hidden="hidden" id="hidden-degree"><@spring.message 'resume.creation.degree'/></div>
+    <div hidden="hidden" id="hidden-restriction"><@spring.message 'resume.creation.restriction'/></div>
 
     <script src="/static/js/resumeUpdating.js"></script>
 
