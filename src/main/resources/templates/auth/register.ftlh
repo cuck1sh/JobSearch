@@ -4,48 +4,49 @@
     <div class="w-50 p-4 mx-auto border rounded-2 mb-4">
         <form action="/auth/register" method="post" id="form" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="accountType" class="form-label">Укажите тип вашего аккаунта: соискатель или
-                    работодатель</label>
+                <label for="accountType" class="form-label">
+                    <@spring.message 'register.account.type.label'/>
+                </label>
                 <@spring.formSingleSelect "userDto.accountType",
-                {"0": "Тип аккаунта", "EMPLOYEE": "Соискатель", "EMPLOYER": "Работодатель"},
+                {"0": "Тип аккаунта / Account type", "EMPLOYEE": "Соискатель / Employee", "EMPLOYER": "Работодатель / Employer"},
                 "id='accountType' class='form-select' required" />
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3" id="nameBlock">
-                <label for="name" id="labelName" class="form-label">Имя</label>
+                <label for="name" id="labelName" class="form-label"><@spring.message 'register.name'/></label>
                 <@spring.formInput "userDto.name" 'id="name" class="form-control" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3" id="surnameBlock">
-                <label for="surname" class="form-label">Фамилия</label>
+                <label for="surname" class="form-label"><@spring.message 'register.surname'/></label>
                 <@spring.formInput "userDto.surname" 'id="surname" class="form-control"'/>
             </div>
             <div class="mb-3" id="ageBlock">
-                <label for="age" class="form-label">Возраст</label>
-                <@spring.formInput "userDto.age" 'id="age" class="form-control" placeholder="25 лет"'/>
+                <label for="age" class="form-label"><@spring.message 'register.age'/></label>
+                <@spring.formInput "userDto.age" 'id="age" class="form-control" placeholder="min 18"'/>
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3">
-                <label for="email" class="form-label">Email адрес</label>
+                <label for="email" class="form-label"><@spring.message 'register.email'/></label>
                 <@spring.formInput "userDto.email" 'id="email" class="form-control" placeholder="example@mail.com" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label mb-0">Password</label>
-                <div id="passwordHelp" class="form-text">Пароль должен быть не менее 4 символов, иметь 1 заглавную букву
-                    и 1 цифру
+                <label for="password" class="form-label mb-0"><@spring.message 'register.password'/></label>
+                <div id="passwordHelp" class="form-text">
+                    <@spring.message 'register.password.help'/>
                 </div>
                 <@spring.formPasswordInput "userDto.password" 'id="password" class="form-control" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3">
-                <label for="phoneNumber" class="form-label mb-0">Номер телефона</label>
-                <div id="phoneNumberHelp" class="form-text">Формат номера: 996-ddd-dd-dd-dd</div>
+                <label for="phoneNumber" class="form-label mb-0"><@spring.message 'register.phone.number'/></label>
+                <div id="phoneNumberHelp" class="form-text"><@spring.message 'register.phone.number.help'/></div>
                 <@spring.formInput "userDto.phoneNumber" 'id="phoneNumber" class="form-control" placeholder="996-ddd-dd-dd-dd" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3">
-                <label for="formFile" class="form-label">Загрузить аватар</label>
+                <label for="formFile" class="form-label"><@spring.message 'register.avatar'/></label>
                 <input name="file" class="form-control" type="file" id="formFile">
             </div>
 
@@ -54,7 +55,7 @@
                        value="${(_csrf.token)!'csrf-token'}"/>
             </#if>
 
-            <button type="submit" class="btn btn-primary">Создать</button>
+            <button type="submit" class="btn btn-primary"><@spring.message 'register.button'/></button>
         </form>
     </div>
 
