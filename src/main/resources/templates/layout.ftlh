@@ -42,8 +42,8 @@
                             <@spring.message "layout.lang.dropdown"/>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="?lang=ru"><@spring.message 'layout.lang.ru'/></a></li>
-                            <li><a class="dropdown-item" href="?lang=en"><@spring.message 'layout.lang.en'/></a></li>
+                            <li><a class="dropdown-item" href="?lang=ru">Русский</a></li>
+                            <li><a class="dropdown-item" href="?lang=en">English</a></li>
                         </ul>
                     </li>
                 </ul>

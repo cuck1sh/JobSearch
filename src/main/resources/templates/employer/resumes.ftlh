@@ -1,44 +1,58 @@
 <#import  "../layout.ftlh" as main>
 <#import "../pager.ftlh" as p>
-<@main.layout>
+<@main.layout ; spring>
 
-    <h1 class="text-center text-danger mb-1">Резюме:</h1>
+    <h1 class="text-center text-danger mb-1"><@spring.message 'resumes.h1'/></h1>
 
     <div class="dropdown d-flex justify-content-center m-3">
         <button class="btn border me-2 dropdown-toggle" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
-            SORT: Кол-во откликов
+            SORT: <@spring.message 'resumes.sort.responses.qty'/>
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">none</a></li>
             <li><a class="dropdown-item"
-                   href="${url}?page=0&size=#{page.getSize()}&sort=RespondedApplicantsResumeId,desc&filter=${filter}">По
-                    убыванию</a></li>
+                   href="${url}?page=0&size=${page.getSize()}&filter=${filter}"><@spring.message 'resumes.none'/></a>
+            </li>
             <li><a class="dropdown-item"
-                   href="${url}?page=0&size=#{page.getSize()}&sort=RespondedApplicantsResumeId,asc&filter=${filter}">По
-                    возрастанию</a></li>
+                   href="${url}?page=0&size=#{page.getSize()}&sort=RespondedApplicantsResumeId,desc&filter=${filter}">
+                    <@spring.message 'resumes.sort.descending'/>
+                </a>
+            </li>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=RespondedApplicantsResumeId,asc&filter=${filter}">
+                    <@spring.message 'resumes.sort.ascending'/>
+                </a>
+            </li>
         </ul>
 
         <button class="btn border me-2 dropdown-toggle" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
-            SORT: Дата создания
+            SORT: <@spring.message 'resumes.sort.date.creation'/>
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">none</a></li>
-            <li><a class="dropdown-item"
-                   href="${url}?page=0&size=#{page.getSize()}&sort=CreatedDate,desc&filter=${filter}">Новые</a>
+            <li><a class="dropdown-item" href="${url}?page=0&size=${page.getSize()}&filter=${filter}">
+                    <@spring.message 'resumes.none'/>
+                </a>
             </li>
             <li><a class="dropdown-item"
-                   href="${url}?page=0&size=#{page.getSize()}&sort=CreatedDate,asc&filter=${filter}">Старые</a>
+                   href="${url}?page=0&size=#{page.getSize()}&sort=CreatedDate,desc&filter=${filter}">
+                    <@spring.message 'resumes.sort.new'/>
+                </a>
+            </li>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=CreatedDate,asc&filter=${filter}">
+                    <@spring.message 'resumes.sort.old'/>
+                </a>
             </li>
         </ul>
 
         <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
-            Выберите категорию
+            <@spring.message 'resumes.filter.category'/>
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${url}?page=0&size=#{page.getSize()}&sort=${sort}">none</a></li>
+            <li><a class="dropdown-item"
+                   href="${url}?page=0&size=#{page.getSize()}&sort=${sort}"><@spring.message 'resumes.none'/></a></li>
             <#list categories as category>
                 <li><a class="dropdown-item"
                        href="?page=0&size=#{page.getSize()}&sort=${sort}&filter=${category.name}">${category.name}</a>
@@ -56,11 +70,11 @@
 
                         <#if resume.category??>
                             <#if resume.category.parent??>
-                                <h6 class="card-title">Родительская категория: ${resume.category.parent}</h6>
+                                <h6 class="card-title"><@spring.message 'resumes.parent.category'/> ${resume.category.parent}</h6>
                             </#if>
 
                             <#if resume.category.name??>
-                                <h6 class="card-title">Категория: ${resume.category.name}</h6>
+                                <h6 class="card-title"><@spring.message 'resumes.category'/> ${resume.category.name}</h6>
                             </#if>
                         </#if>
 
@@ -68,12 +82,12 @@
 
 
                         <#if resume.salary??>
-                            <h4 class="card-title">Заработная плата: ${resume.salary}</h4>
+                            <h4 class="card-title"><@spring.message 'resumes.salary'/> ${resume.salary}</h4>
                         </#if>
 
                     </div>
                     <div class="card-footer">
-                        <small class="text-body-secondary">Дата обновления ${resume.updateTime.toLocalDate()}</small>
+                        <small class="text-body-secondary"><@spring.message 'resumes.update.time'/> ${resume.updateTime.toLocalDate()}</small>
                     </div>
                 </div>
             </div>
