@@ -1,5 +1,5 @@
 <#import  "../layout.ftlh" as main>
-<@main.layout>
+<@main.layout ; spring>
 
     <div id="responseId" hidden="hidden">${respondId}</div>
 
@@ -17,8 +17,8 @@
                                 <a href="/users/profile/${messenger.employerProfile.email}"
                                    class="text-secondary">${messenger.employerProfile.email}</a>
                             </h5>
-                            <p class="card-text">Возраст: ${messenger.employerProfile.age}</p>
-                            <p class="card-text">Phone: ${messenger.employerProfile.phoneNumber}</p>
+                            <p class="card-text"><@spring.message 'messenger.age'/> ${messenger.employerProfile.age}</p>
+                            <p class="card-text"><@spring.message 'messenger.phone'/> ${messenger.employerProfile.phoneNumber}</p>
                         </div>
                         <div class="card-footer bg-transparent border">${messenger.employerProfile.accountType}</div>
 
@@ -28,22 +28,22 @@
 
                 <div class="col-md-8">
                     <div class="card-body" id="messages">
-                        <h4><span class="text-danger">Вакансия: </span>${vacancy.name}</h4>
-                        <p>Оклад: ${vacancy.salary!'-'}</p>
+                        <h4><span class="text-danger"><@spring.message 'messenger.vacancy'/> </span>${vacancy.name}</h4>
+                        <p><@spring.message 'messenger.vacancy.salary'/> ${vacancy.salary!'-'}</p>
 
-                        <h4><span class="text-danger">Резюме: </span>${resume.name}</h4>
-                        <p>Ожидаемый оклад: ${resume.salary!'-'}</p>
+                        <h4><span class="text-danger"><@spring.message 'messenger.resume'/> </span>${resume.name}</h4>
+                        <p><@spring.message 'messenger.resume.salary'/> ${resume.salary!'-'}</p>
 
                         <hr>
 
-                        <h5 class="card-title mb-4">Переписка:</h5>
+                        <h5 class="card-title mb-4"><@spring.message 'messenger.messenger'/></h5>
                     </div>
 
                     <div class="card-footer bg-transparent border rounded-3">
                         <div class="row">
                             <div class="col-10">
                                 <input type="text" id="messageValue" name="message" class="form-control"
-                                       placeholder="Сообщение">
+                                       placeholder="<@spring.message 'messenger.placeholder'/>">
                             </div>
 
                             <#if _csrf??>
@@ -53,7 +53,8 @@
 
                             <div class="col-2">
                                 <button type="submit" id="submit"
-                                        class="btn bg-success p-2 text-dark bg-opacity-10 rounded-3">Отправить
+                                        class="btn bg-success p-2 text-dark bg-opacity-10 rounded-3">
+                                    <@spring.message 'messenger.send'/>
                                 </button>
                             </div>
                         </div>

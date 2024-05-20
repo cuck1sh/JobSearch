@@ -24,6 +24,7 @@ function submitHandler(event) {
             return await response.json()
         } else {
             let error = new Error(response.status.toString());
+            alert("Failed to response, please make sure you have selected the correct vacancy AND resume to response for")
             error.response = response;
             throw error;
         }

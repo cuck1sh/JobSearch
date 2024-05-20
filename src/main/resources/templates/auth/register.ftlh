@@ -78,7 +78,6 @@
                 buildForm(selected)
             })
 
-
             function buildForm(selectedOption) {
                 let surnameBlock = document.getElementById('surnameBlock')
                 let ageBlock = document.getElementById('ageBlock')
@@ -102,13 +101,12 @@
                 }
             }
 
-
             function createSurnameAndAgeBlock() {
                 let newSurnameBlock = document.createElement('div')
                 newSurnameBlock.className = 'mb-3'
                 newSurnameBlock.id = 'surnameBlock'
                 newSurnameBlock.innerHTML =
-                    '<label for="surname" class="form-label">Фамилия</label>' +
+                    `<label for="surname" class="form-label"><@spring.message 'register.surname'/></label>` +
                     `<@spring.formInput "userDto.surname" 'id="surname" class="form-control"'/>`
                 form.appendChild(newSurnameBlock)
                 nameBlock.after(newSurnameBlock)
@@ -117,7 +115,7 @@
                 newAgeBlock.className = 'mb-3'
                 newAgeBlock.id = 'ageBlock'
                 newAgeBlock.innerHTML =
-                    '<label for="age" class="form-label">Возраст</label>' +
+                    `<label for="age" class="form-label"><@spring.message 'register.age'/></label>` +
                     `<@spring.formInput "userDto.age" 'id="age" class="form-control"'/>`
                 form.appendChild(newAgeBlock)
                 newSurnameBlock.after(newAgeBlock)

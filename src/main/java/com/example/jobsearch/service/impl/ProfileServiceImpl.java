@@ -39,10 +39,14 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void getProfile(String email, Pageable pageable, String filter, Model model) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
         UserDto userProfile = userService.getUserByEmail(email);
         putProfileInModel(userProfile, pageable, filter, model);
         model.addAttribute("url", "/users/profile/" + email);
-        getItemsForResponse(userProfile, model);
+
+        if (!email.equals(authUser.getEmail())) {
+            getItemsForResponse(userProfile, model);
+        }
     }
 
     private void getItemsForResponse(UserDto userProfile, Model model) {
