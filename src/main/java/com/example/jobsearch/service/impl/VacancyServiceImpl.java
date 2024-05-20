@@ -319,10 +319,7 @@ public class VacancyServiceImpl implements VacancyService {
     public List<VacancyDto> getAllVacanciesByCompany(int userId) {
         if (userService.isUserInSystem(userId)) {
             List<Vacancy> vacancies = vacancyRepository.findAllByIsActiveTrueAndUserId(userId);
-            if (!vacancies.isEmpty()) {
-                return getVacancyDtos(vacancies);
-            }
-            throw new VacancyNotFoundException("У Юзера " + userId + " не найдено вакансий");
+            return getVacancyDtos(vacancies);
         }
         throw new VacancyNotFoundException("Юзер " + userId + " не найден");
     }

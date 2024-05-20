@@ -1,25 +1,34 @@
 'use strict'
+
+const hiddenCompanyName = document.getElementById('hidden-company').innerText
+const hiddenVacancy = document.getElementById('hidden-vacancy').innerText
+const hiddenDescription = document.getElementById('hidden-description').innerText
+const hiddenParentCategory = document.getElementById('hidden-parentCategory').innerText
+const hiddenCategory = document.getElementById('hidden-category').innerText
+const hiddenExpFrom = document.getElementById('hidden-expFrom').innerText
+const hiddenExtTo = document.getElementById('hidden-extTo').innerText
+const hiddenSalary = document.getElementById('hidden-salary').innerText
+const hiddenCreationDate = document.getElementById('hidden-creationDate').innerText
+const hiddenLink = document.getElementById('hidden-link').innerText
+const hiddenLinkText = document.getElementById('hidden-linkText').innerText
+
 window.addEventListener('load', () => {
     let form = document.getElementById('form')
     let vacancyBlock = document.getElementById('vacancies')
-    form.addEventListener('submit', submitHandler)
+    let input = document.getElementById('input')
 
-    function submitHandler(e) {
+    input.oninput = submitHandler
+
+    function submitHandler() {
         vacancyBlock.replaceChildren()
-        e.preventDefault()
-        const form = e.target
         let data = new FormData(form)
-
         makeRequest('/api/vacancies/search', {
             method: 'post',
             body: data
         }).then(vacancies => {
-            console.log(vacancies)
-            document.getElementById('submit').value = ''
             createAllProfiles(vacancies)
         })
             .catch(e => console.log(e))
-
     }
 
     function createAllProfiles(vacancies) {
@@ -40,14 +49,14 @@ window.addEventListener('load', () => {
         let col9 = document.createElement('div')
         col9.className = 'col-9'
         col9.innerHTML =
-            '<p class="card-text mb-1 fw-semibold">Компания: ' + vacancy.companyName + '</p>' +
-            '<p class="card-text mb-1">Вакансия: ' + vacancy.name + '</p>' +
-            '<p class="card-text mb-1">Описание: ' + vacancy.description + '</p>' +
-            '<p class="card-text mb-1">Родительская категория: ' + vacancy.category.parent + ' | категория: ' + vacancy.category.name + '</p>' +
-            '<p class="card-text mb-1">Опыт от: ' + vacancy.exp_from + ' до: ' + vacancy.exp_to + '</p>' +
-            '<p class="card-text mb-1">Зарпалта: ' + vacancy.salary + '</p>' +
-            '<p class="card-text mb-1">Дата создания: ' + vacancy.created_date + '</p>' +
-            '<p class="card-text mb-1">Ссылка на вакансию:  <a href="/vacancies/' + vacancy.id + '">Перейти</a></p>'
+            '<p class="card-text mb-1 fw-semibold">' + hiddenCompanyName + ' ' + vacancy.companyName + '</p>' +
+            '<p class="card-text mb-1">' + hiddenVacancy + ' ' + vacancy.name + '</p>' +
+            '<p class="card-text mb-1">' + hiddenDescription + ' ' + vacancy.description + '</p>' +
+            '<p class="card-text mb-1">' + hiddenParentCategory + ' ' + vacancy.category.parent + ' | ' + hiddenCategory + ' ' + vacancy.category.name + '</p>' +
+            '<p class="card-text mb-1">' + hiddenExpFrom + ' ' + vacancy.exp_from + ' ' + hiddenExtTo + ' ' + vacancy.exp_to + '</p>' +
+            '<p class="card-text mb-1">' + hiddenSalary + ' ' + vacancy.salary + '</p>' +
+            '<p class="card-text mb-1">' + hiddenCreationDate + ' ' + vacancy.created_date + '</p>' +
+            '<p class="card-text mb-1">' + hiddenLink + '  <a href="/vacancies/' + vacancy.id + '">' + hiddenLinkText + '</a></p>'
         row.appendChild(col9)
     }
 

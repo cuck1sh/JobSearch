@@ -1,8 +1,8 @@
 <#import "../layout.ftlh" as main>
 
-<@main.layout>
+<@main.layout ; spring>
 
-    <h2 class="text-center mt-5">Восстановить пароль</h2>
+    <h2 class="text-center mt-5"><@spring.message 'forgot.restore.password'/></h2>
 
     <#if error??>
         <b class="text-danger text-center">${error}</b>
@@ -22,15 +22,16 @@
                     </#if>
                     <div class="form-outline  border border-secondary rounded p-3">
                         <div>
-                            <p>Мы отправим ссылку для восстановления пароля на ваш Email.</p>
+                            <p><@spring.message 'forgot.label'/></p>
                         </div>
                         <div>
                             <p>
                                 <input type="email" name="email" class="form-control"
-                                       placeholder="Введите ваш Email" required autofocus/>
+                                       placeholder="<@spring.message 'forgot.placeholder'/>" required autofocus/>
                             </p>
                             <p class="text-center">
-                                <input type="submit" value="Отправить" class="btn btn-primary"/>
+                                <input type="submit" value="<@spring.message 'forgot.button'/>"
+                                       class="btn btn-primary"/>
                             </p>
                         </div>
                     </div>

@@ -5,42 +5,36 @@
         <form action="/users/update" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <#if userDto.getAccountType() == 'EMPLOYEE'>
-                    <label for="name" class="form-label">Имя</label>
+                    <label for="name" class="form-label"><@spring.message 'editing.profile.name'/></label>
                 <#else>
-                    <label for="name" class="form-label">Название компании</label>
+                    <label for="name" class="form-label"><@spring.message 'editing.profile.company'/></label>
                 </#if>
                 <@spring.formInput "userDto.name" 'id="name" class="form-control" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <#if userDto.getAccountType() == 'EMPLOYEE'>
                 <div class="mb-3">
-                    <label for="surname" class="form-label">Фамилия</label>
+                    <label for="surname" class="form-label"><@spring.message 'editing.profile.surname'/></label>
                     <@spring.formInput "userDto.surname" 'id="surname" class="form-control"'/>
                 </div>
 
                 <div class="mb-3">
-                    <label for="age" class="form-label">Возраст</label>
+                    <label for="age" class="form-label"><@spring.message 'editing.profile.age'/></label>
                     <@spring.formInput "userDto.age" 'id="age" class="form-control" placeholder="25 лет"'/>
                     <@spring.showErrors "<br>" "error text-danger" />
                 </div>
             </#if>
 
             <div class="mb-3">
-                <label for="password" class="form-label mb-0">Password</label>
-                <div id="passwordHelp" class="form-text">Пароль должен быть не менее 4 символов, иметь 1 заглавную букву
-                    и 1 цифру
+                <label for="phoneNumber" class="form-label mb-0"><@spring.message 'editing.profile.phone'/></label>
+                <div id="phoneNumberHelp" class="form-text">
+                    <@spring.message 'editing.profile.phone.help'/> 996-ddd-dd-dd-dd
                 </div>
-                <@spring.formPasswordInput "userDto.password" 'id="password" class="form-control"'/>
-                <@spring.showErrors "<br>" "error text-danger" />
-            </div>
-            <div class="mb-3">
-                <label for="phoneNumber" class="form-label mb-0">Номер телефона</label>
-                <div id="phoneNumberHelp" class="form-text">Формат номера: 996-ddd-dd-dd-dd</div>
                 <@spring.formInput "userDto.phoneNumber" 'id="phoneNumber" class="form-control" placeholder="996-ddd-dd-dd-dd" required'/>
                 <@spring.showErrors "<br>" "error text-danger" />
             </div>
             <div class="mb-3">
-                <label for="formFile" class="form-label">Загрузить аватар</label>
+                <label for="formFile" class="form-label"><@spring.message 'editing.profile.avatar'/></label>
                 <input name="file" class="form-control" type="file" id="formFile">
             </div>
 
@@ -49,7 +43,7 @@
                        value="${(_csrf.token)!'csrf-token'}"/>
             </#if>
 
-            <button type="submit" class="btn btn-primary">Изменить</button>
+            <button type="submit" class="btn btn-primary"><@spring.message 'editing.profile.button'/></button>
         </form>
     </div>
 

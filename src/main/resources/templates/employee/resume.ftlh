@@ -1,5 +1,5 @@
 <#import  "../layout.ftlh" as main>
-<@main.layout>
+<@main.layout ; spring>
 
 
     <div class="card text-center mb-4">
@@ -12,14 +12,14 @@
                 <table class="table text-start table-striped">
                     <tbody>
                     <tr>
-                        <th scope="row">Профиль/ Email:</th>
+                        <th scope="row"><@spring.message 'resume.profile'/></th>
                         <td class="pt-2"><a href="/users/profile/${resume.userEmail}"
                                             class="text-decoration-none border border-primary rounded-4 p-1">${resume.userEmail}</a>
                         </td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Родительская категория:</th>
+                        <th scope="row"><@spring.message 'resume.parent.category'/></th>
                         <td>
                             <#if resume.category??>
                                 <#if resume.category.parent??> ${resume.category.parent} <#else> - </#if>
@@ -30,7 +30,7 @@
                     </tr>
 
                     <tr>
-                        <th scope="row">Категория:</th>
+                        <th scope="row"><@spring.message 'resume.category'/></th>
                         <td>
                             <#if resume.category??>
                                 <#if resume.category.name??> ${resume.category.name} <#else> - </#if>
@@ -41,17 +41,17 @@
                     </tr>
 
                     <tr>
-                        <th scope="row">Заработная плата:</th>
+                        <th scope="row"><@spring.message 'resume.salary'/></th>
                         <td><#if resume.salary??> ${resume.salary} <#else> - </#if> </td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Активно:</th>
+                        <th scope="row"><@spring.message 'resume.active'/></th>
                         <td><#if resume.isActive??> ${resume.isActive?string('Да', 'Нет')} <#else> - </#if> </td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Дата создания:</th>
+                        <th scope="row"><@spring.message 'resume.creation.date'/></th>
                         <td>${resume.createdDate.toLocalDate()}</td>
                     </tr>
 
@@ -61,17 +61,17 @@
 
 
             <div class="row mt-3">
-                <h2 class="mb-3">Опыт работы:</h2>
+                <h2 class="mb-3"><@spring.message 'resume.work.experience'/></h2>
                 <#if resume.workExperienceInfoDtos??>
                     <div class="col-sm-8 mb-3 mb-sm-0 mx-auto">
                         <table class="table">
                             <thead>
                             <tr class="table-success">
                                 <th scope="col">#</th>
-                                <th scope="col">Компания</th>
-                                <th scope="col">Стаж(лет)</th>
-                                <th scope="col">Позиция</th>
-                                <th scope="col">Обязанности</th>
+                                <th scope="col"><@spring.message 'resume.company'/></th>
+                                <th scope="col"><@spring.message 'resume.years'/></th>
+                                <th scope="col"><@spring.message 'resume.position'/></th>
+                                <th scope="col"><@spring.message 'resume.responsibilities'/></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -93,18 +93,18 @@
 
 
             <div class="row mt-3">
-                <h2 class="mb-3">Образование:</h2>
+                <h2 class="mb-3"><@spring.message 'resume.education'/></h2>
                 <#if resume.educationInfos??>
                     <div class="col-sm-8 mb-3 mb-sm-0 mx-auto">
                         <table class="table">
                             <thead>
                             <tr class="table-info">
                                 <th scope="col">#</th>
-                                <th scope="col">Учреждение</th>
-                                <th scope="col">Программа обучения</th>
-                                <th scope="col">Дата начала</th>
-                                <th scope="col">Дата завершения</th>
-                                <th scope="col">Степень</th>
+                                <th scope="col"><@spring.message 'resume.institution'/></th>
+                                <th scope="col"><@spring.message 'resume.program'/></th>
+                                <th scope="col"><@spring.message 'resume.start.date'/></th>
+                                <th scope="col"><@spring.message 'resume.end.date'/></th>
+                                <th scope="col"><@spring.message 'resume.end.degree'/></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -127,7 +127,7 @@
 
 
             <div class="row d-flex justify-content-center my-3">
-                <h2 class="mt-2">Контакты:</h2>
+                <h2 class="mt-2"><@spring.message 'resume.contacts'/></h2>
                 <div class="row w-75 my-3 row-cols-1 row-cols-lg-2">
                     <div class="col">
 
@@ -206,7 +206,7 @@
 
         </div>
         <div class="card-footer text-body-secondary">
-            Дата обновления: ${resume.updateTime.toLocalDate()}
+            <@spring.message 'resume.update.time'/> ${resume.updateTime.toLocalDate()}
         </div>
 
     </div>

@@ -1,5 +1,5 @@
 <#import  "../layout.ftlh" as main>
-<@main.layout>
+<@main.layout ; spring>
 
 
     <div class="card text-center mb-4">
@@ -12,12 +12,12 @@
                 <table class="table text-start table-striped">
                     <tbody>
                     <tr>
-                        <th scope="row">Описание:</th>
+                        <th scope="row"><@spring.message 'vacancy.description'/></th>
                         <td><#if vacancy.description??>${vacancy.description}<#else> - </#if></td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Родительская категория:</th>
+                        <th scope="row"><@spring.message 'vacancy.parent.category'/></th>
                         <td>
                             <#if vacancy.category??>
                                 <#if vacancy.category.parent??> ${vacancy.category.parent} <#else> - </#if>
@@ -28,7 +28,7 @@
                     </tr>
 
                     <tr>
-                        <th scope="row">Категория:</th>
+                        <th scope="row"><@spring.message 'vacancy.category'/></th>
                         <td>
                             <#if vacancy.category??>
                                 <#if vacancy.category.name??> ${vacancy.category.name} <#else> - </#if>
@@ -39,34 +39,34 @@
                     </tr>
 
                     <tr>
-                        <th scope="row">Заработная плата:</th>
+                        <th scope="row"><@spring.message 'vacancy.salary'/></th>
                         <td><#if vacancy.salary??> ${vacancy.salary} <#else> - </#if> </td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Опыт от:</th>
-                        <td><#if vacancy.expFrom??> ${vacancy.expFrom} (лет)<#else> - </#if> </td>
+                        <th scope="row"><@spring.message 'vacancy.expFrom'/></th>
+                        <td><#if vacancy.expFrom??> ${vacancy.expFrom} (<@spring.message 'vacancy.years'/>)<#else> - </#if> </td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Опыт до:</th>
-                        <td><#if vacancy.expTo??> ${vacancy.expTo} (лет)<#else> - </#if> </td>
+                        <th scope="row"><@spring.message 'vacancy.expTo'/></th>
+                        <td><#if vacancy.expTo??> ${vacancy.expTo} (<@spring.message 'vacancy.years'/>)<#else> - </#if> </td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Профиль автора:</th>
+                        <th scope="row"><@spring.message 'vacancy.profile'/></th>
                         <td class="pt-2"><a href="/users/profile/${vacancy.userEmail}"
                                             class="text-decoration-none border border-primary rounded-4 p-1">${vacancy.userEmail}</a>
                         </td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Активно:</th>
-                        <td><#if vacancy.isActive??> ${vacancy.isActive?string('Да', 'Нет')} <#else> - </#if> </td>
+                        <th scope="row"><@spring.message 'vacancy.active'/></th>
+                        <td><#if vacancy.isActive??> ${vacancy.isActive?string('Yes', 'No')} <#else> - </#if> </td>
                     </tr>
 
                     <tr>
-                        <th scope="row">Дата создания:</th>
+                        <th scope="row"><@spring.message 'vacancy.creation.date'/></th>
                         <td>${vacancy.createdDate.toLocalDate()}</td>
                     </tr>
 
@@ -79,7 +79,7 @@
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-success mx-auto mb-4" data-bs-toggle="modal"
                     data-bs-target="#exampleModal">
-                Откликнуться
+                <@spring.message 'vacancy.response'/>
             </button>
 
             <!-- Modal -->
@@ -88,7 +88,8 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Отклики на вакансии</h1>
+                            <h1 class="modal-title fs-5"
+                                id="exampleModalLabel"><@spring.message 'vacancy.responses.title'/></h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                         </div>
@@ -103,32 +104,32 @@
                                                 <#if resume.category??>
                                                     <#if resume.category.name??>
                                                         <p class="mb-2">
-                                                            Категория: ${resume.category.name}
+                                                            <@spring.message 'vacancy.responses.category'/> ${resume.category.name}
                                                         </p>
                                                     </#if>
                                                 </#if>
                                                 <#if resume.salary??>
-                                                    Зарплата: ${resume.salary}
+                                                    <@spring.message 'vacancy.responses.salary'/> ${resume.salary}
                                                 <#else>
-                                                    Зарплата: -
+                                                    <@spring.message 'vacancy.responses.salary'/> -
                                                 </#if>
 
                                             </div>
                                             <button type="button"
                                                     class="btn btn-success my-auto"
                                                     onclick="responseVacancy(${vacancy.id}, ${resume.id})">
-                                                Прикрепить
+                                                <@spring.message 'vacancy.responses.pin'/>
                                             </button>
                                         </li>
                                     </#list>
                                 </ol>
                             <#else>
-                                У вас еще нет откликов на вакансии
+                                <@spring.message 'vacancy.no.responses'/>
                             </#if>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                Close
+                                <@spring.message 'vacancy.close.button'/>
                             </button>
                         </div>
                     </div>
@@ -140,7 +141,7 @@
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-success mx-auto mb-4 position-relative" data-bs-toggle="modal"
                     data-bs-target="#exampleModal">
-                Отклики
+                <@spring.message 'vacancy.responses'/>
 
                 <#if responsesQty gt 0>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -156,7 +157,8 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Отклики на вакансию</h1>
+                            <h1 class="modal-title fs-5"
+                                id="exampleModalLabel"><@spring.message 'vacancy.responses.title2'/></h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                         </div>
@@ -170,32 +172,32 @@
                                                     <a href="/users/profile/${response.resume.userEmail}"
                                                        class="text-dark">${response.resume.userEmail}</a>
                                                 </div>
-                                                <p class="mb-2">Резюме:
+                                                <p class="mb-2"><@spring.message 'vacancy.resumes'/>
                                                     <a href="/employer/resumes/${response.resume.id}"
                                                        class="text-dark">${response.resume.name}</a>
                                                 </p>
                                                 <#if response.resume.salary??>
-                                                    Зарплата: ${response.resume.salary}
+                                                    <@spring.message 'vacancy.responses.salary'/> ${response.resume.salary}
                                                 <#else>
-                                                    Зарплата: -
+                                                    <@spring.message 'vacancy.responses.salary'/> -
                                                 </#if>
 
                                             </div>
 
                                             <span class="badge text-bg-primary rounded-pill">
                                                                     <a href="/messages/${response.id}"
-                                                                       class="text-white text-decoration-none">Переписка</a>
+                                                                       class="text-white text-decoration-none"><@spring.message 'vacancy.messages'/></a>
                                                                 </span>
                                         </li>
                                     </#list>
                                 </ol>
                             <#else>
-                                У вас еще нет откликов на вакансии
+                                <@spring.message 'vacancy.no.responses'/>
                             </#if>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                Close
+                                <@spring.message 'vacancy.close.button'/>
                             </button>
                         </div>
                     </div>
@@ -205,7 +207,7 @@
 
 
         <div class="card-footer text-body-secondary">
-            Дата обновления ${vacancy.updateTime.toLocalDate()}
+            <@spring.message 'vacancy.update.time'/> ${vacancy.updateTime.toLocalDate()}
         </div>
     </div>
 
@@ -218,10 +220,8 @@
                 })
                 .then(data => {
                     window.location.href = '/messages/' + data
-
                 })
                 .catch(e => console.log(e))
         }
-
     </script>
 </@main.layout>

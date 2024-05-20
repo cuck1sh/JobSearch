@@ -22,10 +22,6 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class FileUtil {
-
-    //TODO Создать страницы откликов, затем удалить заглишки для резюме и вакансии:
-    public static final Integer TEST_RESUME_ID = 1;
-    public static final Integer TEST_VACANCY_ID = 2;
     private static final String UPLOAD_DIR = "data/";
 
     @SneakyThrows

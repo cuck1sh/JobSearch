@@ -43,6 +43,8 @@ public class SecurityConfig {
                                 .requestMatchers("/").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/static/js/auth/**").permitAll()
+                                .requestMatchers("/static/js/search.js").permitAll()
+                                .requestMatchers("/api/users/setLng").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                                 .requestMatchers("/vacancies/*").permitAll()
                                 .requestMatchers("/search").permitAll()

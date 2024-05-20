@@ -45,6 +45,8 @@ public class User {
     @Column(name = "account_type")
     private String accountType;
 
+    private String userL10n;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Resume> resumes;
 
