@@ -50,6 +50,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(int id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + id));
+        return getDto(user);
+    }
+
+    private UserDto getDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -59,7 +63,12 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .avatar(user.getAvatar())
                 .accountType(user.getAccountType())
+                .userL10n(user.getUserL10n())
                 .build();
+    }
+
+    public void addL10n(String email, String l10n) {
+        userRepository.updateL10n(email, l10n);
     }
 
     @Override
@@ -95,16 +104,7 @@ public class UserServiceImpl implements UserService {
 
     private List<UserDto> getUserDtos(List<User> users) {
         List<UserDto> dtos = new ArrayList<>();
-        users.forEach(e -> dtos.add(UserDto.builder()
-                .id(e.getId())
-                .name(e.getName())
-                .surname(e.getSurname())
-                .age(e.getAge())
-                .email(e.getEmail())
-                .phoneNumber(e.getPhoneNumber())
-                .avatar(e.getAvatar())
-                .accountType(e.getAccountType())
-                .build()));
+        users.forEach(e -> dtos.add(getDto(e)));
         return dtos;
     }
 
@@ -112,32 +112,14 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserByPhone(String phone) {
         User user = userRepository.findByPhoneNumber(phone)
                 .orElseThrow(() -> new UserNotFoundException("Can not find user with phone: " + phone));
-        return UserDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .surname(user.getSurname())
-                .age(user.getAge())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .avatar(user.getAvatar())
-                .accountType(user.getAccountType())
-                .build();
+        return getDto(user);
     }
 
     @Override
     public UserDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Can not find user with email: " + email));
-        return UserDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .surname(user.getSurname())
-                .age(user.getAge())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .avatar(user.getAvatar())
-                .accountType(user.getAccountType())
-                .build();
+        return getDto(user);
     }
 
     @Override

@@ -42,8 +42,14 @@
                             <@spring.message "layout.lang.dropdown"/>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="?lang=ru">Русский</a></li>
-                            <li><a class="dropdown-item" href="?lang=en">English</a></li>
+                            <li>
+                                <button class="dropdown-item" onclick="setLng('ru')">Русский</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" onclick="setLng('en')">English</button>
+                            </li>
+                            <#--                            <li><a class="dropdown-item" href="?lang=ru">Русский</a></li>-->
+                            <#--                            <li><a class="dropdown-item" href="?lang=en">English</a></li>-->
                         </ul>
                     </li>
                 </ul>
@@ -100,6 +106,18 @@
     </body>
 
 </html>
+
+    <script>
+        'use strict'
+
+        function setLng(language) {
+            fetch('/api/users/setLng?lang=' + language, {method: 'get'})
+                .then(e => {
+                    window.location.href = '?=' + language
+                })
+                .catch(e => console.log(e))
+        }
+    </script>
 
 </#macro>
 

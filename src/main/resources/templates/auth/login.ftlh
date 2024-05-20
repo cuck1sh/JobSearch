@@ -32,6 +32,8 @@
         </div>
     </form>
 
+    <div hidden="hidden" id="hidden-valid"><@spring.message 'login.validation'/></div>
+
     <script src="/static/js/auth/login.js">
 
     </script>

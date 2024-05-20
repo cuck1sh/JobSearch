@@ -38,22 +38,24 @@ public class UserDto {
     String email;
 
     @NotBlank
-    @Size(min = 4, max = 24, message = "Длина должна быть в диапазоне от 4 до 24 символов")
+    @Size(min = 4, max = 24, message = "{register.valid.password.length}")
     @Pattern(
             regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).+$",
-            message = "Должны содержаться минимум один заглавный символ и одна цифра"
+            message = "{register.valid.password.pattern}"
     )
     String password;
 
     @JsonProperty("phone_number")
-    @Pattern(regexp = "^996-\\d{3}-\\d{2}-\\d{2}-\\d{2}$", message = "формат должен соответствовать '996-ddd-dd-dd-dd'")
+    @Pattern(regexp = "^996-\\d{3}-\\d{2}-\\d{2}-\\d{2}$", message = "{register.valid.phone.pattern}")
     String phoneNumber;
 
     String avatar;
 
     //    @NotBlank
     @JsonProperty("account_type")
-    @Pattern(regexp = "^((EMPLOYER|EMPLOYEE)$)", message = "Тип аккаунта может быть либо 'Соискатель' или 'Работодатель'")
+    @Pattern(regexp = "^((EMPLOYER|EMPLOYEE)$)", message = "{register.valid.account.type}")
     String accountType;
+
+    String userL10n;
 }
 

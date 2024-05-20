@@ -36,4 +36,6 @@ public interface UserService {
 
     void updateUser(User user);
 
+    public void addL10n(String email, String l10n);
+
 }

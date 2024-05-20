@@ -49,6 +49,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "update users set avatar = :avatar where id = :id;", nativeQuery = true)
     void saveAvatar(String avatar, Integer id);
 
+    @Transactional
+    @Modifying
+    @Query(value = "update users set userL10n = :l10n where email like :email;", nativeQuery = true)
+    void updateL10n(String email, String l10n);
+
     Boolean existsByEmail(String email);
 
     @Transactional
