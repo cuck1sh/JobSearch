@@ -48,18 +48,23 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
             VacancyDto vacancyDto = vacancyService.getVacancyById(id);
             UserDto user = authenticatedUserProvider.getAuthUser();
 
-            if (user.getId() != null) {
-                if (userService.isEmployee(user.getId())) {
-                    List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
-                    model.addAttribute("resumes", resumes);
-                } else {
-                    List<RespondedApplicantsDto> responses = getResponsesForEmployer(id, user.getId());
-                    model.addAttribute("responses", responses);
-                    model.addAttribute("responsesQty", responses.size());
-                }
-            }
+            if (!vacancyDto.getIsActive() && !user.getEmail().equals(vacancyDto.getUserEmail())) {
+                log.error("Вакансия скрыта из общего доступа");
+                throw new VacancyNotFoundException("Вакансия скрыта из общего доступа");
 
-            model.addAttribute("vacancy", vacancyDto);
+            } else {
+                if (user.getId() != null) {
+                    if (userService.isEmployee(user.getId())) {
+                        List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
+                        model.addAttribute("resumes", resumes);
+                    } else {
+                        List<RespondedApplicantsDto> responses = getResponsesForEmployer(id, user.getId());
+                        model.addAttribute("responses", responses);
+                        model.addAttribute("responsesQty", responses.size());
+                    }
+                }
+                model.addAttribute("vacancy", vacancyDto);
+            }
         } else {
             throw new VacancyNotFoundException("Не найдена вакансия");
         }

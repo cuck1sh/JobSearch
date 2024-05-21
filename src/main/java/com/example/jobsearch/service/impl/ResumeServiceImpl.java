@@ -5,6 +5,7 @@ import com.example.jobsearch.dto.resume.InputResumeDto;
 import com.example.jobsearch.dto.resume.ResumeDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.user.UserMainItem;
+import com.example.jobsearch.exception.FailedCreation;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.Category;
@@ -196,38 +197,44 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void createResume(InputResumeDto resumeDto) {
-        UserDto user = authenticatedUserProvider.getAuthUser();
+        if (!resumeDto.getName().isBlank() && !resumeDto.getCategory().equals("Пусто") && resumeDto.getIsActive() != null) {
+            UserDto user = authenticatedUserProvider.getAuthUser();
 
-        if (userService.isEmployee(user.getEmail())) {
-            Resume newResume = Resume.builder()
-                    .user(User.builder().id(user.getId()).build())
-                    .name(resumeDto.getName())
-                    .salary(resumeDto.getSalary())
-                    .isActive(resumeDto.getIsActive())
-                    .createdDate(LocalDateTime.now())
-                    .updateTime(LocalDateTime.now())
-                    .build();
+            if (userService.isEmployee(user.getEmail())) {
+                Resume newResume = Resume.builder()
+                        .user(User.builder().id(user.getId()).build())
+                        .name(resumeDto.getName())
+                        .salary(resumeDto.getSalary())
+                        .isActive(resumeDto.getIsActive())
+                        .createdDate(LocalDateTime.now())
+                        .updateTime(LocalDateTime.now())
+                        .build();
 
-            Integer categoryId = categoryService.checkInCategories(resumeDto.getCategory());
+                Integer categoryId = categoryService.checkInCategories(resumeDto.getCategory());
 
-            if (categoryId != null) {
-                newResume.setCategory(Category.builder().id(categoryId).build());
-            }
+                if (categoryId != null) {
+                    newResume.setCategory(Category.builder().id(categoryId).build());
+                }
 
-            Integer newResumeKey = repository.save(newResume).getId();
+                Integer newResumeKey = repository.save(newResume).getId();
 
-            if (resumeDto.getWorkExperienceInfoDtos() != null) {
-                workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
-            }
+                if (resumeDto.getWorkExperienceInfoDtos() != null) {
+                    workExperienceInfoService.createWorkExperienceInfo(resumeDto.getWorkExperienceInfoDtos(), newResumeKey);
+                }
 
-            if (resumeDto.getEducationInfos() != null) {
-                educationInfoService.createEducationInfo(resumeDto.getEducationInfos(), newResumeKey);
-            }
-            if (resumeDto.getContacts() != null) {
-                contactsInfoService.createContactInfo(resumeDto.getContacts(), newResumeKey);
+                if (resumeDto.getEducationInfos() != null) {
+                    educationInfoService.createEducationInfo(resumeDto.getEducationInfos(), newResumeKey);
+                }
+                if (resumeDto.getContacts() != null) {
+                    contactsInfoService.createContactInfo(resumeDto.getContacts(), newResumeKey);
+                }
+            } else {
+                log.error("Юзер " + user.getEmail() + " не найден среди соискателей");
+                throw new UserNotFoundException("Юзер " + user.getEmail() + " не найден среди соискателей");
             }
         } else {
-            log.error("Юзер " + user.getEmail() + " не найден среди соискателей");
+            log.error("Попытка создания пустого резюме");
+            throw new FailedCreation("Попытка создания пустого резюме");
         }
     }
 

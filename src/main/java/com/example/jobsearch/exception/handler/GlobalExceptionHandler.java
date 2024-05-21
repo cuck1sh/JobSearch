@@ -2,6 +2,7 @@ package com.example.jobsearch.exception.handler;
 
 import com.example.jobsearch.exception.AccessException;
 import com.example.jobsearch.exception.ErrorResponseBody;
+import com.example.jobsearch.exception.FailedCreation;
 import com.example.jobsearch.exception.ResponseApiException;
 import com.example.jobsearch.service.ErrorService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,6 +57,14 @@ public class GlobalExceptionHandler {
     public String accessFoundHandler(Model model, HttpServletRequest request) {
         model.addAttribute("status", HttpStatus.FORBIDDEN.value());
         model.addAttribute("reason", HttpStatus.FORBIDDEN.getReasonPhrase());
+        model.addAttribute("details", request);
+        return ERROR_TEMPLATE_PATH;
+    }
+
+    @ExceptionHandler(FailedCreation.class)
+    public String resumeCreationHandler(Model model, HttpServletRequest request) {
+        model.addAttribute("status", HttpStatus.NO_CONTENT.value());
+        model.addAttribute("reason", HttpStatus.NO_CONTENT.getReasonPhrase());
         model.addAttribute("details", request);
         return ERROR_TEMPLATE_PATH;
     }
