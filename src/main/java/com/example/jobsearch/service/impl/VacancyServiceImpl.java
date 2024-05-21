@@ -233,7 +233,7 @@ public class VacancyServiceImpl implements VacancyService {
                 vacancy.setExpTo(vacancyDto.getExpTo());
             }
 
-            vacancy.setIsActive(vacancyDto.getIsActive() != null);
+            vacancy.setIsActive(vacancyDto.getIsActive());
             vacancyRepository.save(vacancy);
         } else {
             log.info("Юзер " + user.getEmail() + " не найден среди работодателей для добавления вакансии");
@@ -266,9 +266,7 @@ public class VacancyServiceImpl implements VacancyService {
                             vacancy.setCategory(null);
                         }
 
-                        if (vacancyDto.getIsActive() == null) {
-                            vacancy.setIsActive(false);
-                        } else {
+                        if (vacancyDto.getIsActive() != null) {
                             vacancy.setIsActive(vacancyDto.getIsActive());
                         }
 

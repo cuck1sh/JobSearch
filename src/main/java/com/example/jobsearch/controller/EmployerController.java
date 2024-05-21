@@ -1,11 +1,16 @@
 package com.example.jobsearch.controller;
 
+import com.example.jobsearch.dto.resume.ResumeDto;
+import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
+import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+@Slf4j
 @Controller
 @RequestMapping("employer")
 @RequiredArgsConstructor
@@ -27,6 +33,7 @@ public class EmployerController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
     private final ResumeService resumeService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @GetMapping("vacancies/add")
     public String addVacancy(Model model) {
@@ -100,8 +107,15 @@ public class EmployerController {
 
     @GetMapping("resumes/{id}")
     public String getResume(@PathVariable int id, Model model) {
-        model.addAttribute("resume", resumeService.getResumeById(id));
-        return "employee/resume";
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+        ResumeDto resumeDto = resumeService.getResumeById(id);
+        if (!resumeDto.getIsActive() && !authUser.getEmail().equals(resumeDto.getUserEmail())) {
+            log.error("Резюме скрыто из общего доступа");
+            throw new ResumeNotFoundException("Резюме скрыто из общего доступа");
+        } else {
+            model.addAttribute("resume", resumeDto);
+            return "employee/resume";
+        }
     }
 
 }
