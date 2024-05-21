@@ -1,5 +1,6 @@
 package com.example.jobsearch.service.impl;
 
+import com.example.jobsearch.dto.CategoryDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
@@ -44,11 +45,14 @@ public class VacancyServiceImpl implements VacancyService {
         if (isVacancyInSystem(id)) {
             Vacancy vacancy = vacancyRepository.findById(id)
                     .orElseThrow(() -> new VacancyNotFoundException("Не найдена вакансия с айди: " + id));
+
+            CategoryDto category = (vacancy.getCategory() != null) ? categoryService.getCategoryById(vacancy.getCategory().getId()) : null;
+
             return VacancyDto.builder()
                     .id(vacancy.getId())
                     .name(vacancy.getName())
                     .description(vacancy.getDescription())
-                    .category(categoryService.getCategoryById(vacancy.getCategory().getId()))
+                    .category(category)
                     .salary(vacancy.getSalary())
                     .expFrom(vacancy.getExpFrom())
                     .expTo(vacancy.getExpTo())
@@ -199,46 +203,53 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public void createVacancy(InputVacancyDto vacancyDto) {
-        UserDto user = authenticatedUserProvider.getAuthUser();
+        if (!vacancyDto.getName().isBlank() && !vacancyDto.getName().isEmpty()) {
+            UserDto user = authenticatedUserProvider.getAuthUser();
 
-        if (!userService.isEmployee(user.getEmail())) {
-            LocalDateTime now = LocalDateTime.now();
+            if (!userService.isEmployee(user.getEmail())) {
+                LocalDateTime now = LocalDateTime.now();
 
-            Vacancy vacancy = Vacancy.builder()
-                    .name(vacancyDto.getName())
-                    .user(User.builder().id(user.getId()).build())
-                    .createdDate(now)
-                    .updateTime(now)
-                    .build();
+                Vacancy vacancy = Vacancy.builder()
+                        .name(vacancyDto.getName())
+                        .user(User.builder().id(user.getId()).build())
+                        .createdDate(now)
+                        .updateTime(now)
+                        .build();
 
-            Integer categoryId = categoryService.checkInCategories(vacancyDto.getCategory());
+                Integer categoryId = categoryService.checkInCategories(vacancyDto.getCategory());
 
-            if (categoryId != null) {
-                vacancy.setCategory(Category.builder().id(categoryId).build());
+                if (categoryId != null) {
+                    vacancy.setCategory(Category.builder().id(categoryId).build());
+                }
+
+                if (vacancyDto.getSalary() != null) {
+                    vacancy.setSalary(vacancyDto.getSalary());
+                }
+
+                if (!vacancyDto.getDescription().isBlank()) {
+                    vacancy.setDescription(vacancyDto.getDescription());
+                }
+
+                if (vacancyDto.getExpFrom() != null) {
+                    vacancy.setExpFrom(vacancyDto.getExpFrom());
+                }
+
+                if (vacancyDto.getExpTo() != null) {
+                    vacancy.setExpTo(vacancyDto.getExpTo());
+                }
+
+                vacancy.setIsActive(vacancyDto.getIsActive());
+                vacancyRepository.save(vacancy);
+            } else {
+                log.info("Юзер " + user.getEmail() + " не найден среди работодателей для добавления вакансии");
+                throw new UserNotFoundException("Юзер " + user.getEmail() + " не найден среди работодателей для добавления вакансии");
             }
-
-            if (vacancyDto.getSalary() != null) {
-                vacancy.setSalary(vacancyDto.getSalary());
-            }
-
-            if (!vacancyDto.getDescription().isBlank()) {
-                vacancy.setDescription(vacancyDto.getDescription());
-            }
-
-            if (vacancyDto.getExpFrom() != null) {
-                vacancy.setExpFrom(vacancyDto.getExpFrom());
-            }
-
-            if (vacancyDto.getExpTo() != null) {
-                vacancy.setExpTo(vacancyDto.getExpTo());
-            }
-
-            vacancy.setIsActive(vacancyDto.getIsActive());
-            vacancyRepository.save(vacancy);
         } else {
-            log.info("Юзер " + user.getEmail() + " не найден среди работодателей для добавления вакансии");
+            log.error("Пустое резюме");
+            throw new VacancyNotFoundException("Пустое резюме");
         }
     }
+
 
     @Override
     public void changeVacancy(InputVacancyDto vacancyDto) {

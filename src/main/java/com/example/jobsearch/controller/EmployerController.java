@@ -53,12 +53,13 @@ public class EmployerController {
             model.addAttribute("categories", categoryService.getStringedCategories());
             return "employer/createVacancyTemplate";
         }
-
-        if (inputVacancyDto.getExpFrom() > inputVacancyDto.getExpTo()) {
-            model.addAttribute("inputVacancyDto", inputVacancyDto);
-            model.addAttribute("categories", categoryService.getStringedCategories());
-            model.addAttribute("expErr", true);
-            return "employer/createVacancyTemplate";
+        if (inputVacancyDto.getExpFrom() != null && inputVacancyDto.getExpTo() != null) {
+            if (inputVacancyDto.getExpFrom() > inputVacancyDto.getExpTo()) {
+                model.addAttribute("inputVacancyDto", inputVacancyDto);
+                model.addAttribute("categories", categoryService.getStringedCategories());
+                model.addAttribute("expErr", true);
+                return "employer/createVacancyTemplate";
+            }
         }
         vacancyService.createVacancy(inputVacancyDto);
         return "redirect:/users/profile";
