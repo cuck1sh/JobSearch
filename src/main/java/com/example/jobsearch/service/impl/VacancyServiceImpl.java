@@ -5,6 +5,7 @@ import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.user.UserMainItem;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
+import com.example.jobsearch.exception.FailedCreation;
 import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.exception.VacancyNotFoundException;
@@ -245,8 +246,8 @@ public class VacancyServiceImpl implements VacancyService {
                 throw new UserNotFoundException("Юзер " + user.getEmail() + " не найден среди работодателей для добавления вакансии");
             }
         } else {
-            log.error("Пустое резюме");
-            throw new VacancyNotFoundException("Пустое резюме");
+            log.error("Попытка создания пустой вакансии");
+            throw new FailedCreation("Попытка создания пустой вакансии");
         }
     }
 
