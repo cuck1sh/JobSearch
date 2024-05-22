@@ -31,12 +31,6 @@ public class EmployeeController {
     private final CategoryService categoryService;
     private final ProfileService profileService;
 
-    @GetMapping("resumes/{id}")
-    public String getResume(@PathVariable int id, Model model) {
-        resumeService.getResume(id, model);
-        return "employee/resume";
-    }
-
     @GetMapping("resumes/add")
     public String addResume(Model model) {
         model.addAttribute("inputResumeDto", new InputResumeDto());

@@ -58,7 +58,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
                         List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
                         model.addAttribute("resumes", resumes);
                     } else {
-                        List<RespondedApplicantsDto> responses = getResponsesForEmployer(id, user.getId());
+                        List<RespondedApplicantsDto> responses = getResponsesForVacancy(id, user.getId());
                         model.addAttribute("responses", responses);
                         model.addAttribute("responsesQty", responses.size());
                     }
@@ -161,19 +161,20 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     }
 
     @Override
-    public List<RespondedApplicantsDto> getResponsesForEmployee(int userId) {
+    public List<RespondedApplicantsDto> getUsersResponses(int userId) {
         if (userService.isUserInSystem(userId)) {
             if (userService.isEmployee(userId)) {
-                List<RespondedApplicants> applicants = repository.findAllByResumeUserId(userId);
-                return getRespondedApplicantsDtos(applicants);
+                return getRespondedApplicantsDtos(repository.findAllByResumeUserId(userId));
+            } else {
+                return getRespondedApplicantsDtos(repository.findAllByVacancyUserId(userId));
             }
-            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
         }
+        log.error("Не найден юзер с айди: " + userId);
         throw new UserNotFoundException("Не найден юзер с айди: " + userId);
     }
 
     @Override
-    public List<RespondedApplicantsDto> getResponsesForEmployer(int vacancyId, int userId) {
+    public List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId, int userId) {
         if (!userService.isEmployee(userId)) {
             List<RespondedApplicants> applicants = repository.findAllByVacancyIdAndVacancyUserId(vacancyId, userId);
             return getRespondedApplicantsDtos(applicants);

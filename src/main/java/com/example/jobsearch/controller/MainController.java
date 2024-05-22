@@ -1,8 +1,13 @@
 package com.example.jobsearch.controller;
 
+import com.example.jobsearch.dto.resume.ResumeDto;
+import com.example.jobsearch.dto.user.UserDto;
+import com.example.jobsearch.exception.AccessException;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.RespondedApplicantsService;
+import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
+import com.example.jobsearch.util.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +28,8 @@ public class MainController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
     private final RespondedApplicantsService respondedApplicantsService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
+    private final ResumeService resumeService;
 
     @GetMapping
     public String getMainPage(Model model,
@@ -49,6 +56,25 @@ public class MainController {
     public String getVacancy(@PathVariable int id, Model model) {
         respondedApplicantsService.getVacancy(id, model);
         return "employer/vacancy";
+    }
+
+    @GetMapping("resumes/{id}")
+    public String getResume(@PathVariable int id, Model model) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+        ResumeDto resumeDto = resumeService.getResumeById(id);
+
+        if (authUser.getEmail().equals(resumeDto.getUserEmail())) {
+            model.addAttribute("resume", resumeDto);
+            return "employee/resume";
+        }
+
+        if (authUser.getAccountType().equals("EMPLOYER") && resumeDto.getIsActive()) {
+            model.addAttribute("resume", resumeDto);
+            return "employee/resume";
+        } else {
+            log.error("Резюме скрыто из общего доступа");
+            throw new AccessException("Резюме скрыто из общего доступа");
+        }
     }
 
     @GetMapping("search")

@@ -5,7 +5,6 @@ import com.example.jobsearch.dto.user.ProfileDto;
 import com.example.jobsearch.dto.user.UserAvatarFileDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.vacancy.VacancyDto;
-import com.example.jobsearch.exception.UserNotFoundException;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.service.ProfileService;
 import com.example.jobsearch.service.RespondedApplicantsService;
@@ -18,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,14 +65,9 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void getProfile(Pageable pageable, String filter, Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            UserDto user = userService.getUserByEmail(auth.getName());
-            putProfileInModel(user, pageable, filter, model);
-            model.addAttribute("url", "/users/profile");
-        } else {
-            throw new UserNotFoundException("Не найден пользователь для профиля");
-        }
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+        putProfileInModel(authUser, pageable, filter, model);
+        model.addAttribute("url", "/users/profile");
     }
 
     private void putProfileInModel(UserDto user, Pageable pageable, String filter, Model model) {
@@ -83,16 +75,19 @@ public class ProfileServiceImpl implements ProfileService {
 
         if (userService.isEmployee(user.getEmail())) {
             if (resumeService.isUsersResumesInSystem(user.getId())) {
-
                 model.addAttribute("page", resumeService.getResumeMainItem(user.getId(), pageable));
-                model.addAttribute("responses", respondedApplicantsService.getResponsesForEmployee(user.getId()).reversed());
-                model.addAttribute("responsesQuantity", respondedApplicantsService.getResponsesForEmployee(user.getId()).size());
+                model.addAttribute("responses", respondedApplicantsService.getUsersResponses(user.getId()).reversed());
+                model.addAttribute("responsesQuantity", respondedApplicantsService.getUsersResponses(user.getId()).size());
             } else {
                 model.addAttribute("responsesQuantity", 0);
             }
         } else {
             if (vacancyService.isUsersVacanciesInSystem(user.getId())) {
                 model.addAttribute("page", vacancyService.getVacancyMainItem(user.getId(), pageable));
+                model.addAttribute("responses", respondedApplicantsService.getUsersResponses(user.getId()).reversed());
+                model.addAttribute("responsesQuantity", respondedApplicantsService.getUsersResponses(user.getId()).size());
+            } else {
+                model.addAttribute("responsesQuantity", 0);
             }
         }
 

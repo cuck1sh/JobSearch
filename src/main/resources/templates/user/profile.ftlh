@@ -43,70 +43,10 @@
 
                             </div>
 
-                            <div class="col">
-                                <button type="button"
-                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                        class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
-                                    <@spring.message 'profile.responses'/>
 
-                                    <#if responsesQuantity gt 0>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        ${responsesQuantity}
-                                        <span class="visually-hidden">unread messages</span>
-                                        </span>
-                                    </#if>
-                                </button>
-                            </div>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5"
-                                                id="exampleModalLabel"><@spring.message 'profile.responses.title'/></h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <#if responses?size gt 0>
-                                                <ol class="list-group list-group-numbered">
-                                                    <#list responses as response>
-                                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                            <div class="ms-2 me-auto">
-                                                                <div class="fw-bold">${response.vacancy.companyName}</div>
-                                                                <p class="mb-2">
-                                                                    <a href="/vacancies/${response.vacancy.id}"
-                                                                       class="text-dark">
-                                                                        <@spring.message 'profile.responses.vacancy'/> ${response.vacancy.name}
-                                                                    </a>
-                                                                </p>
-                                                                <@spring.message 'profile.responses.resume'/> ${response.resume.name}
-                                                            </div>
 
-                                                            <span class="badge text-bg-primary rounded-pill">
-                                                                    <a href="/messages/${response.id}"
-                                                                       class="text-white text-decoration-none">
-                                                                        <@spring.message 'profile.responses.messenger'/>
-                                                                    </a>
-                                                                </span>
-                                                        </li>
-                                                    </#list>
-                                                </ol>
-                                            <#else>
-                                                <@spring.message 'profile.no.responses'/>
-                                            </#if>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                <@spring.message 'profile.responses.close'/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                        <#--                    EMPLOYER-->
                         <#else>
                             <div class="col">
                                 <a href="/employer/vacancies/add" class="text-dark text-decoration-none">
@@ -117,15 +57,85 @@
                                     </button>
                                 </a>
                             </div>
-
-                            <div class="col">
-                                <button type="button"
-                                        class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
-                                    <a href="/employer/resumes"
-                                       class="text-dark text-decoration-none"><@spring.message 'profile.employer.resumes'/> </a>
-                                </button>
-                            </div>
+                        <#--                            <div class="col">-->
+                        <#--                                <button type="button"-->
+                        <#--                                        class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">-->
+                        <#--                                    <a href="/employer/resumes"-->
+                        <#--                                       class="text-dark text-decoration-none"><@spring.message 'profile.employer.resumes'/> </a>-->
+                        <#--                                </button>-->
+                        <#--                            </div>-->
                         </#if>
+
+                        <div class="col">
+                            <button type="button"
+                                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                    class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">
+                                <@spring.message 'profile.responses'/>
+
+                                <#if responsesQuantity gt 0>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        ${responsesQuantity}
+                                        <span class="visually-hidden">unread messages</span>
+                                        </span>
+                                </#if>
+                            </button>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5"
+                                            id="exampleModalLabel"><@spring.message 'profile.responses.title'/></h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <#if responses?size gt 0>
+                                            <ol class="list-group list-group-numbered">
+                                                <#list responses as response>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                        <div class="ms-2 me-auto">
+                                                            <#if user.accountType == "EMPLOYEE">
+                                                                <div class="fw-bold mb-2">${response.vacancy.companyName}</div>
+                                                            <#else>
+                                                                <div class="fw-bold mb-2">${response.resume.userEmail}</div>
+                                                            </#if>
+
+                                                            <p class="mb-1">
+                                                                <a href="/vacancies/${response.vacancy.id}"
+                                                                   class="text-dark">
+                                                                    <@spring.message 'profile.responses.vacancy'/> ${response.vacancy.name}
+                                                                </a>
+                                                            </p>
+                                                            <a href="/resumes/${response.resume.id}" class="text-dark">
+                                                                <@spring.message 'profile.responses.resume'/> ${response.resume.name}
+                                                            </a>
+                                                        </div>
+
+                                                        <span class="badge text-bg-primary rounded-pill">
+                                                                    <a href="/messages/${response.id}"
+                                                                       class="text-white text-decoration-none">
+                                                                        <@spring.message 'profile.responses.messenger'/>
+                                                                    </a>
+                                                                </span>
+                                                    </li>
+                                                </#list>
+                                            </ol>
+                                        <#else>
+                                            <@spring.message 'profile.no.responses'/>
+                                        </#if>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            <@spring.message 'profile.responses.close'/>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
