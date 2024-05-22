@@ -43,10 +43,7 @@
 
                             </div>
 
-
-
-
-                        <#--                    EMPLOYER-->
+                        <#--EMPLOYER-->
                         <#else>
                             <div class="col">
                                 <a href="/employer/vacancies/add" class="text-dark text-decoration-none">
@@ -57,13 +54,6 @@
                                     </button>
                                 </a>
                             </div>
-                        <#--                            <div class="col">-->
-                        <#--                                <button type="button"-->
-                        <#--                                        class="btn border-black border-2 w-100 h-100 rounded-4 position-relative">-->
-                        <#--                                    <a href="/employer/resumes"-->
-                        <#--                                       class="text-dark text-decoration-none"><@spring.message 'profile.employer.resumes'/> </a>-->
-                        <#--                                </button>-->
-                        <#--                            </div>-->
                         </#if>
 
                         <div class="col">
@@ -156,7 +146,7 @@
                             <div class="card border-black border-2 rounded-4 p-3">
                                 <div class="card-body">
                                     <#if user.accountType == "EMPLOYEE">
-                                    <a href="/employee/resumes/${item.id}" class="text-decoration-none text-dark">
+                                    <a href="/resumes/${item.id}" class="text-decoration-none text-dark">
                                         <#else>
                                         <a href="/vacancies/${item.id}" class="text-decoration-none text-dark">
                                             </#if>

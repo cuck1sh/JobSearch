@@ -173,7 +173,7 @@
                                                        class="text-dark">${response.resume.userEmail}</a>
                                                 </div>
                                                 <p class="mb-2"><@spring.message 'vacancy.resumes'/>
-                                                    <a href="/employer/resumes/${response.resume.id}"
+                                                    <a href="/resumes/${response.resume.id}"
                                                        class="text-dark">${response.resume.name}</a>
                                                 </p>
                                                 <#if response.resume.salary??>

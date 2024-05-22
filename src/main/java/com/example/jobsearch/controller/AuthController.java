@@ -1,5 +1,6 @@
 package com.example.jobsearch.controller;
 
+import com.example.jobsearch.dto.user.AuthResetPasswordDto;
 import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.model.User;
 import com.example.jobsearch.service.ResetPasswordService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -76,7 +78,6 @@ public class AuthController {
         } catch (MessagingException e) {
             model.addAttribute("error", "Error while sending email");
         }
-
         return "auth/forgot_password_form";
     }
 
@@ -84,7 +85,8 @@ public class AuthController {
     public String showResetPasswordForm(@RequestParam String token, Model model) {
         try {
             resetPasswordService.getByResetPasswordToken(token);
-            model.addAttribute("token", token);
+            AuthResetPasswordDto resetDto = AuthResetPasswordDto.builder().token(token).build();
+            model.addAttribute("resetDto", resetDto);
         } catch (UsernameNotFoundException e) {
             model.addAttribute("error", "Invalid token");
         }
@@ -92,16 +94,26 @@ public class AuthController {
     }
 
     @PostMapping("reset_password")
-    public String processResetPassword(HttpServletRequest request, Model model) {
-        String token = request.getParameter("token");
-        String password = request.getParameter("password");
+    public String processResetPassword(@Valid AuthResetPasswordDto resetDto,
+                                       BindingResult bindingResult,
+                                       Model model) {
+        String token = resetDto.getToken();
+        String password = resetDto.getPassword();
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("error", Objects.requireNonNull(bindingResult.getFieldError("password")).getDefaultMessage());
+            model.addAttribute("resetDto", resetDto);
+            return "auth/reset_password_form";
+        }
+
         try {
             User user = resetPasswordService.getByResetPasswordToken(token);
             resetPasswordService.updatePassword(user, password);
             model.addAttribute("message", "You have successfully changed your password");
+            return "auth/message";
         } catch (UsernameNotFoundException e) {
-            model.addAttribute("message", "Invalid token");
+            model.addAttribute("token", token);
+            model.addAttribute("error", "Invalid token");
+            return "auth/reset_password_form";
         }
-        return "auth/message";
     }
 }

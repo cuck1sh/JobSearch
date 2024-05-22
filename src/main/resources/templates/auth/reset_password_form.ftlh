@@ -18,10 +18,19 @@
                                value="${(_csrf.token)!'csrf-token'}"/>
                     </#if>
 
-                    <input type="hidden" name="token" value="${token!}">
+                    <@spring.formHiddenInput "resetDto.token" 'id="token" class="form-control" required'/>
+                    <@spring.showErrors "<br>" "error text-danger" />
+                    <#--                    <input type="hidden" name="token" value="${token!}">-->
 
-                    <input type="password" name="password" class="form-control"
-                           placeholder="<@spring.message 'reset.placeholder'/>" required autofocus/>
+                    <div class="mb-3" id="passwordBlock">
+                        <label for="password" id="labelPassword"
+                               class="form-label"><@spring.message 'reset.placeholder'/></label>
+                        <@spring.formPasswordInput "resetDto.password" 'id="password" class="form-control" required autofocus'/>
+                        <@spring.showErrors "<br>" "error text-danger" />
+                    </div>
+
+                    <#--                    <input type="password" name="password" class="form-control"-->
+                    <#--                           placeholder="<@spring.message 'reset.placeholder'/>" required autofocus/>-->
                     <p class="text-center">
                         <button type="submit" class="btn btn-primary mt-3"><@spring.message 'reset.button'/></button>
                     </p>

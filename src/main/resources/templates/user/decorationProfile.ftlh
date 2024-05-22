@@ -132,7 +132,7 @@
                             <div class="card border-black border-2 rounded-4 p-3">
                                 <div class="card-body">
                                     <#if user.accountType == "EMPLOYEE">
-                                    <a href="/employee/resumes/${item.id}" class="text-decoration-none text-dark">
+                                    <a href="/resumes/${item.id}" class="text-decoration-none text-dark">
                                         <#else>
                                         <a href="/vacancies/${item.id}" class="text-decoration-none text-dark">
                                             </#if>
@@ -148,7 +148,7 @@
                                         <button type="button"
                                                 class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
                                             <a
-                                                    href="/employee/resumes/${item.id}"
+                                                    href="/resumes/${item.id}"
                                                     class="text-dark text-decoration-none">
                                                 <@spring.message 'decoration.button.check'/>
                                             </a>
