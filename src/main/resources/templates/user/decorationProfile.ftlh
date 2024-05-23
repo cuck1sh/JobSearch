@@ -8,14 +8,14 @@
         <#else>
             <h1 class="text-center my-3 text-danger"><@spring.message 'profile.employer.title'/></h1>
         </#if>
-        <div class="d-flex justify-content-between mt-5">
+        <div class="mt-5">
             <div class="row row-cols-1 row-cols-lg-2 g-3">
                 <div class="col">
                     <div class="row">
-                        <div class="col border border-black border-2 rounded-4 d-flex align-items-center">
+                        <div class="col-4 border border-black border-2 rounded-4 d-flex align-items-center py-3">
                             <img src="/api/users/avatar/${user.id}" alt="avatar" class="card-img">
                         </div>
-                        <div class="col ms-3">
+                        <div class="col-7 ms-3">
                             <h2>${user.name}</h2>
                             <#if user.accountType == 'EMPLOYEE'>
                                 <p><@spring.message 'profile.age'/> ${user.age}</p>
@@ -132,7 +132,7 @@
                             <div class="card border-black border-2 rounded-4 p-3">
                                 <div class="card-body">
                                     <#if user.accountType == "EMPLOYEE">
-                                    <a href="/employee/resumes/${item.id}" class="text-decoration-none text-dark">
+                                    <a href="/resumes/${item.id}" class="text-decoration-none text-dark">
                                         <#else>
                                         <a href="/vacancies/${item.id}" class="text-decoration-none text-dark">
                                             </#if>
@@ -148,7 +148,7 @@
                                         <button type="button"
                                                 class="btn border-black border-1 bg-success p-2 text-dark bg-opacity-10">
                                             <a
-                                                    href="/employee/resumes/${item.id}"
+                                                    href="/resumes/${item.id}"
                                                     class="text-dark text-decoration-none">
                                                 <@spring.message 'decoration.button.check'/>
                                             </a>

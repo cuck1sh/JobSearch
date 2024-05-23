@@ -1,9 +1,6 @@
 package com.example.jobsearch.controller;
 
-import com.example.jobsearch.dto.resume.ResumeDto;
-import com.example.jobsearch.dto.user.UserDto;
 import com.example.jobsearch.dto.vacancy.InputVacancyDto;
-import com.example.jobsearch.exception.ResumeNotFoundException;
 import com.example.jobsearch.service.CategoryService;
 import com.example.jobsearch.service.ResumeService;
 import com.example.jobsearch.service.VacancyService;
@@ -104,19 +101,6 @@ public class EmployerController {
 
         model.addAttribute("sort", sort);
         return "employer/resumes";
-    }
-
-    @GetMapping("resumes/{id}")
-    public String getResume(@PathVariable int id, Model model) {
-        UserDto authUser = authenticatedUserProvider.getAuthUser();
-        ResumeDto resumeDto = resumeService.getResumeById(id);
-        if (!resumeDto.getIsActive() && !authUser.getEmail().equals(resumeDto.getUserEmail())) {
-            log.error("Резюме скрыто из общего доступа");
-            throw new ResumeNotFoundException("Резюме скрыто из общего доступа");
-        } else {
-            model.addAttribute("resume", resumeDto);
-            return "employee/resume";
-        }
     }
 
 }

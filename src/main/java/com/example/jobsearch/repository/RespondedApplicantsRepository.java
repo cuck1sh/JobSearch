@@ -20,6 +20,8 @@ public interface RespondedApplicantsRepository extends JpaRepository<RespondedAp
 
     List<RespondedApplicants> findAllByResumeUserId(Integer userId);
 
+    List<RespondedApplicants> findAllByVacancyUserId(Integer userId);
+
     List<RespondedApplicants> findAllByVacancyIdAndVacancyUserId(Integer vacancyId, Integer userId);
 
     List<RespondedApplicants> findAllByVacancyId(Integer vacancyId);

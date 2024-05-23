@@ -202,13 +202,88 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
+
+        <#if vacancies??>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-success mx-auto mb-4" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                <@spring.message 'vacancy.response'/>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5"
+                                id="exampleModalLabel"><@spring.message 'resume.responses.title'/></h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <#if vacancies?size gt 0>
+                                <ol class="list-group list-group-numbered">
+                                    <#list vacancies as vacancy>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto text-start">
+                                                <div class="fw-bold text-start mb-2">${vacancy.name}</div>
+                                                <#if vacancy.category??>
+                                                    <#if vacancy.category.name??>
+                                                        <p class="mb-1">
+                                                            <@spring.message 'vacancy.responses.category'/> ${resume.category.name}
+                                                        </p>
+                                                    </#if>
+                                                </#if>
+                                                <#if vacancy.salary??>
+                                                    <@spring.message 'vacancy.responses.salary'/> ${resume.salary}
+                                                <#else>
+                                                    <@spring.message 'vacancy.responses.salary'/> -
+                                                </#if>
+
+                                            </div>
+                                            <button type="button"
+                                                    class="btn btn-success my-auto"
+                                                    onclick="responseResume(${vacancy.id}, ${resume.id})">
+                                                <@spring.message 'vacancy.responses.pin'/>
+                                            </button>
+                                        </li>
+                                    </#list>
+                                </ol>
+                            <#else>
+                                <@spring.message 'resume.no.vacancies'/>
+                            </#if>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <@spring.message 'vacancy.close.button'/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </#if>
+
+
         <div class="card-footer text-body-secondary">
             <@spring.message 'resume.update.time'/> ${resume.updateTime.toLocalDate()}
         </div>
 
     </div>
+
+    <script>
+        function responseResume(vacancyId, resumeId) {
+            const url = '/api/responses/vacancy/' + vacancyId + '/resume/' + resumeId
+            fetch(url, {method: 'get'})
+                .then(resp => {
+                    return resp.json();
+                })
+                .then(data => {
+                    window.location.href = '/messages/' + data
+                })
+                .catch(e => console.log(e))
+        }
+    </script>
 
 </@main.layout>

@@ -66,7 +66,7 @@
             <div class="col">
                 <div class="card h-100">
                     <div class="card-body">
-                        <a href="/employer/resumes/${resume.id}"><h3 class="card-title mb-4">${resume.name}</h3></a>
+                        <a href="/resumes/${resume.id}"><h3 class="card-title mb-4">${resume.name}</h3></a>
 
                         <#if resume.category??>
                             <#if resume.category.parent??>

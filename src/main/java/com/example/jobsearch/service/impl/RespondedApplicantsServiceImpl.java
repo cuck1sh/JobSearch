@@ -58,7 +58,7 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
                         List<ResumeDto> resumes = resumeService.getResumesByUserId(user.getId());
                         model.addAttribute("resumes", resumes);
                     } else {
-                        List<RespondedApplicantsDto> responses = getResponsesForEmployer(id, user.getId());
+                        List<RespondedApplicantsDto> responses = getResponsesForVacancy(id, user.getId());
                         model.addAttribute("responses", responses);
                         model.addAttribute("responsesQty", responses.size());
                     }
@@ -67,6 +67,29 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
             }
         } else {
             throw new VacancyNotFoundException("Не найдена вакансия");
+        }
+    }
+
+    @Override
+    public String getResume(int id, Model model) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+        ResumeDto resumeDto = resumeService.getResumeById(id);
+        if (!userService.isEmployee(authUser.getId())) {
+            List<VacancyDto> vacancies = vacancyService.getAllVacanciesByCompany(authUser.getId());
+            model.addAttribute("vacancies", vacancies);
+        }
+
+        if (authUser.getEmail().equals(resumeDto.getUserEmail())) {
+            model.addAttribute("resume", resumeDto);
+            return "employee/resume";
+        }
+
+        if (authUser.getAccountType().equals("EMPLOYER") && resumeDto.getIsActive()) {
+            model.addAttribute("resume", resumeDto);
+            return "employee/resume";
+        } else {
+            log.error("Резюме скрыто из общего доступа");
+            throw new AccessException("Резюме скрыто из общего доступа");
         }
     }
 
@@ -161,19 +184,20 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     }
 
     @Override
-    public List<RespondedApplicantsDto> getResponsesForEmployee(int userId) {
+    public List<RespondedApplicantsDto> getUsersResponses(int userId) {
         if (userService.isUserInSystem(userId)) {
             if (userService.isEmployee(userId)) {
-                List<RespondedApplicants> applicants = repository.findAllByResumeUserId(userId);
-                return getRespondedApplicantsDtos(applicants);
+                return getRespondedApplicantsDtos(repository.findAllByResumeUserId(userId));
+            } else {
+                return getRespondedApplicantsDtos(repository.findAllByVacancyUserId(userId));
             }
-            throw new ResumeNotFoundException("Юзер " + userId + " не найден среди соискателей");
         }
+        log.error("Не найден юзер с айди: " + userId);
         throw new UserNotFoundException("Не найден юзер с айди: " + userId);
     }
 
     @Override
-    public List<RespondedApplicantsDto> getResponsesForEmployer(int vacancyId, int userId) {
+    public List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId, int userId) {
         if (!userService.isEmployee(userId)) {
             List<RespondedApplicants> applicants = repository.findAllByVacancyIdAndVacancyUserId(vacancyId, userId);
             return getRespondedApplicantsDtos(applicants);

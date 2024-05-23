@@ -10,6 +10,8 @@ import java.util.List;
 public interface RespondedApplicantsService {
     void getVacancy(int id, Model model);
 
+    String getResume(int id, Model model);
+
     Integer getRespondId(int resumeId, int vacancyId);
 
     RespondedApplicantsDto getRespondedApplicants(int respond);
@@ -20,9 +22,13 @@ public interface RespondedApplicantsService {
     List<RespondedApplicantsDto> getUserResponses(String email);
     List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId);
     List<RespondedApplicantsDto> getResponsesForResume(int resumeId);
-    List<RespondedApplicantsDto> getResponsesForEmployee(int userId);
-    List<RespondedApplicantsDto> getResponsesForEmployer(int vacancyId, int userId);
+
+    List<RespondedApplicantsDto> getUsersResponses(int userId);
+
+    List<RespondedApplicantsDto> getResponsesForVacancy(int vacancyId, int userId);
     ResponseEntity<Integer> createResponse(int vacancyId, int resumeId);
 
     void getResumeAndVacancyByResponseId(Integer id, Model model);
+
+
 }
