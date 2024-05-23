@@ -100,10 +100,10 @@
                                         <div id="resumeId" hidden="hidden"></div>
                                         <li class="list-group-item d-flex justify-content-between align-items-start">
                                             <div class="ms-2 me-auto text-start">
-                                                <div class="fw-bold text-start">${resume.name}</div>
+                                                <div class="fw-bold text-start mb-2">${resume.name}</div>
                                                 <#if resume.category??>
                                                     <#if resume.category.name??>
-                                                        <p class="mb-2">
+                                                        <p class="mb-1">
                                                             <@spring.message 'vacancy.responses.category'/> ${resume.category.name}
                                                         </p>
                                                     </#if>
@@ -124,7 +124,7 @@
                                     </#list>
                                 </ol>
                             <#else>
-                                <@spring.message 'vacancy.no.responses'/>
+                                <@spring.message 'vacancy.no.resumes'/>
                             </#if>
                         </div>
                         <div class="modal-footer">

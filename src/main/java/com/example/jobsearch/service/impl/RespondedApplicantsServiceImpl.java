@@ -71,6 +71,29 @@ public class RespondedApplicantsServiceImpl implements RespondedApplicantsServic
     }
 
     @Override
+    public String getResume(int id, Model model) {
+        UserDto authUser = authenticatedUserProvider.getAuthUser();
+        ResumeDto resumeDto = resumeService.getResumeById(id);
+        if (!userService.isEmployee(authUser.getId())) {
+            List<VacancyDto> vacancies = vacancyService.getAllVacanciesByCompany(authUser.getId());
+            model.addAttribute("vacancies", vacancies);
+        }
+
+        if (authUser.getEmail().equals(resumeDto.getUserEmail())) {
+            model.addAttribute("resume", resumeDto);
+            return "employee/resume";
+        }
+
+        if (authUser.getAccountType().equals("EMPLOYER") && resumeDto.getIsActive()) {
+            model.addAttribute("resume", resumeDto);
+            return "employee/resume";
+        } else {
+            log.error("Резюме скрыто из общего доступа");
+            throw new AccessException("Резюме скрыто из общего доступа");
+        }
+    }
+
+    @Override
     public Integer getRespondId(int resumeId, int vacancyId) {
         return repository.findRespondedApplicantsByResumeIdAndVacancyId(resumeId, vacancyId)
                 .orElseThrow(() -> new ResponseFoundException("Не найден отклик по резюмеАйди: " + resumeId + " и вакансииАйди: " + vacancyId))
