@@ -8,14 +8,14 @@
         <#else>
             <h1 class="text-center my-3 text-danger"><@spring.message 'profile.employer.title'/></h1>
         </#if>
-        <div class="d-flex justify-content-between mt-5">
-            <div class="row row-cols-1 row-cols-lg-2 g-3">
+        <div class="mt-5">
+            <div class="row row-cols-1 row-cols-lg-2 g-5">
                 <div class="col">
                     <div class="row">
-                        <div class="col border border-black border-2 rounded-4 d-flex align-items-center">
+                        <div class="col-4 border border-black border-2 rounded-4 d-flex align-items-center py-3">
                             <img src="/api/users/avatar/${user.id}" alt="avatar" class="card-img">
                         </div>
-                        <div class="col ms-3">
+                        <div class="col-7 ms-3">
                             <h2>${user.name}</h2>
                             <#if user.accountType == 'EMPLOYEE'>
                                 <p><@spring.message 'profile.age'/> ${user.age}</p>

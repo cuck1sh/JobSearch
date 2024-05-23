@@ -27,7 +27,7 @@ VALUES ('Василий', 'Пупкин', 33, 'vasiliy@gmail.com', '$2a$10$hiVUe
         '996-999-24-25-28', 'default.png',
         'EMPLOYER'),
        ('Apple', null, 50, 'apple@apple.com', '$2a$10$uH/AT3FXpvRCQ8SdD4Dqi..4vw1NeuddeqUEEON9ZxbEkFOtC.z0S',
-        '996-999-24-25-27', 'default.png',
+        '996-999-24-25-27', 'apple.png',
         'EMPLOYER'),
        ('Microsoft', null, 50, 'microsoft@inbox.com', '$2a$10$uH/AT3FXpvRCQ8SdD4Dqi..4vw1NeuddeqUEEON9ZxbEkFOtC.z0S',
         '996-156-24-24-27', 'default.png',

@@ -8,7 +8,7 @@
         <#list page.content as company>
             <div class="col">
                 <div class="card h-100">
-                    <img src="/api/users/avatar/${company.id}" class="card-img-top h-75" alt="avatar">
+                    <img src="/api/users/avatar/${company.id}" class="card-img-top object-fit-cover " alt="avatar">
                     <div class="card-body">
                         <h5 class="card-title mb-3">${company.name}</h5>
                         <p class="card-text mb-1"><@spring.message 'companies.email'/> ${company.email}</p>
