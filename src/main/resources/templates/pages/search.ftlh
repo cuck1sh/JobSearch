@@ -29,9 +29,6 @@
     <div hidden="hidden" id="hidden-link"><@spring.message 'search.link'/></div>
     <div hidden="hidden" id="hidden-linkText"><@spring.message 'search.link.text'/></div>
 
-    <script src="/static/js/search.js">
-
-    </script>
-
+    <script src="/static/js/search.js"></script>
 
 </@main.layout>
